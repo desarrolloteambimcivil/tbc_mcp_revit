@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>tbc-revit-mcp — AI agents for Autodesk Revit</title>
+  <meta name="description" content="tbc-revit-mcp lets Claude and other MCP agents read, check and edit Autodesk Revit 2022–2027 models locally, with every change undoable. By Nour Rouas, TeamBIMCivil.">
+  <meta property="og:title" content="tbc-revit-mcp — AI agents for Autodesk Revit">
+  <meta property="og:description" content="242 Revit tools for Claude and any MCP client. Local, safe, open source. Revit 2022–2027.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#12355b">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Choose the language before first paint: saved choice, else the browser language.
+    (function () {
+      var lang = null;
+      try { lang = localStorage.getItem('tbc-lang'); } catch (e) {}
+      if (lang !== 'es' && lang !== 'en') lang = (navigator.language || 'en').toLowerCase().indexOf('es') === 0 ? 'es' : 'en';
+      document.documentElement.setAttribute('data-lang', lang);
+      document.documentElement.setAttribute('lang', lang);
+    })();
+  </script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="tbc-revit-mcp">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#12355b"/><path d="M6 11h20" stroke="#3cc489" stroke-width="2.5" stroke-linecap="round"/><path d="M9 11v14M16 11v14M23 11v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M6 25h20" stroke="#8fb6e3" stroke-width="2" stroke-linecap="round"/></svg>
+      tbc-revit-mcp
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#features"><span lang="en">Features</span><span lang="es">Funciones</span></a>
+      <a href="#story"><span lang="en">Example</span><span lang="es">Ejemplo</span></a>
+      <a href="#how"><span lang="en">How it works</span><span lang="es">Cómo funciona</span></a>
+      <a href="#install"><span lang="en">Install</span><span lang="es">Instalar</span></a>
+      <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp">GitHub</a>
+    </nav>
+    <div class="lang-toggle" role="group" aria-label="Language / Idioma">
+      <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-set-lang="es" aria-pressed="false">ES</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow"><span lang="en">MCP for Autodesk Revit 2022–2027</span><span lang="es">MCP para Autodesk Revit 2022–2027</span></span>
+      <h1>
+        <span lang="en">Talk to Revit.<br><span class="hl">Let AI do the chores.</span></span>
+        <span lang="es">Habla con Revit.<br><span class="hl">Deja que la IA haga el trabajo pesado.</span></span>
+      </h1>
+      <p class="lead">
+        <span lang="en">tbc-revit-mcp connects Claude and any MCP-capable agent to your open Revit model. Ask in plain language — it reads, checks and edits the model locally, and every change can be undone.</span>
+        <span lang="es">tbc-revit-mcp conecta Claude y cualquier agente compatible con MCP con tu modelo de Revit abierto. Pídeselo en lenguaje natural: lee, revisa y edita el modelo en local, y cada cambio se puede deshacer.</span>
+      </p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="#install"><span lang="en">Get started</span><span lang="es">Empezar</span></a>
+        <a class="btn btn-ghost" href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp">
+          <svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span lang="en">View on GitHub</span><span lang="es">Ver en GitHub</span>
+        </a>
+      </div>
+    </div>
+
+    <svg class="hero-art" viewBox="0 0 560 470" role="img" aria-labelledby="hero-art-title">
+      <title id="hero-art-title">Illustration: an AI agent fixing the posts of a fence modelled in Revit</title>
+      <defs>
+        <pattern id="mesh" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(30)">
+          <path d="M0 0H10M0 0V10" stroke="var(--mesh)" stroke-width="1"/>
+        </pattern>
+        <filter id="lift" x="-10%" y="-30%" width="120%" height="160%">
+          <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#12355b" flood-opacity="0.18"/>
+        </filter>
+      </defs>
+      <!-- slab -->
+      <polygon points="60,250 280,140 500,250 280,360" fill="var(--slab-top)"/>
+      <polygon points="60,250 280,360 280,378 60,268" fill="var(--slab-side)"/>
+      <polygon points="280,360 500,250 500,268 280,378" fill="var(--slab-side)" opacity="0.8"/>
+      <!-- mesh panels -->
+      <polygon points="60,250 280,140 280,20 60,130" fill="url(#mesh)" opacity="0.55"/>
+      <polygon points="280,140 500,250 500,130 280,20" fill="url(#mesh)" opacity="0.4"/>
+      <!-- posts, full height down to the slab -->
+      <g stroke="var(--post)" stroke-width="5" stroke-linecap="round">
+        <line x1="60" y1="256" x2="60" y2="130"/><line x1="104" y1="234" x2="104" y2="108"/>
+        <line x1="148" y1="212" x2="148" y2="86"/><line x1="192" y1="190" x2="192" y2="64"/>
+        <line x1="236" y1="168" x2="236" y2="42"/><line x1="280" y1="146" x2="280" y2="20"/>
+        <line x1="324" y1="168" x2="324" y2="42"/><line x1="368" y1="190" x2="368" y2="64"/>
+        <line x1="412" y1="212" x2="412" y2="86"/><line x1="456" y1="234" x2="456" y2="108"/>
+        <line x1="500" y1="256" x2="500" y2="130"/>
+      </g>
+      <polyline points="60,130 280,20 500,130" fill="none" stroke="var(--post)" stroke-width="6" stroke-linejoin="round"/>
+      <!-- check badge -->
+      <g transform="translate(470 70)">
+        <circle r="22" fill="var(--accent)"/>
+        <path d="M-9 1l6 6 12-13" fill="none" stroke="var(--surface)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <!-- conversation -->
+      <g filter="url(#lift)">
+        <rect x="16" y="394" width="340" height="34" rx="12" fill="var(--surface)" stroke="var(--border)"/>
+        <rect x="204" y="434" width="340" height="34" rx="12" fill="var(--accent)"/>
+      </g>
+      <g font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="14">
+        <text lang="en" x="32" y="416" fill="var(--text)">“The fence posts stop halfway. Fix them?”</text>
+        <text lang="es" x="32" y="416" fill="var(--text)">“Los postes de la valla se quedan a medias.”</text>
+        <text lang="en" x="220" y="456" fill="var(--accent-text)">✓ Posts reach the ground on all 4 fences</text>
+        <text lang="es" x="220" y="456" fill="var(--accent-text)">✓ Postes completos en las 4 vallas</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat"><b>242</b><span lang="en">Revit tools</span><span lang="es">herramientas de Revit</span></div>
+      <div class="stat"><b>2022–2027</b><span lang="en">Revit versions</span><span lang="es">versiones de Revit</span></div>
+      <div class="stat"><b>100%</b><span lang="en">local — nothing leaves your PC</span><span lang="es">local: nada sale de tu PC</span></div>
+      <div class="stat"><b>Apache-2.0</b><span lang="en">open source</span><span lang="es">código abierto</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="features">
+  <div class="wrap">
+    <h2><span lang="en">Everything an agent needs to work in Revit</span><span lang="es">Todo lo que un agente necesita para trabajar en Revit</span></h2>
+    <p class="section-lead">
+      <span lang="en">Typed tools for everyday BIM work, a C# escape hatch for the rest, and guard rails so the model stays yours.</span>
+      <span lang="es">Herramientas tipadas para el BIM del día a día, código C# para todo lo demás y protecciones para que el modelo siga siendo tuyo.</span>
+    </p>
+    <div class="grid">
+      <article class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+        <h3><span lang="en">Tools for daily BIM</span><span lang="es">Herramientas para el BIM diario</span></h3>
+        <p><span lang="en">Query, create and modify elements, views, sheets, schedules, families, materials, rooms, MEP and structure. Export PDF, DWG, IFC and NWC.</span><span lang="es">Consulta, crea y modifica elementos, vistas, planos, tablas, familias, materiales, habitaciones, MEP y estructura. Exporta PDF, DWG, IFC y NWC.</span></p>
+      </article>
+      <article class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div>
+        <h3><span lang="en">Safe by design</span><span lang="es">Seguro por diseño</span></h3>
+        <p><span lang="en">Every change runs in a Revit transaction. Warnings roll back by default, the model is never saved for you, and Ctrl+Z still works.</span><span lang="es">Cada cambio va en una transacción de Revit. Los avisos se revierten por defecto, nunca se guarda por ti y Ctrl+Z sigue funcionando.</span></p>
+      </article>
+      <article class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></div>
+        <h3><span lang="en">Revit API lookup</span><span lang="es">Consulta de la API</span><span class="tag"><span lang="en">NEW</span><span lang="es">NUEVO</span></span></h3>
+        <p><span lang="en">The agent checks real member names for the Revit year you run — signatures, obsolete warnings, docs — before writing code.</span><span lang="es">El agente comprueba los nombres reales de la API de tu versión de Revit (firmas, obsoletos, documentación) antes de escribir código.</span></p>
+      </article>
+      <article class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-9V3"/><path d="M7.5 15h9"/></svg></div>
+        <h3><span lang="en">Dry runs</span><span lang="es">Pruebas sin riesgo</span><span class="tag"><span lang="en">NEW</span><span lang="es">NUEVO</span></span></h3>
+        <p><span lang="en">Try a change, regenerate, measure the result — then everything is rolled back automatically. Decide with evidence.</span><span lang="es">Prueba un cambio, regenera, mide el resultado y todo se deshace automáticamente. Decide con datos.</span></p>
+      </article>
+      <article class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg></div>
+        <h3><span lang="en">Railings &amp; layers</span><span lang="es">Barandillas y capas</span><span class="tag"><span lang="en">NEW</span><span lang="es">NUEVO</span></span></h3>
+        <p><span lang="en">Read and edit baluster patterns, posts and rails, and wall, floor, roof and ceiling layers — settings Revit hides from parameters.</span><span lang="es">Lee y edita balaustres, postes y barandales, y las capas de muros, suelos, cubiertas y techos: ajustes que Revit no expone como parámetros.</span></p>
+      </article>
+      <article class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <h3><span lang="en">Focused captures</span><span lang="es">Capturas centradas</span><span class="tag"><span lang="en">NEW</span><span lang="es">NUEVO</span></span></h3>
+        <p><span lang="en">An image of just the elements you care about, from a temporary 3D view that leaves no trace in the model.</span><span lang="es">Una imagen solo de los elementos que te interesan, desde una vista 3D temporal que no deja rastro en el modelo.</span></p>
+      </article>
+      <article class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/></svg></div>
+        <h3><span lang="en">C# when tools run out</span><span lang="es">C# cuando no hay herramienta</span></h3>
+        <p><span lang="en">For anything without a typed tool, the agent writes C# against the Revit API. Repeated patterns can become your own tools with ToolBaker.</span><span lang="es">Para lo que no tiene herramienta, el agente escribe C# contra la API de Revit. Lo que repites puede convertirse en tus propias herramientas con ToolBaker.</span></p>
+      </article>
+      <article class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg></div>
+        <h3><span lang="en">Every version, 15 languages</span><span lang="es">Todas las versiones, 15 idiomas</span></h3>
+        <p><span lang="en">One gateway for Revit 2022 to 2027. The add-in interface follows your Revit language, Spanish and English included.</span><span lang="es">Un único gateway para Revit 2022 a 2027. La interfaz del complemento sigue el idioma de tu Revit, español incluido.</span></p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="story">
+  <div class="wrap story">
+    <div>
+      <h2><span lang="en">From a question to a verified fix</span><span lang="es">De una pregunta a una solución verificada</span></h2>
+      <p class="quote"><span lang="en">“The posts of this fence stop halfway. Can you fix it?”</span><span lang="es">“Los postes de esta valla se quedan a medias. ¿Puedes ajustarlo?”</span></p>
+      <ol class="steps">
+        <li><b><span lang="en">Read the railing type</span><span lang="es">Lee el tipo de barandilla</span></b>
+          <span lang="en">The agent inspects posts, balusters and rails — data Revit keeps out of the parameter list.</span><span lang="es">El agente revisa postes, balaustres y barandales: datos que Revit no muestra como parámetros.</span></li>
+        <li><b><span lang="en">Find the real cause</span><span lang="es">Encuentra la causa real</span></b>
+          <span lang="en">The mesh rail sits on the post axis, and Revit trims balusters where they cross a rail profile.</span><span lang="es">La malla está en el eje de los postes, y Revit recorta los balaustres donde cruzan el perfil de un barandal.</span></li>
+        <li><b><span lang="en">Prove it with a dry run</span><span lang="es">Lo demuestra sin riesgo</span></b>
+          <span lang="en">Offsetting the mesh 24 mm restores full-height posts. The test is rolled back automatically.</span><span lang="es">Desplazar la malla 24 mm devuelve los postes completos. La prueba se deshace sola.</span></li>
+        <li><b><span lang="en">Apply, verify, show</span><span lang="es">Aplica, verifica y lo enseña</span></b>
+          <span lang="en">One undoable change on the type, geometry measured again, and a focused capture of every fence.</span><span lang="es">Un cambio reversible en el tipo, la geometría medida de nuevo y una captura centrada de cada valla.</span></li>
+      </ol>
+    </div>
+    <svg class="diagram" viewBox="0 0 520 300" role="img" aria-labelledby="fix-art-title">
+      <title id="fix-art-title">Before: posts trimmed at the top rail. After: posts reach the ground.</title>
+      <defs>
+        <pattern id="mesh2" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <path d="M0 0H9M0 0V9" stroke="var(--mesh)" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <g font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="15" font-weight="700">
+        <text lang="en" x="135" y="34" text-anchor="middle" fill="var(--muted)">Before</text>
+        <text lang="es" x="135" y="34" text-anchor="middle" fill="var(--muted)">Antes</text>
+        <text lang="en" x="385" y="34" text-anchor="middle" fill="var(--accent)">After</text>
+        <text lang="es" x="385" y="34" text-anchor="middle" fill="var(--accent)">Después</text>
+      </g>
+      <!-- before -->
+      <rect x="30" y="66" width="210" height="160" fill="url(#mesh2)" opacity="0.6"/>
+      <line x1="20" y1="232" x2="250" y2="232" stroke="var(--slab-side)" stroke-width="6"/>
+      <line x1="24" y1="62" x2="246" y2="62" stroke="var(--post)" stroke-width="6" stroke-linecap="round"/>
+      <g stroke="var(--post)" stroke-width="6" stroke-linecap="round">
+        <line x1="34" y1="62" x2="34" y2="96"/><line x1="86" y1="62" x2="86" y2="96"/><line x1="138" y1="62" x2="138" y2="96"/><line x1="190" y1="62" x2="190" y2="96"/><line x1="236" y1="62" x2="236" y2="96"/>
+      </g>
+      <g stroke="#d64545" stroke-width="2" stroke-dasharray="4 4"><line x1="34" y1="104" x2="34" y2="226"/><line x1="138" y1="104" x2="138" y2="226"/><line x1="236" y1="104" x2="236" y2="226"/></g>
+      <!-- after -->
+      <rect x="280" y="66" width="210" height="160" fill="url(#mesh2)" opacity="0.6"/>
+      <line x1="270" y1="232" x2="500" y2="232" stroke="var(--slab-side)" stroke-width="6"/>
+      <line x1="274" y1="62" x2="496" y2="62" stroke="var(--post)" stroke-width="6" stroke-linecap="round"/>
+      <g stroke="var(--post)" stroke-width="6" stroke-linecap="round">
+        <line x1="284" y1="62" x2="284" y2="232"/><line x1="336" y1="62" x2="336" y2="232"/><line x1="388" y1="62" x2="388" y2="232"/><line x1="440" y1="62" x2="440" y2="232"/><line x1="486" y1="62" x2="486" y2="232"/>
+      </g>
+      <g stroke="var(--post)" stroke-width="6" stroke-linecap="round" opacity="0.35">
+        <line x1="284" y1="238" x2="284" y2="262"/><line x1="336" y1="238" x2="336" y2="262"/><line x1="388" y1="238" x2="388" y2="262"/><line x1="440" y1="238" x2="440" y2="262"/><line x1="486" y1="238" x2="486" y2="262"/>
+      </g>
+      <g font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="var(--muted)">
+        <text lang="en" x="135" y="262" text-anchor="middle">trimmed by the mesh rail</text>
+        <text lang="es" x="135" y="262" text-anchor="middle">recortados por la malla</text>
+        <text lang="en" x="385" y="284" text-anchor="middle">mesh offset 24 mm · posts embedded</text>
+        <text lang="es" x="385" y="284" text-anchor="middle">malla desplazada 24 mm · postes empotrados</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<section class="alt" id="how">
+  <div class="wrap">
+    <h2><span lang="en">How it works</span><span lang="es">Cómo funciona</span></h2>
+    <p class="section-lead">
+      <span lang="en">Two small programs on your machine. Your agent talks MCP to a local server; the server talks to an add-in inside Revit, which runs each request on Revit's own thread.</span>
+      <span lang="es">Dos programas pequeños en tu equipo. Tu agente habla MCP con un servidor local, y el servidor con un complemento dentro de Revit, que ejecuta cada petición en el hilo de Revit.</span>
+    </p>
+    <svg class="diagram" viewBox="0 0 1000 200" role="img" aria-labelledby="arch-title">
+      <title id="arch-title">Claude or any MCP client, to the tbc-revit-mcp server, to the Revit add-in, to your model</title>
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M0 0L10 5L0 10z" fill="var(--accent)"/>
+        </marker>
+      </defs>
+      <g font-family="system-ui, -apple-system, Segoe UI, sans-serif" text-anchor="middle">
+        <g>
+          <rect x="20" y="50" width="200" height="104" rx="14" fill="var(--bg)" stroke="var(--border)"/>
+          <text x="120" y="96" font-size="19" font-weight="700" fill="var(--text)">Claude</text>
+          <text lang="en" x="120" y="124" font-size="14" fill="var(--muted)">or any MCP client</text>
+          <text lang="es" x="120" y="124" font-size="14" fill="var(--muted)">o cualquier cliente MCP</text>
+        </g>
+        <g>
+          <rect x="270" y="50" width="200" height="104" rx="14" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/>
+          <text x="370" y="96" font-size="19" font-weight="700" fill="var(--accent)">tbc-revit-mcp</text>
+          <text lang="en" x="370" y="124" font-size="14" fill="var(--muted)">local server · .NET 8</text>
+          <text lang="es" x="370" y="124" font-size="14" fill="var(--muted)">servidor local · .NET 8</text>
+        </g>
+        <g>
+          <rect x="520" y="50" width="200" height="104" rx="14" fill="var(--bg)" stroke="var(--border)"/>
+          <text lang="en" x="620" y="96" font-size="19" font-weight="700" fill="var(--text)">Revit add-in</text>
+          <text lang="es" x="620" y="96" font-size="19" font-weight="700" fill="var(--text)">Complemento</text>
+          <text x="620" y="124" font-size="14" fill="var(--muted)">Revit 2022–2027</text>
+        </g>
+        <g>
+          <rect x="770" y="50" width="200" height="104" rx="14" fill="var(--navy)"/>
+          <text lang="en" x="870" y="96" font-size="19" font-weight="700" fill="var(--surface)">Your model</text>
+          <text lang="es" x="870" y="96" font-size="19" font-weight="700" fill="var(--surface)">Tu modelo</text>
+          <text x="870" y="124" font-size="14" fill="var(--surface)" opacity="0.8">Revit API</text>
+        </g>
+        <g stroke="var(--accent)" stroke-width="2.5" marker-end="url(#arrow)" marker-start="url(#arrow)">
+          <line x1="226" y1="102" x2="264" y2="102"/><line x1="476" y1="102" x2="514" y2="102"/><line x1="726" y1="102" x2="764" y2="102"/>
+        </g>
+        <g font-size="13" fill="var(--muted)">
+          <text x="245" y="180">stdio</text>
+          <text lang="en" x="495" y="180">named pipe / TCP</text>
+          <text lang="es" x="495" y="180">pipe / TCP local</text>
+          <text x="745" y="180">ExternalEvent</text>
+        </g>
+      </g>
+    </svg>
+    <div class="diagram-notes">
+      <div class="card"><h3><span lang="en">Local by default</span><span lang="es">Local por defecto</span></h3><p><span lang="en">Loopback or a named pipe with a per-session token. Your model never goes to a server of ours.</span><span lang="es">Conexión local o pipe con token por sesión. Tu modelo nunca pasa por un servidor nuestro.</span></p></div>
+      <div class="card"><h3><span lang="en">Every change on record</span><span lang="es">Cada cambio registrado</span></h3><p><span lang="en">Changed elements are reported with each call, and History → Issues in the ribbon keeps warnings and decisions.</span><span lang="es">Cada llamada informa de los elementos cambiados, y Historial → Incidencias en la cinta guarda avisos y decisiones.</span></p></div>
+      <div class="card"><h3><span lang="en">Read-only when you want</span><span lang="es">Solo lectura si quieres</span></h3><p><span lang="en">Start with --read-only or limit the toolsets, and the agent can only look, not touch.</span><span lang="es">Arranca con --read-only o limita los grupos de herramientas, y el agente solo podrá mirar.</span></p></div>
+    </div>
+    <p style="margin-top:24px"><b><span lang="en">Works with</span><span lang="es">Funciona con</span></b></p>
+    <div class="clients">
+      <span class="chip">Claude Code</span><span class="chip">Claude Desktop</span><span class="chip">Cursor</span><span class="chip">Codex</span><span class="chip">Cline</span><span class="chip"><span lang="en">any MCP client</span><span lang="es">cualquier cliente MCP</span></span>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2><span lang="en">Get started</span><span lang="es">Empezar</span></h2>
+    <p class="section-lead">
+      <span lang="en">Windows with Revit 2022–2027. Close Revit and your AI client, then run the installer from the release package.</span>
+      <span lang="es">Windows con Revit 2022–2027. Cierra Revit y tu cliente de IA y ejecuta el instalador del paquete publicado.</span>
+    </p>
+    <div class="install">
+      <div>
+        <div class="code" lang="en"><button class="copy" type="button" data-copy>Copy</button><span class="c"># 1. Download TbcRevitMcp.Setup-&lt;version&gt;-win-x64.zip and unzip it</span>
+<span class="c"># 2. Preview, then install for Claude Code</span>
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -WhatIf -Client claude
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -Client claude
+<span class="c"># 3. In Revit: Add-Ins → RvtMcp, then ask your agent</span></div>
+        <div class="code" lang="es"><button class="copy" type="button" data-copy>Copiar</button><span class="c"># 1. Descarga TbcRevitMcp.Setup-&lt;versión&gt;-win-x64.zip y descomprímelo</span>
+<span class="c"># 2. Previsualiza e instala para Claude Code</span>
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -WhatIf -Client claude
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -Client claude
+<span class="c"># 3. En Revit: Complementos → RvtMcp, y pregunta a tu agente</span></div>
+        <p class="note" style="margin-top:14px">
+          <span lang="en">The first public release is on its way. Until then, build from source following the <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp#install">README</a>. Use <code>-Client claude-desktop</code>, <code>cursor</code> or <code>codex</code> for other clients.</span>
+          <span lang="es">La primera versión pública está en camino. Mientras tanto, compílalo desde el código siguiendo el <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp#install">README</a>. Usa <code>-Client claude-desktop</code>, <code>cursor</code> o <code>codex</code> para otros clientes.</span>
+        </p>
+      </div>
+      <div class="card">
+        <h3><span lang="en">Then just ask</span><span lang="es">Y después, pide</span></h3>
+        <ul class="steps" style="margin-top:12px">
+          <li><span lang="en">“What view am I in, and what is selected?”</span><span lang="es">“¿En qué vista estoy y qué tengo seleccionado?”</span></li>
+          <li><span lang="en">“Tag every untagged door on this sheet.”</span><span lang="es">“Etiqueta todas las puertas sin etiqueta de este plano.”</span></li>
+          <li><span lang="en">“Check the model warnings before we issue.”</span><span lang="es">“Revisa los avisos del modelo antes de emitir.”</span></li>
+          <li><span lang="en">“Make the plaster layer of this wall type 15 mm.”</span><span lang="es">“Pon a 15 mm la capa de enlucido de este tipo de muro.”</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="about">
+  <div class="wrap credits">
+    <div>
+      <h2><span lang="en">Made by a BIM practitioner</span><span lang="es">Hecho desde la práctica BIM</span></h2>
+      <p>
+        <span lang="en">tbc-revit-mcp is built and maintained by <b>Nour Rouas</b>, BIM developer and modeller at <b>TeamBIMCivil</b>. Its new tools come from real modelling problems on real projects.</span>
+        <span lang="es">tbc-revit-mcp lo desarrolla y mantiene <b>Nour Rouas</b>, desarrollador y modelador BIM en <b>TeamBIMCivil</b>. Sus nuevas herramientas nacen de problemas reales de modelado en proyectos reales.</span>
+      </p>
+      <a class="btn btn-primary" href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/issues"><span lang="en">Request a feature</span><span lang="es">Pide una función</span></a>
+    </div>
+    <div class="card">
+      <h3><span lang="en">Open source, with credit</span><span lang="es">Código abierto, con reconocimiento</span></h3>
+      <p>
+        <span lang="en">Apache-2.0. tbc-revit-mcp is a fork of <a href="https://github.com/bimwright/rvt-mcp">rvt-mcp</a> by Khoa Le (Bimwright); the original copyright and license are kept in NOTICE.</span>
+        <span lang="es">Apache-2.0. tbc-revit-mcp es un fork de <a href="https://github.com/bimwright/rvt-mcp">rvt-mcp</a> de Khoa Le (Bimwright); el copyright y la licencia originales se conservan en NOTICE.</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav>
+      <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp">GitHub</a>
+      <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/blob/master/LICENSE"><span lang="en">License</span><span lang="es">Licencia</span></a>
+      <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/blob/master/CHANGELOG.md">Changelog</a>
+      <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/blob/master/SECURITY.md"><span lang="en">Security</span><span lang="es">Seguridad</span></a>
+    </nav>
+    <p>
+      <span lang="en">© 2026 Nour Rouas · TeamBIMCivil. Autodesk and Revit are registered trademarks of Autodesk, Inc. This project is not affiliated with or endorsed by Autodesk.</span>
+      <span lang="es">© 2026 Nour Rouas · TeamBIMCivil. Autodesk y Revit son marcas registradas de Autodesk, Inc. Este proyecto no está afiliado ni respaldado por Autodesk.</span>
+    </p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
