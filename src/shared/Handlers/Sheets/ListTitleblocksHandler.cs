@@ -82,9 +82,9 @@ namespace RvtMcp.Plugin.Handlers
                         continue;
 
                     if (!string.IsNullOrEmpty(namePattern) &&
-                        !displayName.Contains(namePattern, StringComparison.OrdinalIgnoreCase) &&
-                        !familyName.Contains(namePattern, StringComparison.OrdinalIgnoreCase) &&
-                        !typeName.Contains(namePattern, StringComparison.OrdinalIgnoreCase))
+                        displayName.IndexOf(namePattern, StringComparison.OrdinalIgnoreCase) < 0 &&
+                        familyName.IndexOf(namePattern, StringComparison.OrdinalIgnoreCase) < 0 &&
+                        typeName.IndexOf(namePattern, StringComparison.OrdinalIgnoreCase) < 0)
                     {
                         continue;
                     }

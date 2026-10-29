@@ -44,6 +44,10 @@ namespace RvtMcp.Plugin
             Register(new Handlers.ColorElementsHandler());
             Register(new Handlers.SetElementParameterValuesHandler());
             Register(new Handlers.SetTypeParameterValuesHandler());
+            Register(new Handlers.GetRailingStructureHandler());
+            Register(new Handlers.SetRailingStructureHandler());
+            Register(new Handlers.GetCompoundStructureHandler());
+            Register(new Handlers.SetCompoundLayersHandler());
             Register(new Handlers.ChangeElementTypeHandler());
             Register(new Handlers.AssignElementsToWorksetHandler());
             Register(new Handlers.DeleteElementHandler());
@@ -53,6 +57,7 @@ namespace RvtMcp.Plugin
             Register(new Handlers.TagAllRoomsHandler());
             // Phase 6: Dynamic Code
             Register(new Handlers.SendCodeToRevitHandler());
+            Register(new Handlers.ApiLookupHandler());
             Register(new Handlers.OpenModelHandler());
             Register(new Handlers.ListRecentModelsHandler());
             // Phase 7: Views & Sheets

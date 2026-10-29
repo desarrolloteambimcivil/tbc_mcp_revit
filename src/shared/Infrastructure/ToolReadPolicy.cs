@@ -15,6 +15,7 @@ namespace RvtMcp.Plugin
         {
             "analyze_usage_patterns",
             "activate_view",
+            "api_lookup",
             "ai_element_filter",
             "analyze_geometry_complexity",
             "analyze_mep_network",
@@ -40,6 +41,7 @@ namespace RvtMcp.Plugin
             "health",
             "get_current_view_info",
             "get_change_records",
+            "get_compound_structure",
             "get_failure_records",
             "get_operation_status",
             "lookup_message",
@@ -60,6 +62,7 @@ namespace RvtMcp.Plugin
             "get_panel_schedule",
             "get_print_settings",
             "get_project_coordinate_system",
+            "get_railing_structure",
             "get_room_boundaries",
             "get_room_openings",
             "get_schedulable_fields",

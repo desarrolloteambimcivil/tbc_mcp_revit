@@ -17,6 +17,7 @@ namespace RvtMcp.Tests
         private static readonly string[] MetaToolsInClass =
         {
             "revit_analyze_usage_patterns",
+            "revit_api_lookup",
             "revit_batch_execute",
             "revit_get_current_target",
             "revit_list_available_targets",
@@ -39,6 +40,28 @@ namespace RvtMcp.Tests
                 .ToArray();
 
             Assert.Equal(MetaToolsInClass, declared);
+        }
+
+        [Fact]
+        public async Task Api_lookup_sends_query_and_member_options()
+        {
+            var sent = await Capture.Send(() => MetaTools.ApiLookup("BalusterPattern.Length", true, 20));
+
+            Assert.Equal("api_lookup", sent.Command);
+            var json = sent.Json();
+            Assert.Equal("BalusterPattern.Length", json.Value<string>("query"));
+            Assert.True(json.Value<bool>("include_inherited"));
+            Assert.Equal(20, json.Value<int>("max_members"));
+        }
+
+        [Fact]
+        public async Task Send_code_forwards_dry_run()
+        {
+            var sent = await Capture.Send(() => SendCodeTools.SendCodeToRevit("return 1;", true));
+
+            Assert.Equal("send_code_to_revit", sent.Command);
+            Assert.Equal("return 1;", sent.Json().Value<string>("code"));
+            Assert.True(sent.Json().Value<bool>("dry_run"));
         }
 
         [Fact]

@@ -1,6 +1,6 @@
 {
   "generated_by": "ToolsListSnapshotTests",
-  "tool_count": 237,
+  "tool_count": 242,
   "tools": [
     {
       "name": "revit_acquire_coordinates_from_link",
@@ -357,6 +357,36 @@
           }
         },
         "required": [],
+        "type": "object"
+      },
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "revit_api_lookup",
+      "description_hash": "sha256:db0d311aad7eb24f22cddabdf28fcbd339607a8f8b990c2b22b1b8d413acf866",
+      "inputSchema": {
+        "properties": {
+          "include_inherited": {
+            "description": "",
+            "type": "Boolean"
+          },
+          "max_members": {
+            "description": "",
+            "type": "Int32"
+          },
+          "query": {
+            "description": "",
+            "type": "String"
+          }
+        },
+        "required": [
+          "query"
+        ],
         "type": "object"
       },
       "annotations": {
@@ -807,16 +837,28 @@
     },
     {
       "name": "revit_capture_view_image",
-      "description_hash": "sha256:22bc590d8e4ee15e0a51fe2d66798a6a3944847552632a9146bf1609458a2370",
+      "description_hash": "sha256:df779c87923e465aa34ea96966fcda1430674ddad72e65d155f125bb349b82f1",
       "inputSchema": {
         "properties": {
+          "element_ids": {
+            "description": "",
+            "type": "Int64[]"
+          },
           "image_format": {
             "description": "",
             "type": "String"
           },
+          "isolate": {
+            "description": "",
+            "type": "Boolean"
+          },
           "output_path": {
             "description": "",
             "type": "String"
+          },
+          "padding_mm": {
+            "description": "",
+            "type": "Double"
           },
           "pixel_size": {
             "description": "",
@@ -3902,6 +3944,30 @@
       }
     },
     {
+      "name": "revit_get_compound_structure",
+      "description_hash": "sha256:b87ca7dd328e40a91b7ef50e5011ac2c66b6ed610c6c2f79473b46d33b5ae6ad",
+      "inputSchema": {
+        "properties": {
+          "elementIds": {
+            "description": "",
+            "type": "Int64[]"
+          },
+          "typeIds": {
+            "description": "",
+            "type": "Int64[]"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      }
+    },
+    {
       "name": "revit_get_current_target",
       "description_hash": "sha256:480820b624c70ed5eb99fcb5f6fd57c53aeeef1b2ceb4569e204e7e9d4b8002e",
       "inputSchema": {
@@ -4516,6 +4582,30 @@
       "description_hash": "sha256:f4202c231dbbedd78545b79d6fd4958abecfd6ad8eeb9a4a22b80ef645e4bb60",
       "inputSchema": {
         "properties": {},
+        "required": [],
+        "type": "object"
+      },
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "revit_get_railing_structure",
+      "description_hash": "sha256:8eab54ae4d1b7a7199d2020bf8158785575716f3c241084ce3d024016954ecbe",
+      "inputSchema": {
+        "properties": {
+          "elementIds": {
+            "description": "",
+            "type": "Int64[]"
+          },
+          "typeIds": {
+            "description": "",
+            "type": "Int64[]"
+          }
+        },
         "required": [],
         "type": "object"
       },
@@ -6684,8 +6774,12 @@
       "inputSchema": {
         "properties": {
           "code": {
-            "description": "",
+            "description": "C# source. Verify Revit API member names with revit_api_lookup first; they differ between Revit years.",
             "type": "String"
+          },
+          "dry_run": {
+            "description": "true runs the script inside a TransactionGroup that is always rolled back: probe what-if changes and return measurements without keeping them.",
+            "type": "Boolean"
           }
         },
         "required": [
@@ -6716,6 +6810,38 @@
           "categories",
           "hidden"
         ],
+        "type": "object"
+      },
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      }
+    },
+    {
+      "name": "revit_set_compound_layers",
+      "description_hash": "sha256:a93def20b8f897d795edd67665dd3efa4d55ffeb4bbcfa2d3f1c28713bfbb29e",
+      "inputSchema": {
+        "properties": {
+          "delete_indices": {
+            "description": "",
+            "type": "Int64[]"
+          },
+          "elementId": {
+            "description": "",
+            "type": "Nullable`1"
+          },
+          "layers_json": {
+            "description": "",
+            "type": "String"
+          },
+          "typeId": {
+            "description": "",
+            "type": "Nullable`1"
+          }
+        },
+        "required": [],
         "type": "object"
       },
       "annotations": {
@@ -7188,6 +7314,38 @@
           "status": {
             "description": "",
             "type": "String"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      }
+    },
+    {
+      "name": "revit_set_railing_structure",
+      "description_hash": "sha256:7e0eb4e39d2ba4c2d0c6320eb821bbf681c33e6b84fc8de95da51c52a618310e",
+      "inputSchema": {
+        "properties": {
+          "balusters_json": {
+            "description": "",
+            "type": "String"
+          },
+          "elementId": {
+            "description": "",
+            "type": "Nullable`1"
+          },
+          "rails_json": {
+            "description": "",
+            "type": "String"
+          },
+          "typeId": {
+            "description": "",
+            "type": "Nullable`1"
           }
         },
         "required": [],

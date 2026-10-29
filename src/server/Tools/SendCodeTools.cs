@@ -12,7 +12,9 @@ namespace RvtMcp.Server
             "Imports: System, System.Linq, System.Collections.Generic, Autodesk.Revit.DB, Autodesk.Revit.UI. " +
             "Use RvtMcp.Plugin.SafeFailuresPreprocessor for transactions/StairsEditScope: unapproved warnings/errors roll back; only model-specific Revit decisions accept supported warnings. " +
             "Check commit/failure/operation status before retry. Large output auto-spills to a local same-machine file.")]
-        public static async Task<string> SendCodeToRevit(string code)
-            => await ToolGateway.CallAsync("send_code_to_revit", new { code });
+        public static async Task<string> SendCodeToRevit(
+            [System.ComponentModel.Description("C# source. Verify Revit API member names with revit_api_lookup first; they differ between Revit years.")] string code,
+            [System.ComponentModel.Description("true runs the script inside a TransactionGroup that is always rolled back: probe what-if changes and return measurements without keeping them.")] bool dry_run = false)
+            => await ToolGateway.CallAsync("send_code_to_revit", new { code, dry_run });
     }
 }

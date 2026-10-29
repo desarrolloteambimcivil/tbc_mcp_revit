@@ -60,10 +60,10 @@ namespace RvtMcp.Plugin.Handlers
                 if (!includePlaceholders && sheet.IsPlaceholder)
                     continue;
 
-                if (!string.IsNullOrEmpty(numberFilter) && !sheet.SheetNumber.Contains(numberFilter, StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(numberFilter) && sheet.SheetNumber.IndexOf(numberFilter, StringComparison.OrdinalIgnoreCase) < 0)
                     continue;
 
-                if (!string.IsNullOrEmpty(namePattern) && !sheet.Name.Contains(namePattern, StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(namePattern) && sheet.Name.IndexOf(namePattern, StringComparison.OrdinalIgnoreCase) < 0)
                     continue;
 
                 filtered.Add(sheet);

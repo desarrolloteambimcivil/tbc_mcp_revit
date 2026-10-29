@@ -13,15 +13,19 @@ namespace RvtMcp.Plugin.Handlers
     {
         public string Name => "send_code_to_revit";
         public string Description => "Send C# code to Revit to compile and execute dynamically";
-        public string ParametersSchema => @"{""type"":""object"",""properties"":{""code"":{""type"":""string"",""description"":""C# code to compile and execute in Revit""}},""required"":[""code""]}";
+        public string ParametersSchema => @"{""type"":""object"",""properties"":{""code"":{""type"":""string"",""description"":""C# code to compile and execute in Revit""},""dry_run"":{""type"":""boolean"",""default"":false,""description"":""Run inside a TransactionGroup that is always rolled back""}},""required"":[""code""]}";
 
         public CommandResult Execute(UIApplication app, string paramsJson)
         {
             var request = JObject.Parse(paramsJson);
             var code = request.Value<string>("code");
+            var dryRun = request.Value<bool?>("dry_run") ?? false;
 
             if (string.IsNullOrWhiteSpace(code))
                 return Fail("code parameter is required.");
+            var dryRunDoc = app.ActiveUIDocument?.Document;
+            if (dryRun && dryRunDoc == null)
+                return Fail("dry_run requires an open document.");
 
             try
             {
@@ -73,17 +77,43 @@ namespace RvtMcp.Plugin.Handlers
                         return Fail("Method 'Run(UIApplication)' not found in McpDynamicScript.");
 
                     object output;
-                    using (McpDocument.Begin(app))
-                        output = method.Invoke(null, new object[] { app });
-                    // Live wire returns raw output so the agent can read structured JSON
-                    // (anonymous objects serialize properly, strings stay strings, numbers stay numbers).
-                    // Persistence paths (McpLogger, McpSessionLog, JournalEntry, bake suggestions, usage
-                    // events) call BakeRedactor independently at write time, so logs/bakes remain redacted.
-                    return CommandResult.Ok(new
+                    if (!dryRun)
                     {
-                        executed = true,
-                        result = output
-                    });
+                        using (McpDocument.Begin(app))
+                            output = method.Invoke(null, new object[] { app });
+                        // Live wire returns raw output so the agent can read structured JSON
+                        // (anonymous objects serialize properly, strings stay strings, numbers stay numbers).
+                        // Persistence paths (McpLogger, McpSessionLog, JournalEntry, bake suggestions, usage
+                        // events) call BakeRedactor independently at write time, so logs/bakes remain redacted.
+                        return CommandResult.Ok(new
+                        {
+                            executed = true,
+                            result = output
+                        });
+                    }
+
+                    // Dry run: transactions the script commits are assimilated by the group and then
+                    // discarded, so the script can measure "what if" results without leaving changes.
+                    using (var group = new Autodesk.Revit.DB.TransactionGroup(dryRunDoc, "MCP: send_code dry run"))
+                    {
+                        group.Start();
+                        try
+                        {
+                            using (McpDocument.Begin(app))
+                                output = method.Invoke(null, new object[] { app });
+                        }
+                        finally
+                        {
+                            if (group.HasStarted()) group.RollBack();
+                        }
+                        return CommandResult.Ok(new
+                        {
+                            executed = true,
+                            dry_run = true,
+                            rolled_back = group.GetStatus() == Autodesk.Revit.DB.TransactionStatus.RolledBack,
+                            result = output
+                        });
+                    }
                 }
             }
             catch (TargetInvocationException ex)

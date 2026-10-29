@@ -46,6 +46,14 @@ namespace RvtMcp.Server
         public static async Task<string> GetTypeParameters(long[] elementIds = null, long[] typeIds = null)
             => await ToolGateway.CallAsync("get_type_parameters", new { elementIds, typeIds });
 
+        [McpServerTool(Name = "revit_get_railing_structure", ReadOnly = true, Destructive = false, Idempotent = true, OpenWorld = false), System.ComponentModel.Description("Read railing type definitions not exposed as parameters: baluster pattern and posts (family, base/top references and offsets, spacing), non-continuous rails (height, offset, profile, material), top rail and handrails, in mm. Pass railing elementIds or typeIds. Returns the localized host/top-rail reference names and notes such as rails on the baluster axis, where Revit trims balusters.")]
+        public static async Task<string> GetRailingStructure(long[] elementIds = null, long[] typeIds = null)
+            => await ToolGateway.CallAsync("get_railing_structure", new { elementIds, typeIds });
+
+        [McpServerTool(Name = "revit_get_compound_structure", ReadOnly = true, Destructive = false, Idempotent = true, OpenWorld = false), System.ComponentModel.Description("Read the layer structure of wall, floor, roof and ceiling types: per layer index, function, width (mm), material, core/shell and wrapping, plus total width, core boundaries and variable/structural layer. Index 0 is the wall exterior or the top of floors/roofs/ceilings. Pass elementIds or typeIds.")]
+        public static async Task<string> GetCompoundStructure(long[] elementIds = null, long[] typeIds = null)
+            => await ToolGateway.CallAsync("get_compound_structure", new { elementIds, typeIds });
+
         [McpServerTool(Name = "revit_list_project_parameters", ReadOnly = true, Destructive = false, Idempotent = true, OpenWorld = false), System.ComponentModel.Description("List project/shared parameter bindings, including instance/type binding kind and bound categories.")]
         public static async Task<string> ListProjectParameters(bool includeCategories = true)
             => await ToolGateway.CallAsync("list_project_parameters", new { includeCategories });

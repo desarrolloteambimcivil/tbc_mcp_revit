@@ -232,5 +232,10 @@
   "revit_workflow_data_roundtrip": "Export/import category parameter data with validation. output=file writes the response report as NDJSON to a local same-machine absolute path with bounded prev…",
   "revit_workflow_view_cleanup": "Analyze unused views, empty schedules, and naming outliers, with guarded optional deletion of safe candidates.",
   "revit_workflow_naming_normalization": "Analyze and optionally rename views, sheets, levels, and grids using deterministic normalization or a token pattern.",
-  "revit_workflow_takeoff_report": "Generate category, quantity, material, and optional cost takeoff reports. output=file writes relational SQLite to a local same-machine absolute path with schem…"
+  "revit_workflow_takeoff_report": "Generate category, quantity, material, and optional cost takeoff reports. output=file writes relational SQLite to a local same-machine absolute path with schem…",
+  "revit_api_lookup": "Look up Revit API types and members in the running Revit: signatures, obsolete flags and summaries, to check names before send_code.",
+  "revit_get_railing_structure": "Read railing type balusters, posts, non-continuous rails, top rail and handrails (mm).",
+  "revit_set_railing_structure": "Edit a railing type's baluster/post references, offsets, spacing and family, and its non-continuous rails.",
+  "revit_get_compound_structure": "Read layer function, width, material and core/shell of wall, floor, roof and ceiling types.",
+  "revit_set_compound_layers": "Edit layer width, material and function, or delete layers, of one wall/floor/roof/ceiling type."
 }

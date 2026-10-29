@@ -19,12 +19,14 @@ namespace RvtMcp.Tests
             "revit_analyze_model_statistics",
             "revit_get_assembly_members",
             "revit_get_available_family_types",
+            "revit_get_compound_structure",
             "revit_get_current_view_info",
             "revit_get_element_details",
             "revit_get_element_parameters",
             "revit_get_element_relationships",
             "revit_get_group_members",
             "revit_get_material_quantities",
+            "revit_get_railing_structure",
             "revit_get_selected_elements",
             "revit_get_type_parameters",
             "revit_list_assemblies",
@@ -67,6 +69,18 @@ namespace RvtMcp.Tests
                     var text = await QueryTools.GetCurrentViewInfo();
                     Assert.Equal("Error: Revit is running but no document is open.", text);
                 });
+        }
+
+        [Fact]
+        public async Task Type_structure_reads_send_element_and_type_ids()
+        {
+            var railing = await Capture.Send(() => QueryTools.GetRailingStructure(new long[] { 419359 }, null));
+            var compound = await Capture.Send(() => QueryTools.GetCompoundStructure(null, new long[] { 230748 }));
+
+            Assert.Equal("get_railing_structure", railing.Command);
+            Assert.Equal(419359, railing.Json()["elementIds"]![0]!.Value<long>());
+            Assert.Equal("get_compound_structure", compound.Command);
+            Assert.Equal(230748, compound.Json()["typeIds"]![0]!.Value<long>());
         }
 
         [Fact]

@@ -22,10 +22,12 @@ namespace RvtMcp.Server
 
         [McpServerTool(Name = "revit_capture_view_image", ReadOnly = false, Destructive = true, Idempotent = false, OpenWorld = false), System.ComponentModel.Description(
             "Export the active or specified view as png/jpeg (default 1600 pixels), optionally to an absolute output_path inside %TEMP% or %LOCALAPPDATA%\\Bimwright\\rvt-mcp\\captures\\. " +
-            "May overwrite files that Revit Undo cannot restore; back up the destination first.")]
+            "May overwrite files that Revit Undo cannot restore; back up the destination first. " +
+            "element_ids frames a temporary 3D view's section box around those elements (padding_mm, default 1000; isolate hides everything else); it keeps the source 3D view's orientation and is discarded after export, so the model keeps no new view.")]
         public static async Task<string> CaptureViewImage(
             string output_path = null,
-            long? view_id = null, int pixel_size = 1600, string image_format = "png")
+            long? view_id = null, int pixel_size = 1600, string image_format = "png",
+            long[] element_ids = null, double padding_mm = 1000, bool isolate = false)
         {
             var blocked = ServerState.BlockIfReadOnly("capture_view_image");
             if (blocked != null) return blocked;
@@ -35,7 +37,10 @@ namespace RvtMcp.Server
                 view_id,
                 output_path,
                 pixel_size,
-                image_format
+                image_format,
+                element_ids,
+                padding_mm,
+                isolate
             });
         }
 

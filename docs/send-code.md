@@ -46,6 +46,34 @@ public class McpDynamicScript
 
 The language remains C#. TypeScript or Python payloads are not supported by this Roslyn-based endpoint. A different language engine would still need to respect Revit API transactions, interface implementations, and failure handling.
 
+## Checking API names and probing changes
+
+Revit API member names change between years, and a wrong guess costs a compile round trip. `revit_api_lookup` reflects over the `RevitAPI`/`RevitAPIUI` assemblies loaded in the running Revit and adds the summaries from the `RevitAPI.xml` that Revit installs next to `RevitAPI.dll`:
+
+```text
+revit_api_lookup(query="BalusterPattern")                  → all declared members
+revit_api_lookup(query="CompoundStructure.GetLayer")       → members starting with GetLayer
+revit_api_lookup(query="View3D", include_inherited=true)   → adds View/Element members
+```
+
+Members carry their signature, `static`, an `obsolete` message when Revit marks them deprecated, and a short summary. A name with no exact match returns `candidates`.
+
+`dry_run=true` runs the script inside a `TransactionGroup` that is always rolled back, including when the script throws. Transactions the script commits are assimilated by the group and discarded, so a script can change the model, regenerate, measure and return the results without keeping anything:
+
+```csharp
+// dry_run=true: does offsetting the rail let the posts reach the ground?
+var type = (Autodesk.Revit.DB.Architecture.RailingType)doc.GetElement(new ElementId(230748L));
+using (var tx = new Transaction(doc, "probe"))
+{
+    tx.Start();
+    type.RailStructure.GetNonContinuousRail(0).Offset = UnitUtils.ConvertToInternalUnits(-24, UnitTypeId.Millimeters);
+    tx.Commit();
+}
+return doc.GetElement(new ElementId(419359L)).get_BoundingBox(null).Min.Z;
+```
+
+The response adds `dry_run: true` and `rolled_back`. `_changes` reports the call as incomplete, because a group rollback cannot be reconstructed per element. A script must close every transaction it opens; the group cannot roll back around an open transaction. Saving is not possible during a dry run.
+
 ## Stairs and failure handling
 
 For a stair creation request, start with the [stairs conversation workflow](stairs-workflow.md). It explains execution safeguards and provides questions for unresolved design choices. Use it to agree the layout and railing intent before adapting the technical pattern below; a dedicated `create_stairs` tool is deferred.

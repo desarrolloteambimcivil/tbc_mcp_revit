@@ -27,6 +27,16 @@ Install only the [latest GitHub Release](https://github.com/bimwright/rvt-mcp/re
 
 ## Unreleased
 
+### API lookup, dry runs, type structures and focused captures
+
+- **`revit_api_lookup`** in `meta` (read-only): looks up Revit API types and members in the running Revit — signatures, static/obsolete flags and summaries from the `RevitAPI.xml` that Revit installs next to `RevitAPI.dll`. Accepts a simple or full type name or `Type.MemberPrefix`; no exact match returns candidates. Use it before `send_code` instead of guessing member names, which differ between Revit years.
+- **`revit_send_code_to_revit` `dry_run=true`** runs the script inside a `TransactionGroup` that is always rolled back, so what-if probes can return measurements without keeping changes. `_changes` reports such a call as incomplete because a group rollback cannot be reconstructed per element.
+- **`revit_get_railing_structure`** (`query`) and **`revit_set_railing_structure`** (`modify`): read and edit the baluster pattern, posts, non-continuous rails, top rail and handrails of a railing type. References accept `host` and `top_rail`, mapped to Revit's localized names. Reads note rails on the baluster axis, where Revit trims balusters.
+- **`revit_get_compound_structure`** (`query`) and **`revit_set_compound_layers`** (`modify`): read and edit wall/floor/roof/ceiling layers (width, material, function, deletion). Edits use per-layer setters, not `SetLayers`, so core/shell boundaries and the variable/structural layer are kept, and the result is validated before commit.
+- **`revit_capture_view_image` `element_ids`** frames a temporary 3D view's section box around those elements (`padding_mm`, optional `isolate`), keeping the source 3D view's orientation. The view is created inside a rolled-back `TransactionGroup`, so the model keeps no new view.
+- Revit 2022–2024 add-ins compile again: `ListSheetsHandler` and `ListTitleblocksHandler` used a `string.Contains` overload that .NET Framework 4.8 lacks.
+- Development source counts: `--toolsets all` **242**, adaptive bake **245**, and bare defaults **53**.
+
 ### Target binding (#19)
 
 - Once a session has a binding, `auto`/year selectors no longer move it to another instance, including after the previous instance exited or stopped its listener. Select the new instance with `pid:`/`id:`; leaving a live confirmed instance still requires `rebind=true`. The first selection in a new session still accepts `auto`/year when exactly one instance matches.
