@@ -7,7 +7,7 @@ namespace RvtMcp.Server;
 
 internal static class HealthRuntimeInfo
 {
-    internal const string ClientRuntimeMetadataKey = "nour-rouas/tbc-revit-mcp/runtime";
+    internal const string ClientRuntimeMetadataKey = "desarrolloteambimcivil/tbc-revit-mcp/runtime";
 
     internal static JObject ClientRuntime(JObject gateway) => new()
     {
@@ -84,7 +84,7 @@ internal static class HealthRuntimeInfo
             ["mode"] = mode,
             ["automatic_update_supported"] = false,
             ["requires_user_authorization"] = mode == "prepare_update",
-            ["documentation_url"] = "https://github.com/nour-rouas/tbc-revit-mcp/blob/master/AGENTS.md",
+            ["documentation_url"] = "https://github.com/desarrolloteambimcivil/tbc-revit-mcp/blob/master/AGENTS.md",
             ["steps"] = steps,
         };
     }

@@ -14,7 +14,7 @@ namespace RvtMcp.Server;
 internal sealed class ReleaseUpdateCheck
 {
     internal const int MaxResponseBytes = 256 * 1024;
-    private const string RepositoryApi = "https://api.github.com/repos/nour-rouas/tbc-revit-mcp";
+    private const string RepositoryApi = "https://api.github.com/repos/desarrolloteambimcivil/tbc-revit-mcp";
     private static readonly HttpClient SharedClient = new(new HttpClientHandler { AllowAutoRedirect = false });
     private readonly HttpClient _client;
 
@@ -57,7 +57,7 @@ internal sealed class ReleaseUpdateCheck
             result["status"] = "checked";
             result["latest_version"] = latest;
             // Never forward API-provided URLs, release notes or target_commitish (which may be a branch).
-            result["release_url"] = "https://github.com/nour-rouas/tbc-revit-mcp/releases/tag/" + tag;
+            result["release_url"] = "https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/tag/" + tag;
             string? revision = null;
             try { revision = await ReleaseRevisionAsync(tag, timeout.Token); }
             catch (OperationCanceledException) when (!ct.IsCancellationRequested) { result["build_reason"] = "timeout"; }

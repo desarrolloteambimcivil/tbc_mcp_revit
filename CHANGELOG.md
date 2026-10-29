@@ -33,7 +33,7 @@ This project continues as **tbc-revit-mcp**, a fork of [bimwright/rvt-mcp](https
 
 - Per-user data moves to `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\`. On first start the gateway and add-in copy settings, ToolBaker data, change history and failure records from `%LOCALAPPDATA%\Bimwright\rvt-mcp\` (or the older `%LOCALAPPDATA%\RvtMcp\`); logs, update-check state and installed binaries are not copied, and the old folder is left as a backup.
 - Environment variables are `TBC_REVIT_MCP_*`; the `BIMWRIGHT_*` names are still read when the new name is not set.
-- The MCP server name is `tbc-revit-mcp`, the installed server is `tbc-revit-mcp.exe`, the NuGet package is `TbcRevitMcp.Server`, the registry name is `io.github.nour-rouas/tbc-revit-mcp`, and update checks follow `nour-rouas/tbc-revit-mcp` releases. The add-in keeps its manifest names and AddInIds, so it replaces the upstream add-in in place; its VendorId is `nourrouas`.
+- The MCP server name is `tbc-revit-mcp`, the installed server is `tbc-revit-mcp.exe`, the NuGet package is `TbcRevitMcp.Server`, the registry name is `io.github.desarrolloteambimcivil/tbc-revit-mcp`, and update checks follow `desarrolloteambimcivil/tbc-revit-mcp` releases. The add-in keeps its manifest names and AddInIds, so it replaces the upstream add-in in place; its VendorId is `nourrouas`.
 - C# namespaces `RvtMcp.*` are unchanged, so `send_code` scripts and baked tools that reference them keep working. `Bimwright.Targeting` is now `RvtMcp.Targeting`.
 - Upstream attribution is kept in `NOTICE`, the README and Settings → About.
 

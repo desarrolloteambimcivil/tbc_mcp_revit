@@ -1,5 +1,5 @@
 ﻿<!-- agents-install-guide -->
-<!-- mcp-name: io.github.nour-rouas/tbc-revit-mcp -->
+<!-- mcp-name: io.github.desarrolloteambimcivil/tbc-revit-mcp -->
 
 # AGENTS.md — tbc-revit-mcp install guide for AI agents
 
@@ -14,7 +14,7 @@ This file is the install protocol for an AI agent with permission to run PowerSh
 - Connect the requested MCP client(s): always pass `-Client <names>` for direct registration, or `-Client none` for the Claude Desktop MCPB route. The installer itself defaults to every detected client; do not use that default unless the user requested it.
 - Verify installation, target-client connection and Revit handshake separately; troubleshoot failures and verify any attempted rollback.
 
-**Release selection:** resolve `/repos/nour-rouas/tbc-revit-mcp/releases/latest` once for a normal install, or use the published release the user explicitly requested. Record its tag and use assets from that one release throughout. This fork keeps its data in `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\`. Do not install upstream rvt-mcp `v0.5.0` or earlier tags. Until the fork's first release is published there is nothing to resolve: tell the user, and offer a developer build from source (see [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy) only if they ask for one.
+**Release selection:** resolve `/repos/desarrolloteambimcivil/tbc-revit-mcp/releases/latest` once for a normal install, or use the published release the user explicitly requested. Record its tag and use assets from that one release throughout. This fork keeps its data in `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\`. Do not install upstream rvt-mcp `v0.5.0` or earlier tags. Until the fork's first release is published there is nothing to resolve: tell the user, and offer a developer build from source (see [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy) only if they ask for one.
 
 **What you cannot do:**
 
@@ -73,10 +73,10 @@ Revit may be closed during installation and tool discovery. Revit-dependent call
 For a normal latest-release install:
 
 ```powershell
-$tag = (Invoke-RestMethod https://api.github.com/repos/nour-rouas/tbc-revit-mcp/releases/latest).tag_name
+$tag = (Invoke-RestMethod https://api.github.com/repos/desarrolloteambimcivil/tbc-revit-mcp/releases/latest).tag_name
 $zip = "$env:TEMP\TbcRevitMcp.Setup-$tag-win-x64.zip"
 $dir = "$env:TEMP\TbcRevitMcp.Setup-$tag-win-x64"
-$base = "https://github.com/nour-rouas/tbc-revit-mcp/releases/download/$tag"
+$base = "https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/download/$tag"
 Invoke-WebRequest "$base/TbcRevitMcp.Setup-$tag-win-x64.zip" -OutFile $zip
 Invoke-WebRequest "$base/TbcRevitMcp.Setup-$tag-win-x64.zip.sha256" -OutFile "$zip.sha256"
 $expected = ((Get-Content "$zip.sha256" -Raw).Trim() -split '\s+')[0]
@@ -240,7 +240,7 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Uninstall   # add-i
 | Client config parse error after edit | Agent wrote invalid JSON/TOML. | Restore the backup you made, retry with a diff preview. |
 | Server starts but no tools show up | Toolset filter hiding them. | Check `--toolsets` / `--read-only` flags on the host config entry. |
 
-For anything not in this table, open an issue at <https://github.com/nour-rouas/tbc-revit-mcp/issues> with the host name, Revit year, and the exact error.
+For anything not in this table, open an issue at <https://github.com/desarrolloteambimcivil/tbc-revit-mcp/issues> with the host name, Revit year, and the exact error.
 
 ---
 

@@ -59,7 +59,7 @@ tbc-revit-mcp runs on `127.0.0.1` only. The attack surface is:
 
 **Please do not open a public GitHub issue for security-sensitive reports.**
 
-Use GitHub private vulnerability reporting on [nour-rouas/tbc-revit-mcp](https://github.com/nour-rouas/tbc-revit-mcp): open **Security → Report a vulnerability** ([direct link](https://github.com/nour-rouas/tbc-revit-mcp/security/advisories/new)) and submit the advisory draft.
+Use GitHub private vulnerability reporting on [desarrolloteambimcivil/tbc-revit-mcp](https://github.com/desarrolloteambimcivil/tbc-revit-mcp): open **Security → Report a vulnerability** ([direct link](https://github.com/desarrolloteambimcivil/tbc-revit-mcp/security/advisories/new)) and submit the advisory draft.
 
 If the issue also affects the original project, the upstream [bimwright/rvt-mcp](https://github.com/bimwright/rvt-mcp) maintainers handle it through their own Security tab.
 

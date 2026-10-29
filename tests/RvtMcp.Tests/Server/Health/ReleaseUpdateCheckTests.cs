@@ -36,8 +36,8 @@ public sealed class ReleaseUpdateCheckTests
             var path = request.RequestUri.AbsolutePath;
             string body;
             var status = RefStatus;
-            if (path == "/repos/nour-rouas/tbc-revit-mcp/releases/latest") { body = Body; status = Status; }
-            else if (path.StartsWith("/repos/nour-rouas/tbc-revit-mcp/git/ref/tags/", StringComparison.Ordinal))
+            if (path == "/repos/desarrolloteambimcivil/tbc-revit-mcp/releases/latest") { body = Body; status = Status; }
+            else if (path.StartsWith("/repos/desarrolloteambimcivil/tbc-revit-mcp/git/ref/tags/", StringComparison.Ordinal))
             {
                 var tag = path.Split('/').Last();
                 body = RefBody ?? new JObject { ["ref"] = "refs/tags/" + tag,
@@ -45,7 +45,7 @@ public sealed class ReleaseUpdateCheckTests
             }
             else
             {
-                Assert.Equal("/repos/nour-rouas/tbc-revit-mcp/git/tags/" + new string('b', 40), path);
+                Assert.Equal("/repos/desarrolloteambimcivil/tbc-revit-mcp/git/tags/" + new string('b', 40), path);
                 body = TagBody!;
             }
             return new HttpResponseMessage(status) { Content = new StringContent(body, Encoding.UTF8, "application/json") };
@@ -73,7 +73,7 @@ public sealed class ReleaseUpdateCheckTests
         Assert.Equal(expected, result["components"]!["server"]!.Value<bool>("update_available"));
         Assert.Equal(expected, result["components"]!["plugin"]!.Value<bool>("update_available"));
         if (!expected) Assert.Null(result.Value<bool?>("update_available"));
-        Assert.Equal("https://github.com/nour-rouas/tbc-revit-mcp/releases/tag/" + tag, result.Value<string>("release_url"));
+        Assert.Equal("https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/tag/" + tag, result.Value<string>("release_url"));
         Assert.DoesNotContain("untrusted", result.ToString());
     }
 

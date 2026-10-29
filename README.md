@@ -1,4 +1,4 @@
-<!-- mcp-name: io.github.nour-rouas/tbc-revit-mcp -->
+<!-- mcp-name: io.github.desarrolloteambimcivil/tbc-revit-mcp -->
 
 <h1 align="center">tbc-revit-mcp</h1>
 
@@ -11,11 +11,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/nour-rouas/tbc-revit-mcp/actions/workflows/build.yml"><img src="https://github.com/nour-rouas/tbc-revit-mcp/actions/workflows/build.yml/badge.svg" alt="build" /></a>
+  <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
   <a href="#tools"><img src="https://img.shields.io/badge/MCP-242%20tools-6C47FF" alt="MCP tools" /></a>
-  <a href="https://github.com/nour-rouas/tbc-revit-mcp/releases/latest"><img src="https://img.shields.io/github/v/release/nour-rouas/tbc-revit-mcp" alt="latest release" /></a>
+  <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc-revit-mcp" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
 
@@ -37,7 +37,7 @@ Agents get a **typed tool surface** for common Revit work, a C# escape hatch for
 
 ## Install
 
-**Downloads:** Setup ZIP and Claude Desktop MCPB from the [latest release](https://github.com/nour-rouas/tbc-revit-mcp/releases/latest). Until the fork's first release is published, build from source (see [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy).
+**Downloads:** Setup ZIP and Claude Desktop MCPB from the [latest release](https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/latest). Until the fork's first release is published, build from source (see [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy).
 
 **Let an AI agent install it for your target client.** Use an agent that can run PowerShell and edit local files on this Windows machine (Claude Code, Codex, Cursor, …), not a chat session without local tools. The agent installing it can be different from the client where you will use Revit tools. It follows [AGENTS.md](AGENTS.md), previews changes and asks before applying them; you may still need to approve a UI step or restart an app.
 
@@ -45,7 +45,7 @@ For **Claude Desktop**, paste:
 
 ```text
 Install tbc-revit-mcp for Claude Desktop on this Windows machine.
-First read https://github.com/nour-rouas/tbc-revit-mcp/blob/master/AGENTS.md.
+First read https://github.com/desarrolloteambimcivil/tbc-revit-mcp/blob/master/AGENTS.md.
 Configure only Claude Desktop, not other clients. Inspect existing installations,
 preview changes and ask before writing. Tell me if I need to use the UI or restart an app.
 ```
@@ -55,9 +55,9 @@ For another client, replace **Claude Desktop** with its name. **Claude Code and 
 **Or run the installer yourself (Claude Desktop, direct config).** Close Revit and fully quit Claude Desktop (including its tray process), then in PowerShell:
 
 ```powershell
-$tag = (Invoke-RestMethod https://api.github.com/repos/nour-rouas/tbc-revit-mcp/releases/latest).tag_name
+$tag = (Invoke-RestMethod https://api.github.com/repos/desarrolloteambimcivil/tbc-revit-mcp/releases/latest).tag_name
 $dir = "$env:TEMP\TbcRevitMcp.Setup-$tag-win-x64"
-Invoke-WebRequest "https://github.com/nour-rouas/tbc-revit-mcp/releases/download/$tag/TbcRevitMcp.Setup-$tag-win-x64.zip" -OutFile "$dir.zip"
+Invoke-WebRequest "https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/download/$tag/TbcRevitMcp.Setup-$tag-win-x64.zip" -OutFile "$dir.zip"
 Expand-Archive "$dir.zip" -DestinationPath $dir -Force
 powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -WhatIf -Client claude-desktop
 # Review the preview before applying:

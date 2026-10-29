@@ -1,4 +1,4 @@
-<!-- mcp-name: io.github.nour-rouas/tbc-revit-mcp -->
+<!-- mcp-name: io.github.desarrolloteambimcivil/tbc-revit-mcp -->
 
 [工具描述大小基准](docs/benchmarks/2026-10-18-tool-descriptors.md) · [v1.2.0 验证结果与待验证项目](docs/testing/2026-10-18-v1.2.0-validation.md)（上游 rvt-mcp 在 fork 之前的记录；英文；不代表原生执行性能）。
 
@@ -13,11 +13,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/nour-rouas/tbc-revit-mcp/actions/workflows/build.yml"><img src="https://github.com/nour-rouas/tbc-revit-mcp/actions/workflows/build.yml/badge.svg" alt="build" /></a>
+  <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
   <a href="#tools"><img src="https://img.shields.io/badge/MCP-242%20tools-6C47FF" alt="MCP tools" /></a>
-  <a href="https://github.com/nour-rouas/tbc-revit-mcp/releases/latest"><img src="https://img.shields.io/github/v/release/nour-rouas/tbc-revit-mcp" alt="latest release" /></a>
+  <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc-revit-mcp" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
 
@@ -39,7 +39,7 @@ Agent 可以使用覆盖常见 Revit 工作的 **typed 工具面**、应对其�
 
 ## 安装
 
-**下载：** 从[最新发布版](https://github.com/nour-rouas/tbc-revit-mcp/releases/latest)获取 Setup ZIP 和 Claude Desktop MCPB。在本 fork 发布首个版本之前，请从源码构建（见 [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy）。
+**下载：** 从[最新发布版](https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/latest)获取 Setup ZIP 和 Claude Desktop MCPB。在本 fork 发布首个版本之前，请从源码构建（见 [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy）。
 
 **让 AI agent 为指定客户端安装。** 使用能在这台 Windows 电脑上运行 PowerShell、编辑本地文件的 agent（Claude Code、Codex、Cursor 等），而非没有本地工具的普通聊天。执行安装的 agent 可以与之后使用 Revit 工具的客户端不同。agent 按照 [AGENTS.md](AGENTS.md) 预览更改并在应用前征求同意；你仍可能需要操作界面或重启应用。
 
@@ -47,7 +47,7 @@ Agent 可以使用覆盖常见 Revit 工作的 **typed 工具面**、应对其�
 
 ```text
 请在这台 Windows 电脑上为 Claude Desktop 安装 tbc-revit-mcp。
-先阅读 https://github.com/nour-rouas/tbc-revit-mcp/blob/master/AGENTS.md。
+先阅读 https://github.com/desarrolloteambimcivil/tbc-revit-mcp/blob/master/AGENTS.md。
 只配置 Claude Desktop，不配置其他客户端。检查现有安装，预览更改并在写入前征求同意。
 如需我操作界面或重启应用，请明确说明。
 ```
@@ -57,9 +57,9 @@ Agent 可以使用覆盖常见 Revit 工作的 **typed 工具面**、应对其�
 **或者自己运行安装程序（Claude Desktop，直接配置）。** 关闭 Revit，完全退出 Claude Desktop（包括托盘进程），然后在 PowerShell 中：
 
 ```powershell
-$tag = (Invoke-RestMethod https://api.github.com/repos/nour-rouas/tbc-revit-mcp/releases/latest).tag_name
+$tag = (Invoke-RestMethod https://api.github.com/repos/desarrolloteambimcivil/tbc-revit-mcp/releases/latest).tag_name
 $dir = "$env:TEMP\TbcRevitMcp.Setup-$tag-win-x64"
-Invoke-WebRequest "https://github.com/nour-rouas/tbc-revit-mcp/releases/download/$tag/TbcRevitMcp.Setup-$tag-win-x64.zip" -OutFile "$dir.zip"
+Invoke-WebRequest "https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/download/$tag/TbcRevitMcp.Setup-$tag-win-x64.zip" -OutFile "$dir.zip"
 Expand-Archive "$dir.zip" -DestinationPath $dir -Force
 powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -WhatIf -Client claude-desktop
 # 检查预览后再应用：

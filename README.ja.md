@@ -1,4 +1,4 @@
-<!-- mcp-name: io.github.nour-rouas/tbc-revit-mcp -->
+<!-- mcp-name: io.github.desarrolloteambimcivil/tbc-revit-mcp -->
 
 [ツール記述サイズのベンチマーク](docs/benchmarks/2026-10-18-tool-descriptors.md) · [v1.2.0 検証結果と未検証項目](docs/testing/2026-10-18-v1.2.0-validation.md)（フォーク前の上流 rvt-mcp の記録。英語。ネイティブ実行性能の測定ではありません）。
 
@@ -13,11 +13,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/nour-rouas/tbc-revit-mcp/actions/workflows/build.yml"><img src="https://github.com/nour-rouas/tbc-revit-mcp/actions/workflows/build.yml/badge.svg" alt="build" /></a>
+  <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
   <a href="#tools"><img src="https://img.shields.io/badge/MCP-242%20tools-6C47FF" alt="MCP tools" /></a>
-  <a href="https://github.com/nour-rouas/tbc-revit-mcp/releases/latest"><img src="https://img.shields.io/github/v/release/nour-rouas/tbc-revit-mcp" alt="latest release" /></a>
+  <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc-revit-mcp" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
 
@@ -39,7 +39,7 @@
 
 ## インストール
 
-**ダウンロード：** Setup ZIP と Claude Desktop MCPB は[最新リリース](https://github.com/nour-rouas/tbc-revit-mcp/releases/latest)から入手できます。フォークの最初のリリースが公開されるまでは、ソースからビルドしてください（[CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy を参照）。
+**ダウンロード：** Setup ZIP と Claude Desktop MCPB は[最新リリース](https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/latest)から入手できます。フォークの最初のリリースが公開されるまでは、ソースからビルドしてください（[CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy を参照）。
 
 **使用したいクライアントへのインストールを AI エージェントに依頼できます。** この Windows マシンで PowerShell の実行とローカルファイルの編集ができるエージェント（Claude Code、Codex、Cursor など）が必要です。ローカルツールのない通常のチャットでは実行できません。インストールするエージェントと、Revit ツールを使うクライアントは別でも構いません。[AGENTS.md](AGENTS.md) に従って変更をプレビューし、適用前に確認します。UI 操作やアプリの再起動はユーザーに依頼する場合があります。
 
@@ -47,7 +47,7 @@
 
 ```text
 この Windows マシンで Claude Desktop 用に tbc-revit-mcp をインストールしてください。
-先に https://github.com/nour-rouas/tbc-revit-mcp/blob/master/AGENTS.md を読んでください。
+先に https://github.com/desarrolloteambimcivil/tbc-revit-mcp/blob/master/AGENTS.md を読んでください。
 Claude Desktop だけを設定し、他のクライアントは設定しないでください。
 既存のインストールを確認し、変更をプレビューして書き込み前に確認を求めてください。
 UI 操作やアプリの再起動が必要なら明示してください。
@@ -58,9 +58,9 @@ UI 操作やアプリの再起動が必要なら明示してください。
 **自分で実行する場合（Claude Desktop、直接設定）。** Revit を閉じ、Claude Desktop を完全に終了（トレイのプロセスも含む）してから PowerShell で：
 
 ```powershell
-$tag = (Invoke-RestMethod https://api.github.com/repos/nour-rouas/tbc-revit-mcp/releases/latest).tag_name
+$tag = (Invoke-RestMethod https://api.github.com/repos/desarrolloteambimcivil/tbc-revit-mcp/releases/latest).tag_name
 $dir = "$env:TEMP\TbcRevitMcp.Setup-$tag-win-x64"
-Invoke-WebRequest "https://github.com/nour-rouas/tbc-revit-mcp/releases/download/$tag/TbcRevitMcp.Setup-$tag-win-x64.zip" -OutFile "$dir.zip"
+Invoke-WebRequest "https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/download/$tag/TbcRevitMcp.Setup-$tag-win-x64.zip" -OutFile "$dir.zip"
 Expand-Archive "$dir.zip" -DestinationPath $dir -Force
 powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -WhatIf -Client claude-desktop
 # プレビューを確認してから適用：
