@@ -37,7 +37,7 @@ namespace RvtMcp.Tests
         [Fact]
         public void UiLanguage_EnvOverridesJson()
         {
-            // BIMWRIGHT_UI_LANGUAGE is a Revit.exe process env var (Windows user/machine);
+            // TBC_REVIT_MCP_UI_LANGUAGE is a Revit.exe process env var (Windows user/machine);
             // the MCP client env block reaches the server, not the plugin.
             File.WriteAllText(Cfg, "{ \"uiLanguage\": \"ja\" }");
             var env = new Dictionary<string, string> { [RvtMcpConfig.EnvUiLanguage] = "de" };

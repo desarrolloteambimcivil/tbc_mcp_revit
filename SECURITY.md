@@ -2,18 +2,18 @@
 
 ## Supported Versions
 
-Security updates are provided for the latest minor release series only.
+Security updates are provided for the latest release of tbc-revit-mcp only.
 
 | Version | Supported |
 |---------|-----------|
-| 0.6.x   | ✓         |
-| < 0.6   | ✗         |
+| Latest release | ✓ |
+| Older releases | ✗ |
 
 ## Threat Model
 
-bimwright runs on `127.0.0.1` only. The attack surface is:
+tbc-revit-mcp runs on `127.0.0.1` only. The attack surface is:
 
-- Local processes that can read the discovery files (`%LOCALAPPDATA%\Bimwright\rvt-mcp\revit-2022.json`..`revit-2027.json`)
+- Local processes that can read the discovery files (`%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\revit-2022.json`..`revit-2027.json`)
 - Local processes that can connect to the TCP port or Named Pipe
 - Code executed via `send_code_to_revit` or materialized by the ToolBaker engine
 
@@ -46,23 +46,22 @@ bimwright runs on `127.0.0.1` only. The attack surface is:
 - TCP listener: `127.0.0.1` only (not `0.0.0.0`).
 - Named Pipe: local machine scope.
 - HTTP SSE path: `127.0.0.1` only, middleware rejects non-localhost `Host` headers.
-- Any non-localhost plugin bind requires explicit `BIMWRIGHT_ALLOW_LAN_BIND=1` opt-in.
+- Any non-localhost plugin bind requires explicit `TBC_REVIT_MCP_ALLOW_LAN_BIND=1` opt-in.
 
 ### Dynamic code paths (`send_code_to_revit`, ToolBaker)
 - `send_code_to_revit` is on the default `meta` surface (still hidden by `--read-only` or `--disable-toolbaker`) and executes through the same local authenticated MCP channel as the rest of the Revit tools.
 - Adaptive bake is separate: it only enables suggestion/logging tools and is not required for `send_code_to_revit`.
 - Use `--read-only` or `--disable-toolbaker` when a host profile should not expose dynamic-code execution.
 - ToolBaker bakes require user approval per tool + operate under the host Revit process trust boundary. Production hardening, including signed-bake verification, remains tracked as v1.0 hardening work.
-- **TTL send_code journal:** When `persistSendCodeBodies` is enabled, raw code bodies (partially redacted for paths and secrets) are stored on the local disk under `%LOCALAPPDATA%\Bimwright\rvt-mcp\send-code-journal.jsonl`. This journal has a maximum 2-day TTL and is completely deleted 7 days after expiration or disablement. Secure local environment access is required to prevent unauthorized reading of local journal files.
+- **TTL send_code journal:** When `persistSendCodeBodies` is enabled, raw code bodies (partially redacted for paths and secrets) are stored on the local disk under `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\send-code-journal.jsonl`. This journal has a maximum 2-day TTL and is completely deleted 7 days after expiration or disablement. Secure local environment access is required to prevent unauthorized reading of local journal files.
 
 ## Reporting a vulnerability
 
 **Please do not open a public GitHub issue for security-sensitive reports.**
 
-Use one of these private channels:
+Use GitHub private vulnerability reporting on [nour-rouas/tbc-revit-mcp](https://github.com/nour-rouas/tbc-revit-mcp): open **Security → Report a vulnerability** ([direct link](https://github.com/nour-rouas/tbc-revit-mcp/security/advisories/new)) and submit the advisory draft.
 
-1. **GitHub private vulnerability report** — go to [the Security tab](https://github.com/bimwright/rvt-mcp/security/advisories/new) and submit a new advisory draft. This is the preferred path.
-2. **Email the maintainer** — contact via the address on the commit history.
+If the issue also affects the original project, the upstream [bimwright/rvt-mcp](https://github.com/bimwright/rvt-mcp) maintainers handle it through their own Security tab.
 
 Include:
 - Version (server + plugin) and Revit year.

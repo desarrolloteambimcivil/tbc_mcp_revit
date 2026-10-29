@@ -22,7 +22,7 @@ namespace RvtMcp.Tests
         private static string Release(string tag, bool prerelease = false, bool draft = false) =>
             "{\"tag_name\":\"" + tag + "\",\"prerelease\":" + (prerelease ? "true" : "false") +
             ",\"draft\":" + (draft ? "true" : "false") +
-            ",\"html_url\":\"https://github.com/bimwright/rvt-mcp/releases/tag/" + tag + "\"}";
+            ",\"html_url\":\"https://github.com/nour-rouas/tbc-revit-mcp/releases/tag/" + tag + "\"}";
 
         [Theory]
         [InlineData("0.8.2", "0.8.10", -1)]
@@ -110,7 +110,7 @@ namespace RvtMcp.Tests
         [Fact]
         public void Agent_prompt_names_both_versions_and_the_release_page()
         {
-            var info = new UpdateInfo { CurrentVersion = "v0.8.2", LatestVersion = "v0.9.0", ReleaseUrl = "https://github.com/bimwright/rvt-mcp/releases/tag/v0.9.0" };
+            var info = new UpdateInfo { CurrentVersion = "v0.8.2", LatestVersion = "v0.9.0", ReleaseUrl = "https://github.com/nour-rouas/tbc-revit-mcp/releases/tag/v0.9.0" };
             var prompt = UpdateNoticeText.BuildAgentPrompt(info);
             Assert.Contains("v0.8.2", prompt);
             Assert.Contains("v0.9.0", prompt);
@@ -121,7 +121,7 @@ namespace RvtMcp.Tests
         public void Composed_instructions_lead_with_the_notice_and_stay_under_the_cap()
         {
             var baseText = "keywords paragraph\n\n" + string.Join("\n", new string[40].Select((_, i) => "- toolset" + i + ": tool_a, tool_b"));
-            var notice = "rvt-mcp v0.9.0 is available (running v0.8.2).";
+            var notice = "tbc-revit-mcp v0.9.0 is available (running v0.8.2).";
             var text = UpdateNoticeText.ComposeInstructions(baseText, notice, 512);
             Assert.StartsWith("UPDATE: " + notice, text);
             Assert.True(Encoding.UTF8.GetByteCount(text) <= 512);

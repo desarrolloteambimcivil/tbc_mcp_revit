@@ -37,7 +37,7 @@ namespace RvtMcp.Plugin.Views.Settings
         {
             var dictionary = (ResourceDictionary)XamlReader.Parse(Xaml);
             // Same overlay scrollbar as History; the window pairs it with ScrollBarFadeBehavior.
-            dictionary.Add(typeof(ScrollBar), BimwrightStyles.Dictionary["BimScrollBar"]);
+            dictionary.Add(typeof(ScrollBar), ProductStyles.Dictionary["BimScrollBar"]);
             return dictionary;
         }
 

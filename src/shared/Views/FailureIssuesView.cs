@@ -42,7 +42,7 @@ namespace RvtMcp.Plugin.Views
         private readonly TextBox _reason = new TextBox { Height = 28, MaxLength = 2000, VerticalContentAlignment = VerticalAlignment.Center };
         private readonly TextBlock _reasonWatermark = new TextBlock {
             Margin = new Thickness(6, 0, 6, 0),
-            Style = (Style)BimwrightStyles.Dictionary[BimwrightStyles.PlaceholderTextKey]
+            Style = (Style)ProductStyles.Dictionary[ProductStyles.PlaceholderTextKey]
         };
         private readonly CheckBox _verified = new CheckBox();
         private readonly CheckBox _dialogConsent = new CheckBox { Margin = new Thickness(0, 4, 0, 0), Visibility = Visibility.Collapsed };
@@ -118,7 +118,7 @@ namespace RvtMcp.Plugin.Views
                 SelectionMode = DataGridSelectionMode.Single, HeadersVisibility = DataGridHeadersVisibility.Column,
                 GridLinesVisibility = DataGridGridLinesVisibility.Horizontal, Margin = new Thickness(0)
             };
-            BimwrightStyles.KeepSelectionHighlight(_grid);
+            ProductStyles.KeepSelectionHighlight(_grid);
             var header = new Style(typeof(DataGridColumnHeader));
             header.Setters.Add(new Setter(Control.FontWeightProperty, FontWeights.Bold));
             header.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
@@ -451,7 +451,7 @@ namespace RvtMcp.Plugin.Views
 
         private Button IconButton(string key, string glyph, RoutedEventHandler click)
         {
-            var button = new Button { Content = glyph, Style = (Style)BimwrightStyles.Dictionary[BimwrightStyles.IconButtonKey],
+            var button = new Button { Content = glyph, Style = (Style)ProductStyles.Dictionary[ProductStyles.IconButtonKey],
                 VerticalAlignment = VerticalAlignment.Center };
             _localizers.Add(() => {
                 var label = L.T(key);

@@ -123,7 +123,7 @@ internal static class Program
             foreach (var accept in new[] { false, true })
             {
                 var text = RvtMcp.Plugin.Localization.L.T("failure.reset.confirm", ("issues", 123), ("open", 12),
-                    ("models", 5), ("blocked", 2), ("folder", @"C:\Users\Sample\AppData\Local\Bimwright\rvt-mcp\failures\backups"));
+                    ("models", 5), ("blocked", 2), ("folder", @"C:\Users\Sample\AppData\Local\NourRouas\tbc-revit-mcp\failures\backups"));
                 var dialog = new RvtMcp.Plugin.Views.FailureResetDialog(text);
                 Exception failure = null;
                 dialog.Loaded += (s, e) => dialog.Dispatcher.BeginInvoke(new Action(() =>
@@ -138,7 +138,7 @@ internal static class Program
                         var buttons = panel.Children.OfType<StackPanel>().Single();
                         var cancel = (Button)buttons.Children[0];
                         Expect(cancel.IsCancel && ReferenceEquals(buttons.Children[1], reset)
-                            && ReferenceEquals(reset.Style, RvtMcp.Plugin.Views.BimwrightStyles.Dictionary[RvtMcp.Plugin.Views.BimwrightStyles.PrimaryButtonKey])
+                            && ReferenceEquals(reset.Style, RvtMcp.Plugin.Views.ProductStyles.Dictionary[RvtMcp.Plugin.Views.ProductStyles.PrimaryButtonKey])
                             && cancel.Style != null && cancel.ActualHeight == reset.ActualHeight && cancel.ActualWidth == reset.ActualWidth,
                             "Dialog uses common Cancel-left / primary-Reset-right styles with equal button sizes");
                         if (!accept && snapshot != null) { Pump(); Save(dialog, snapshot); }

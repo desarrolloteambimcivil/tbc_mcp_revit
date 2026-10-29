@@ -1,6 +1,6 @@
-﻿# Contributing to rvt-mcp
+﻿# Contributing to tbc-revit-mcp
 
-Thanks for your interest. rvt-mcp is a solo-maintained bimwright gateway; this guide is the short version. Open an issue before a large PR so we can agree on scope.
+Thanks for your interest. tbc-revit-mcp is a solo-maintained fork of [bimwright/rvt-mcp](https://github.com/bimwright/rvt-mcp), maintained by Nour Rouas; this guide is the short version. Open an issue before a large PR so we can agree on scope.
 
 ## Dev setup
 
@@ -17,8 +17,8 @@ The Revit API itself is pulled from [Nice3point.Revit.Api.*](https://www.nuget.o
 ### Clone + build
 
 ```bash
-git clone https://github.com/bimwright/rvt-mcp.git
-cd rvt-mcp
+git clone https://github.com/nour-rouas/tbc-revit-mcp.git
+cd tbc-revit-mcp
 dotnet build src/RvtMcp.sln -c Debug
 ```
 
@@ -60,7 +60,7 @@ Produces `build/plugin-zip/RvtMcp.Plugin.R{22..27}.zip` from existing Release bu
 
 ```powershell
 pwsh scripts/package-client-setup.ps1 -Config Release
-python tests/installer/verify-package.py build/client-setup/RvtMcp.Setup-v<x.y.z>-win-x64.zip --output <report.json>
+python tests/installer/verify-package.py build/client-setup/TbcRevitMcp.Setup-v<x.y.z>-win-x64.zip --output <report.json>
 pwsh scripts/publish-nupkg.ps1
 ```
 
@@ -123,9 +123,9 @@ Public documentation should describe shipped behavior and reproducible contribut
 Open a GitHub issue with:
 
 - Revit version + year.
-- rvt-mcp server version (MCP `initialize` → `serverInfo.version`) and plugin DLL file/assembly version; identify the selected release. The command is `rvt-mcp`, not `bimwright`.
+- tbc-revit-mcp server version (MCP `initialize` → `serverInfo.version`) and plugin DLL file/assembly version; identify the selected release. The command is `tbc-revit-mcp`.
 - Reproduction steps — ideally the exact MCP tool call and params.
-- Logs from `%LOCALAPPDATA%\Bimwright\rvt-mcp\` — but **check for paths you don't want to share** (the sanitizer masks absolute paths in errors sent to the model, but local log files are unredacted).
+- Logs from `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\` — but **check for paths you don't want to share** (the sanitizer masks absolute paths in errors sent to the model, but local log files are unredacted).
 
 ## Testing & drift detection
 

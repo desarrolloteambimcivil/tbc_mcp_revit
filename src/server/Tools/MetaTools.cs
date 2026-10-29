@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Bimwright.Targeting;
+using RvtMcp.Targeting;
 using ModelContextProtocol.Server;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -174,7 +174,7 @@ namespace RvtMcp.Server
                     count = targets.Length,
                     targets,
                     note = targets.Length == 0
-                        ? "No revit-*.json descriptors found. Start Revit and ensure the rvt-mcp plugin is loaded (Add-Ins ribbon)."
+                        ? "No revit-*.json descriptors found. Start Revit and ensure the tbc-revit-mcp plugin is loaded (Add-Ins ribbon)."
                         : ServerState.IsReadOnly ? ServerState.ReadOnlyTargetGuidance
                         : "Pin an instance with revit_switch_target — 'version' accepts a 4-digit year, 'pid:<n>' or 'id:<target_id>'. When several instances share a year, always pin with pid:<n>.",
                     update_available = UpdateStatus.ForStatusResult()

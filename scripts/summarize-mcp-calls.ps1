@@ -1,8 +1,8 @@
-# PowerShell script to summarize rvt-mcp local call usage from mcp-calls.jsonl.
+# PowerShell script to summarize tbc-revit-mcp local call usage from mcp-calls.jsonl.
 # Usage:
 #   powershell -File summarize-mcp-calls.ps1
 
-$LogDir = Join-Path $env:LOCALAPPDATA "Bimwright\rvt-mcp"
+$LogDir = Join-Path $env:LOCALAPPDATA "NourRouas\tbc-revit-mcp"
 $LogPath = Join-Path $LogDir "mcp-calls.jsonl"
 
 if (-not (Test-Path $LogPath)) {

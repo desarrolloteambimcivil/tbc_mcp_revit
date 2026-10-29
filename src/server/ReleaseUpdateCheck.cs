@@ -14,7 +14,7 @@ namespace RvtMcp.Server;
 internal sealed class ReleaseUpdateCheck
 {
     internal const int MaxResponseBytes = 256 * 1024;
-    private const string RepositoryApi = "https://api.github.com/repos/bimwright/rvt-mcp";
+    private const string RepositoryApi = "https://api.github.com/repos/nour-rouas/tbc-revit-mcp";
     private static readonly HttpClient SharedClient = new(new HttpClientHandler { AllowAutoRedirect = false });
     private readonly HttpClient _client;
 
@@ -57,7 +57,7 @@ internal sealed class ReleaseUpdateCheck
             result["status"] = "checked";
             result["latest_version"] = latest;
             // Never forward API-provided URLs, release notes or target_commitish (which may be a branch).
-            result["release_url"] = "https://github.com/bimwright/rvt-mcp/releases/tag/" + tag;
+            result["release_url"] = "https://github.com/nour-rouas/tbc-revit-mcp/releases/tag/" + tag;
             string? revision = null;
             try { revision = await ReleaseRevisionAsync(tag, timeout.Token); }
             catch (OperationCanceledException) when (!ct.IsCancellationRequested) { result["build_reason"] = "timeout"; }
@@ -135,7 +135,7 @@ internal sealed class ReleaseUpdateCheck
         var message = lookupUnavailable
             ? "Official release lookup is unavailable (" + lookupReason + "). Reported runtime identities are unchanged; no release comparison or installation recommendation is available."
             : older.Count > 0
-                ? "rvt-mcp " + result.Value<string>("latest_version") + " is available for: " + string.Join(", ", older.Values<string>()) + "."
+                ? "tbc-revit-mcp " + result.Value<string>("latest_version") + " is available for: " + string.Join(", ", older.Values<string>()) + "."
                 : code == "LOCAL_VERSION_AHEAD" ? "Local version is ahead of the published stable release."
                 : "Review the runtime/release comparison.";
         if (!lookupUnavailable && lookupReason is not null)
@@ -213,7 +213,7 @@ internal sealed class ReleaseUpdateCheck
     private async Task<JObject> GetMetadataAsync(string path, CancellationToken ct)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, RepositoryApi + path);
-        request.Headers.UserAgent.ParseAdd("rvt-mcp/" + Program.ServerVersion);
+        request.Headers.UserAgent.ParseAdd("tbc-revit-mcp/" + Program.ServerVersion);
         request.Headers.Accept.ParseAdd("application/vnd.github+json");
         request.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
         using var response = await _client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct);

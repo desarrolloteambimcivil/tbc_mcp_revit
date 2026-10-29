@@ -1,5 +1,7 @@
 # Tool descriptor benchmark — 2026-10-18
 
+> Historical record from the upstream [bimwright/rvt-mcp](https://github.com/bimwright/rvt-mcp) project, made before the tbc-revit-mcp fork. Releases, packages, CI runs and issue numbers below refer to upstream; results are unchanged.
+
 This measures discovery payload size, not model tokens, tool execution time or task accuracy. It invokes no Revit tool. The separate [validation record](../testing/2026-10-18-v1.2.0-validation.md) lists retained native checks and pending release coverage.
 
 | Setup | Value |

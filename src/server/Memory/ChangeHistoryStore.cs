@@ -20,7 +20,7 @@ namespace RvtMcp.Server.Memory
         public ChangeHistoryTransfer Transfer { get; }
         public ChangeHistoryStore(string dataRoot = null)
         {
-            dataRoot ??= Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Bimwright", "rvt-mcp");
+            dataRoot ??= ProductIdentity.DataRoot();
             _projects = Path.Combine(dataRoot, "projects");
             _identities = new HistoryIdentityCatalog(_projects);
             Transfer = new ChangeHistoryTransfer(dataRoot);

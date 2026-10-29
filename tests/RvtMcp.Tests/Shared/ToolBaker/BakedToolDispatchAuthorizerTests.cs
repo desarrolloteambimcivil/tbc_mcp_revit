@@ -149,7 +149,7 @@ namespace RvtMcp.Tests
         {
             public TempDir()
             {
-                Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "bimwright-baked-test-" + Guid.NewGuid().ToString("N"));
+                Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "tbc-revit-mcp-baked-test-" + Guid.NewGuid().ToString("N"));
                 Directory.CreateDirectory(Path);
             }
 

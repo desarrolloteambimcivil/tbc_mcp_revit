@@ -45,7 +45,7 @@ namespace RvtMcp.Plugin.Infrastructure.UI
         public int LoadPastSessions()
         {
             var folder = !string.IsNullOrEmpty(McpLogger.CurrentLogPath) ? Path.GetDirectoryName(McpLogger.CurrentLogPath)
-                : Path.Combine(McpLogger.LocalAppDataOverride ?? Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Bimwright", "rvt-mcp");
+                : ProductIdentity.DataRoot(McpLogger.LocalAppDataOverride);
             var entries = SessionLogHistoryLoader.LoadPastSessions(folder, McpLogger.CurrentSessionId,
                 _log.Count, liveEntries: Entries.Where(e => !e.IsHistorical));
             foreach (var entry in entries) entry.ToolDescription = Description(entry.ToolName);
@@ -54,7 +54,7 @@ namespace RvtMcp.Plugin.Infrastructure.UI
         }
         public void OpenLogs()
         {
-            var folder = Path.Combine(McpLogger.LocalAppDataOverride ?? Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Bimwright", "rvt-mcp");
+            var folder = ProductIdentity.DataRoot(McpLogger.LocalAppDataOverride);
             try { Directory.CreateDirectory(folder); Process.Start(new ProcessStartInfo(folder) { UseShellExecute = true }); } catch { }
         }
 

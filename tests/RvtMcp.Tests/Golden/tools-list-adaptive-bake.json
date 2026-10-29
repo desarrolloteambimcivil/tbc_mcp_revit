@@ -872,7 +872,7 @@
     },
     {
       "name": "revit_capture_view_image",
-      "description_hash": "sha256:df779c87923e465aa34ea96966fcda1430674ddad72e65d155f125bb349b82f1",
+      "description_hash": "sha256:a6239384fe18dc474961503c78e9ff04095a7b34a5c01cbde4263b8d1bdeae9e",
       "inputSchema": {
         "properties": {
           "element_ids": {

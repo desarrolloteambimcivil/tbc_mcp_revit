@@ -13,7 +13,7 @@ namespace RvtMcp.Tests
         [Fact]
         public void Log_PreservesExecutionIdentityForHistoryDeduplication()
         {
-            var root = Path.Combine(Path.GetTempPath(), "bimwright-call-id-" + Guid.NewGuid().ToString("N"));
+            var root = Path.Combine(Path.GetTempPath(), "tbc-revit-mcp-call-id-" + Guid.NewGuid().ToString("N"));
             try
             {
                 McpLogger.LocalAppDataOverride = root;
@@ -124,7 +124,7 @@ namespace RvtMcp.Tests
         [Fact]
         public void Log_RedactsPersistentErrorField()
         {
-            var root = Path.Combine(Path.GetTempPath(), "bimwright-mcp-logger-" + Guid.NewGuid().ToString("N"));
+            var root = Path.Combine(Path.GetTempPath(), "tbc-revit-mcp-mcp-logger-" + Guid.NewGuid().ToString("N"));
             try
             {
                 McpLogger.LocalAppDataOverride = root;
@@ -137,7 +137,7 @@ namespace RvtMcp.Tests
                     durationMs: 5,
                     errorMsg: @"Could not open C:\Users\Admin\Documents\Project A&B.rvt from https://example.com/client?token=sk-testsecret12345");
 
-                var line = File.ReadAllText(Path.Combine(root, "Bimwright", "rvt-mcp", "mcp-calls.jsonl"));
+                var line = File.ReadAllText(Path.Combine(root, "NourRouas", "tbc-revit-mcp", "mcp-calls.jsonl"));
 
                 Assert.DoesNotContain("Project A&B", line);
                 Assert.DoesNotContain(@"C:\Users\Admin\Documents", line);
@@ -156,10 +156,10 @@ namespace RvtMcp.Tests
         [Fact]
         public void Initialize_DeletesPreV5ActiveLogInsteadOfArchiving()
         {
-            var root = Path.Combine(Path.GetTempPath(), "bimwright-mcp-logger-" + Guid.NewGuid().ToString("N"));
+            var root = Path.Combine(Path.GetTempPath(), "tbc-revit-mcp-mcp-logger-" + Guid.NewGuid().ToString("N"));
             try
             {
-                var dir = Path.Combine(root, "Bimwright", "rvt-mcp");
+                var dir = Path.Combine(root, "NourRouas", "tbc-revit-mcp");
                 Directory.CreateDirectory(dir);
                 File.WriteAllText(Path.Combine(dir, "mcp-calls.version"), "3");
                 File.WriteAllText(Path.Combine(dir, "mcp-calls.jsonl"), "raw send_code_to_revit body");
@@ -182,10 +182,10 @@ namespace RvtMcp.Tests
         [Fact]
         public void Initialize_DeletesPreV5ArchivedLogs()
         {
-            var root = Path.Combine(Path.GetTempPath(), "bimwright-mcp-logger-" + Guid.NewGuid().ToString("N"));
+            var root = Path.Combine(Path.GetTempPath(), "tbc-revit-mcp-mcp-logger-" + Guid.NewGuid().ToString("N"));
             try
             {
-                var dir = Path.Combine(root, "Bimwright", "rvt-mcp");
+                var dir = Path.Combine(root, "NourRouas", "tbc-revit-mcp");
                 Directory.CreateDirectory(dir);
                 File.WriteAllText(Path.Combine(dir, "mcp-calls.version"), "3");
                 File.WriteAllText(Path.Combine(dir, "mcp-calls-20260426-010101.jsonl"), "raw send_code_to_revit body");
@@ -207,10 +207,10 @@ namespace RvtMcp.Tests
         [Fact]
         public void Initialize_DeletesVersion4OrphanArchivedLogs()
         {
-            var root = Path.Combine(Path.GetTempPath(), "bimwright-mcp-logger-" + Guid.NewGuid().ToString("N"));
+            var root = Path.Combine(Path.GetTempPath(), "tbc-revit-mcp-mcp-logger-" + Guid.NewGuid().ToString("N"));
             try
             {
-                var dir = Path.Combine(root, "Bimwright", "rvt-mcp");
+                var dir = Path.Combine(root, "NourRouas", "tbc-revit-mcp");
                 Directory.CreateDirectory(dir);
                 File.WriteAllText(Path.Combine(dir, "mcp-calls.version"), "4");
                 File.WriteAllText(Path.Combine(dir, "mcp-calls-20260426-010101.jsonl"), "raw send_code_to_revit body");

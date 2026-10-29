@@ -65,7 +65,7 @@ public sealed class BoundedLogTests : IDisposable
                 DiagnosticLog.Write("Pipe", "disconnected", "2027");
             }
             Assert.True(DiagnosticLog.Flush(5000));
-            var path = Path.Combine(_root, "Bimwright", "rvt-mcp", "rvt-mcp.log");
+            var path = Path.Combine(_root, "NourRouas", "tbc-revit-mcp", "tbc-revit-mcp.log");
             var lines = File.ReadAllLines(path);
             Assert.Equal(4, lines.Length);
             Assert.All(lines, line => { Assert.Contains("pid=", line); Assert.Contains("revit=2027", line); Assert.Contains(DateTime.UtcNow.ToString("yyyy-MM-dd"), line); });
@@ -81,9 +81,9 @@ public sealed class BoundedLogTests : IDisposable
         try
         {
             DiagnosticLog.LocalAppDataOverride = _root;
-            var dir = Path.Combine(_root, "Bimwright", "rvt-mcp");
+            var dir = Path.Combine(_root, "NourRouas", "tbc-revit-mcp");
             Directory.CreateDirectory(dir);
-            var path = Path.Combine(dir, "rvt-mcp.log");
+            var path = Path.Combine(dir, "tbc-revit-mcp.log");
             File.WriteAllText(path, "held");
             var before = DiagnosticLog.Dropped;
             using (var held = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
@@ -277,9 +277,9 @@ public sealed class BoundedLogTests : IDisposable
         try
         {
             DiagnosticLog.LocalAppDataOverride = _root;
-            var dir = Path.Combine(_root, "Bimwright", "rvt-mcp");
+            var dir = Path.Combine(_root, "NourRouas", "tbc-revit-mcp");
             Directory.CreateDirectory(dir);
-            var path = Path.Combine(dir, "rvt-mcp.log");
+            var path = Path.Combine(dir, "tbc-revit-mcp.log");
             var old = string.Concat(Enumerable.Repeat(new string('x', 1023) + "\n", 11000));
             File.WriteAllText(path, old);
             File.WriteAllText(path + ".1", old);
@@ -302,7 +302,7 @@ public sealed class BoundedLogTests : IDisposable
         public CleanupClock(string root)
         {
             Assert.True(DiagnosticLog.Flush(5000));
-            LogPath = Path.Combine(root, "Bimwright", "rvt-mcp", "rvt-mcp.log");
+            LogPath = Path.Combine(root, "NourRouas", "tbc-revit-mcp", "tbc-revit-mcp.log");
             DiagnosticLog.LocalAppDataOverride = root;
             DiagnosticLog.LegacyCleanupTimestamp = () => Interlocked.Read(ref _timestamp);
         }

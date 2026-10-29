@@ -6,7 +6,8 @@
 .DESCRIPTION
   Cleans up addin folders and manifests installed by the legacy `Bimwright` plugin layout.
   Preserves user data (baked tools, journal, firm profiles, debug logs) in `%LOCALAPPDATA%\Bimwright\`
-  for migration on next launch of v0.4.0+.
+  for migration on next launch of v0.4.0+ (tbc-revit-mcp copies it into
+  `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\` and never deletes the original).
 
   Run this BEFORE installing v0.4.0 to avoid Revit loading both legacy + new plugins simultaneously.
 
@@ -101,7 +102,7 @@ if ($skipped.Count -gt 0) {
     Write-Host ("Skipped: {0}" -f ($skipped -join '; '))
 }
 Write-Host ""
-Write-Host "PRESERVED user data (will migrate on next RvtMcp launch):"
+Write-Host "PRESERVED user data (copied to %LOCALAPPDATA%\NourRouas\tbc-revit-mcp\ on next tbc-revit-mcp launch):"
 Write-Host "  %LOCALAPPDATA%\Bimwright\baked\        (custom baked tools)"
 Write-Host "  %LOCALAPPDATA%\Bimwright\journal\      (session history)"
 Write-Host "  %LOCALAPPDATA%\Bimwright\firm-profiles\ (firm settings)"

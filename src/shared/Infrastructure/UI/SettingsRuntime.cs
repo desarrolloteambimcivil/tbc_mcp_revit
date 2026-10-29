@@ -38,8 +38,8 @@ namespace RvtMcp.Plugin.Infrastructure.UI
         public event Action<bool> PositionSaved;
         public int LanguageVersion => L.Version;
         public string EffectiveLanguage => L.Locale;
-        public bool IsLanguageWriteDisabled => !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(RvtMcpConfig.EnvUiLanguage));
-        public bool IsWarningPolicyWriteDisabled => Environment.GetEnvironmentVariable(RvtMcpConfig.EnvWarningPolicy) != null;
+        public bool IsLanguageWriteDisabled => !string.IsNullOrWhiteSpace(ProductIdentity.GetEnv(RvtMcpConfig.EnvUiLanguage));
+        public bool IsWarningPolicyWriteDisabled => ProductIdentity.GetEnv(RvtMcpConfig.EnvWarningPolicy) != null;
         public bool ToastEnabled => _app.ToastEnabled;
         public ToastPositionOptions ToastPosition => _app.ToastNotifier?.PositionOptions;
         public bool IsListenerRunning => _app.IsTransportRunning && _app.Transport != null;
@@ -111,7 +111,7 @@ namespace RvtMcp.Plugin.Infrastructure.UI
             }
             if (blocked)
             {
-                var message = SettingsText.Text("security.warningPolicy.environmentOverride", "BIMWRIGHT_WARNING_POLICY overrides the saved setting in this Revit process.");
+                var message = SettingsText.Text("security.warningPolicy.environmentOverride", "TBC_REVIT_MCP_WARNING_POLICY overrides the saved setting in this Revit process.");
                 report.Failed.Add(message);
                 report.FieldErrors["warningPolicy"] = message;
             }

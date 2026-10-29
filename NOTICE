@@ -1,0 +1,10 @@
+tbc-revit-mcp
+Copyright 2026 Nour Rouas (https://github.com/nour-rouas)
+
+This product is a modified version of rvt-mcp
+(https://github.com/bimwright/rvt-mcp), copyright 2026 Khoa Le (Bimwright)
+and contributors, licensed under the Apache License, Version 2.0.
+
+Changes from the original work are recorded in the git history and in
+CHANGELOG.md. "Bimwright" and the rvt-mcp logo are not used to brand this
+product.

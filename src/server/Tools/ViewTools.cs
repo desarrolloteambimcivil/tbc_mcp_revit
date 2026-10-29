@@ -21,7 +21,7 @@ namespace RvtMcp.Server
             => await ToolGateway.CallAsync("analyze_sheet_layout", new { sheetNumber, sheetId, start_viewport = startViewport, max_viewports = maxViewports });
 
         [McpServerTool(Name = "revit_capture_view_image", ReadOnly = false, Destructive = true, Idempotent = false, OpenWorld = false), System.ComponentModel.Description(
-            "Export the active or specified view as png/jpeg (default 1600 pixels), optionally to an absolute output_path inside %TEMP% or %LOCALAPPDATA%\\Bimwright\\rvt-mcp\\captures\\. " +
+            "Export the active or specified view as png/jpeg (default 1600 pixels), optionally to an absolute output_path inside %TEMP% or %LOCALAPPDATA%\\NourRouas\\tbc-revit-mcp\\captures\\. " +
             "May overwrite files that Revit Undo cannot restore; back up the destination first. " +
             "element_ids frames a temporary 3D view's section box around those elements (padding_mm, default 1000; isolate hides everything else); it keeps the source 3D view's orientation and is discarded after export, so the model keeps no new view.")]
         public static async Task<string> CaptureViewImage(

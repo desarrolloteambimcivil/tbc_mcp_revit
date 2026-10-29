@@ -39,9 +39,7 @@ namespace RvtMcp.Plugin
 
         private static void EnsureLogFile()
         {
-            var dir = Path.Combine(
-                LocalAppDataOverride ?? Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Bimwright", "rvt-mcp");
+            var dir = ProductIdentity.DataRoot(LocalAppDataOverride);
             Directory.CreateDirectory(dir);
             _logPath = Path.Combine(dir, "mcp-calls.jsonl");
 

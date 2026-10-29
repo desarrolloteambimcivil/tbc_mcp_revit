@@ -50,8 +50,7 @@ namespace RvtMcp.Plugin
             return diff == 0;
         }
 
-        public static string DiscoveryDir() => Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Bimwright", "rvt-mcp");
+        public static string DiscoveryDir() => ProductIdentity.DataRoot();
 
         public static string DiscoveryFileName(string year) => "revit-" + year + "-" + CachedPid + ".json";
 

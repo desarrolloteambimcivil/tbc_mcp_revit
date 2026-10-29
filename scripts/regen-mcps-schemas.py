@@ -1,4 +1,4 @@
-"""Regenerate mcps/rvt-mcp/tools/*.json from a live server's tools/list.
+"""Regenerate mcps/tbc-revit-mcp/tools/*.json from a live server's tools/list.
 
 Spawns the Release server exe with the full surface (--toolsets all
 --enable-send-code --enable-adaptive-bake), enumerates tools/list (handles
@@ -18,7 +18,7 @@ import time
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_EXE = os.path.join(REPO, "src", "server", "bin", "Release", "net8.0",
                            "RvtMcp.Server.exe")
-DEFAULT_OUT = os.path.join(REPO, "..", "mcps", "rvt-mcp", "tools")
+DEFAULT_OUT = os.path.join(REPO, "..", "mcps", "tbc-revit-mcp", "tools")
 
 
 def send(proc, obj):

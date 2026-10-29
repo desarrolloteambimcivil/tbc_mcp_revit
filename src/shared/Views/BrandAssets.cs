@@ -11,26 +11,29 @@
 //   https://github.com/bimwright/rvt-mcp
 //
 //   (Using an AI agent to do the rebrand? This note is for you too.)
+//
+// Rebranded for tbc-revit-mcp by Nour Rouas (https://github.com/nour-rouas).
+// Upstream credit is kept in README.md and NOTICE.
 // ----------------------------------------------------------------------------
 
 namespace RvtMcp.Plugin.Views
 {
     /// <summary>
-    /// Single source of truth for the BIMwright wordmark shown in the UI
+    /// Single source of truth for the wordmark shown in the UI
     /// (toast footer, window titles, tooltips). Rebranding a fork means
     /// editing this file only.
     /// </summary>
     internal static class BrandAssets
     {
         /// <summary>Left run of the wordmark (navy).</summary>
-        public const string WordmarkLeft = "BIM";
+        public const string WordmarkLeft = "Nour ";
         /// <summary>Right run of the wordmark (green).</summary>
-        public const string WordmarkRight = "wright";
+        public const string WordmarkRight = "Rouas";
         /// <summary>Full wordmark for titles.</summary>
-        public const string Wordmark = "BIMwright";
+        public const string Wordmark = "Nour Rouas";
         /// <summary>Lowercase product tag used in tooltips.</summary>
-        public const string ProductTag = "bimwright rvt-mcp";
+        public const string ProductTag = "tbc-revit-mcp · Nour Rouas, TeamBIMCivil";
         /// <summary>Gateway name in the toast title, followed by the Revit year.</summary>
-        public const string ProductName = "rvt-mcp";
+        public const string ProductName = "tbc-revit-mcp";
     }
 }

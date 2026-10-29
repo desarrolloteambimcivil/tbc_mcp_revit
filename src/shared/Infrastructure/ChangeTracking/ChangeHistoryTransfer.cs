@@ -39,8 +39,7 @@ namespace RvtMcp.Plugin
         public string Root { get; }
         public ChangeHistoryTransfer(string dataRoot = null)
         {
-            Root = Path.Combine(dataRoot ?? Path.Combine(Environment.GetFolderPath(
-                Environment.SpecialFolder.LocalApplicationData), "Bimwright", "rvt-mcp"), "history-pending");
+            Root = Path.Combine(dataRoot ?? ProductIdentity.DataRoot(), "history-pending");
         }
         public static bool IsId(string value) => value != null && value.Length == 32 && Guid.TryParseExact(value, "N", out _);
         private string FilePath(string id)

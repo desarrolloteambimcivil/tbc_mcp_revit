@@ -61,7 +61,7 @@ namespace RvtMcp.Tests
                     var reply = await Send(2, "prompts/get", new { name = prompt, arguments = new { change = "DO_NOT_LOG_SENTINEL" } });
                     Assert.Equal(missing, reply["error"] != null);
                     Assert.True(DiagnosticLog.Flush());
-                    var log = File.ReadAllText(Path.Combine(root, "Bimwright", "rvt-mcp", "rvt-mcp.log"));
+                    var log = File.ReadAllText(Path.Combine(root, "NourRouas", "tbc-revit-mcp", "tbc-revit-mcp.log"));
                     var entry = Assert.Single(log.Split('\n').Where(line => line.Contains("[Prompts]")));
                     Assert.Contains("prompts/get name=" + prompt + " utc=", entry);
                     Assert.Contains(" session=", entry);

@@ -20,9 +20,7 @@ namespace RvtMcp.Server.Memory
         public JournalLogger(bool enabled = false, string journalDir = null)
         {
             _enabled = enabled;
-            _journalDir = journalDir ?? Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Bimwright", "rvt-mcp", "journal");
+            _journalDir = journalDir ?? Path.Combine(ProductIdentity.DataRoot(), "journal");
         }
 
         public void Log(JournalEntry entry)

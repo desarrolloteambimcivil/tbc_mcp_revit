@@ -23,7 +23,7 @@ namespace RvtMcp.Plugin.Views.Update
             _info = info ?? throw new ArgumentNullException(nameof(info));
             _prompt = UpdateNoticeText.BuildAgentPrompt(info);
 
-            Title = T("update.title", "rvt-mcp update available");
+            Title = T("update.title", "tbc-revit-mcp update available");
             Width = 440;
             SizeToContent = SizeToContent.Height;
             ResizeMode = ResizeMode.NoResize;
@@ -44,7 +44,7 @@ namespace RvtMcp.Plugin.Views.Update
             body.Children.Add(new TextBlock
             {
                 Text = T("update.message",
-                    "A new version of rvt-mcp is available ({latest}). Copy the prompt below and paste it to your AI agent to update.",
+                    "A new version of tbc-revit-mcp is available ({latest}). Copy the prompt below and paste it to your AI agent to update.",
                     ("latest", info.LatestVersion)),
                 TextWrapping = TextWrapping.Wrap,
                 FontWeight = FontWeights.SemiBold,

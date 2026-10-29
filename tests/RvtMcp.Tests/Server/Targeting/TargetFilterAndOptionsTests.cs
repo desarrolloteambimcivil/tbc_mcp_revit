@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Client;
 using ModelContextProtocol.Protocol;
-using Bimwright.Targeting;
+using RvtMcp.Targeting;
 using Newtonsoft.Json.Linq;
 using RvtMcp.Plugin;
 using RvtMcp.Server;
@@ -41,9 +41,9 @@ namespace RvtMcp.Tests
             {
                 var config = new RvtMcpConfig { Toolsets = new List<string> { "query" } };
                 ServerState.Config = config;
-                var payload = new Bimwright.Targeting.TargetPayload
+                var payload = new RvtMcp.Targeting.TargetPayload
                 {
-                    Code = Bimwright.Targeting.TargetCode.TargetChanged,
+                    Code = RvtMcp.Targeting.TargetCode.TargetChanged,
                     NextStep = "The call was not sent because the target binding changed after the call arrived.",
                     Message = "TARGET_CHANGED: The call was not sent because the target binding changed after the call arrived.",
                 };

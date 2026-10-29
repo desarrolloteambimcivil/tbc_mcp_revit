@@ -306,7 +306,7 @@ INSERT INTO suggestions(
         {
             public TempDir()
             {
-                Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "bimwright-bakedb-test-" + Guid.NewGuid().ToString("N"));
+                Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "tbc-revit-mcp-bakedb-test-" + Guid.NewGuid().ToString("N"));
                 Directory.CreateDirectory(Path);
             }
 

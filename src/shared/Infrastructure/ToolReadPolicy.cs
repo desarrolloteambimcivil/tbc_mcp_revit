@@ -7,9 +7,9 @@ namespace RvtMcp.Plugin
     public static class ToolReadPolicy
     {
         public const string AddinPairingRequired = "PAIRING_REQUIRED: the selected Revit add-in does not support the gateway's required safety protocols. "
-            + "Update the gateway and Revit add-in together from the same rvt-mcp Setup release, restart Revit, and reconnect/restart the MCP client. No model mutation was started.";
-        public const string GatewayPairingRequired = "PAIRING_REQUIRED: the command was not started. The connected rvt-mcp gateway does not support the safety protocols required by this Revit add-in. "
-            + "Update the gateway and Revit add-in together from the same rvt-mcp Setup release, restart Revit, and reconnect/restart the MCP client.";
+            + "Update the gateway and Revit add-in together from the same tbc-revit-mcp Setup release, restart Revit, and reconnect/restart the MCP client. No model mutation was started.";
+        public const string GatewayPairingRequired = "PAIRING_REQUIRED: the command was not started. The connected tbc-revit-mcp gateway does not support the safety protocols required by this Revit add-in. "
+            + "Update the gateway and Revit add-in together from the same tbc-revit-mcp Setup release, restart Revit, and reconnect/restart the MCP client.";
 
         public static readonly ISet<string> ReadOnlyCommands = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {

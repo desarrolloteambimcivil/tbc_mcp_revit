@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using Bimwright.Targeting;
+using RvtMcp.Targeting;
 using RvtMcp.Server;
 using Xunit;
 

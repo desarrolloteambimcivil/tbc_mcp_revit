@@ -12,7 +12,7 @@
   <!--
     Test project does NOT reference a plugin shell. It uses two sources:
       1. ProjectReference to Server below — covers ToolsetFilter, ToolsetAttribute,
-         BimwrightConfig (all compiled into the Server assembly).
+         RvtMcpConfig (all compiled into the Server assembly).
       2. Compile-Include below — glob-includes Revit-API-free shared files that
          are NOT in the Server assembly (plugin-only: ErrorSanitizer, SchemaValidator,
          BatchExecutor) so we can unit-test them without loading Autodesk assemblies.
@@ -28,8 +28,7 @@
     <Compile Include="../../src/shared/Views/FailureIssuesPresentation.cs" Link="Shared/Views/FailureIssuesPresentation.cs" />
     <Compile Include="..\..\src\shared\Infrastructure\SendCodeSourceBuilder.cs" Link="Shared\Infrastructure\SendCodeSourceBuilder.cs" />
     <Compile Include="..\..\src\shared\Infrastructure\SendCodeDocumentRewriter.cs" Link="Shared\Infrastructure\SendCodeDocumentRewriter.cs" />
-    <Compile Include="..\..\src\shared\Infrastructure\RevitApiReference.cs" Link="Shared\Infrastructure\RevitApiReference.cs" />
-    <Compile Include="..\..\src\shared\Infrastructure\NoDocumentGuidance.cs" Link="Shared\Infrastructure\NoDocumentGuidance.cs" />
+    <Compile Include="..\..\src\shared\Infrastructure\RevitApiReference.cs" Link="Shared\Infrastructure\RevitApiReference.cs" />    <Compile Include="..\..\src\shared\Infrastructure\NoDocumentGuidance.cs" Link="Shared\Infrastructure\NoDocumentGuidance.cs" />
     <Compile Include="..\..\src\shared\Infrastructure\RecentFileList.cs" Link="Shared\Infrastructure\RecentFileList.cs" />
     <Compile Include="..\..\src\shared\Infrastructure\McpAddinDiscovery.cs" Link="Shared\Infrastructure\McpAddinDiscovery.cs" />
     <Compile Include="..\..\src\shared\Handlers\Mep\MepMembershipPolicy.cs" Link="Shared\Handlers\Mep\MepMembershipPolicy.cs" />

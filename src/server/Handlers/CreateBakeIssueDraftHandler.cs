@@ -7,7 +7,7 @@ namespace RvtMcp.Server.Handlers
 {
     public static class CreateBakeIssueDraftHandler
     {
-        private const string IssueBaseUrl = "https://github.com/bimwright/rvt-mcp/issues/new";
+        private const string IssueBaseUrl = "https://github.com/nour-rouas/tbc-revit-mcp/issues/new";
 
         public static string Handle(BakeSuggestionRecord suggestion, string currentRevitVersion = null)
         {
@@ -50,7 +50,7 @@ namespace RvtMcp.Server.Handlers
                 "may be worth shipping.",
                 "",
                 "---",
-                "Submitted via rvt-mcp Suggestion Inbox v0.3.x"
+                "Submitted via tbc-revit-mcp Suggestion Inbox v0.3.x"
             });
         }
 

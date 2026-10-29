@@ -1,21 +1,21 @@
-<!-- mcp-name: io.github.bimwright/rvt-mcp -->
+<!-- mcp-name: io.github.nour-rouas/tbc-revit-mcp -->
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/bimwright/.github/master/assets/logos/rvt-mcp.png" alt="rvt-mcp" width="180" />
-</p>
-
-<h1 align="center">rvt-mcp</h1>
+<h1 align="center">tbc-revit-mcp</h1>
 
 <p align="center">
   MCP gateway for Autodesk Revit — local tools for agents, optional personal bake loop
 </p>
 
 <p align="center">
-  <a href="https://github.com/bimwright/rvt-mcp/actions/workflows/build.yml"><img src="https://github.com/bimwright/rvt-mcp/actions/workflows/build.yml/badge.svg" alt="build" /></a>
+  by Nour Rouas — BIM developer/modeller at TeamBIMCivil
+</p>
+
+<p align="center">
+  <a href="https://github.com/nour-rouas/tbc-revit-mcp/actions/workflows/build.yml"><img src="https://github.com/nour-rouas/tbc-revit-mcp/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
   <a href="#tools"><img src="https://img.shields.io/badge/MCP-242%20tools-6C47FF" alt="MCP tools" /></a>
-  <a href="https://github.com/bimwright/rvt-mcp/releases/latest"><img src="https://img.shields.io/github/v/release/bimwright/rvt-mcp" alt="latest release" /></a>
+  <a href="https://github.com/nour-rouas/tbc-revit-mcp/releases/latest"><img src="https://img.shields.io/github/v/release/nour-rouas/tbc-revit-mcp" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
 
@@ -27,9 +27,9 @@
 
 ## What it is
 
-**An early all-C# MCP implementation for Revit — researched and implemented since March 2026.**
+`tbc-revit-mcp` is a fork of [bimwright/rvt-mcp](https://github.com/bimwright/rvt-mcp) maintained by Nour Rouas. So far the fork adds `revit_api_lookup`, a `dry_run` mode for `send_code`, read and edit tools for railing and compound (layered) structures, and focused captures (`element_ids` on `revit_capture_view_image`).
 
-`rvt-mcp` is a **local** bridge between an MCP client and a running Revit session. A .NET 8 server talks MCP over stdio; a thin add-in per Revit year (2022–2027) runs inside Revit and is reached over localhost TCP (≤2024) or a named pipe (≥2025). Nothing leaves the machine, it is C# end to end, and lengths are millimetres at the tool boundary. Details: [ARCHITECTURE.md](ARCHITECTURE.md).
+`tbc-revit-mcp` is a **local** bridge between an MCP client and a running Revit session. A .NET 8 server talks MCP over stdio; a thin add-in per Revit year (2022–2027) runs inside Revit and is reached over localhost TCP (≤2024) or a named pipe (≥2025). Nothing leaves the machine, it is C# end to end, and lengths are millimetres at the tool boundary. Details: [ARCHITECTURE.md](ARCHITECTURE.md).
 
 Agents get a **typed tool surface** for common Revit work, a C# escape hatch for everything else, and an **optional** way to turn repeated patterns into personal tools (ToolBaker): start from a shared runtime and grow *your* tools on top. Family Editor authoring is out of scope for now.
 
@@ -37,15 +37,15 @@ Agents get a **typed tool surface** for common Revit work, a C# escape hatch for
 
 ## Install
 
-**v1.2.0:** [Setup and Claude Desktop MCPB](https://github.com/bimwright/rvt-mcp/releases/tag/v1.2.0) · [NuGet (server only)](https://www.nuget.org/packages/RvtMcp.Server/1.2.0) · [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.bimwright%2Frvt-mcp/versions/1.2.0). See the [validation record and remaining coverage](docs/testing/2026-10-18-v1.2.0-validation.md).
+**Downloads:** Setup ZIP and Claude Desktop MCPB from the [latest release](https://github.com/nour-rouas/tbc-revit-mcp/releases/latest). Until the fork's first release is published, build from source (see [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy).
 
 **Let an AI agent install it for your target client.** Use an agent that can run PowerShell and edit local files on this Windows machine (Claude Code, Codex, Cursor, …), not a chat session without local tools. The agent installing it can be different from the client where you will use Revit tools. It follows [AGENTS.md](AGENTS.md), previews changes and asks before applying them; you may still need to approve a UI step or restart an app.
 
 For **Claude Desktop**, paste:
 
 ```text
-Install rvt-mcp for Claude Desktop on this Windows machine.
-First read https://github.com/bimwright/rvt-mcp/blob/master/AGENTS.md.
+Install tbc-revit-mcp for Claude Desktop on this Windows machine.
+First read https://github.com/nour-rouas/tbc-revit-mcp/blob/master/AGENTS.md.
 Configure only Claude Desktop, not other clients. Inspect existing installations,
 preview changes and ask before writing. Tell me if I need to use the UI or restart an app.
 ```
@@ -55,30 +55,30 @@ For another client, replace **Claude Desktop** with its name. **Claude Code and 
 **Or run the installer yourself (Claude Desktop, direct config).** Close Revit and fully quit Claude Desktop (including its tray process), then in PowerShell:
 
 ```powershell
-$tag = (Invoke-RestMethod https://api.github.com/repos/bimwright/rvt-mcp/releases/latest).tag_name
-$dir = "$env:TEMP\RvtMcp.Setup-$tag-win-x64"
-Invoke-WebRequest "https://github.com/bimwright/rvt-mcp/releases/download/$tag/RvtMcp.Setup-$tag-win-x64.zip" -OutFile "$dir.zip"
+$tag = (Invoke-RestMethod https://api.github.com/repos/nour-rouas/tbc-revit-mcp/releases/latest).tag_name
+$dir = "$env:TEMP\TbcRevitMcp.Setup-$tag-win-x64"
+Invoke-WebRequest "https://github.com/nour-rouas/tbc-revit-mcp/releases/download/$tag/TbcRevitMcp.Setup-$tag-win-x64.zip" -OutFile "$dir.zip"
 Expand-Archive "$dir.zip" -DestinationPath $dir -Force
 powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -WhatIf -Client claude-desktop
 # Review the preview before applying:
 powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-desktop
 ```
 
-This installs the add-in for every detected Revit 2022–2027 and registers `rvt-mcp` only in Claude Desktop (the config is backed up first). For Claude Code use `-Client claude`; for multiple requested clients use a comma list. Omitting `-Client` wires every detected client; `-Client none` leaves configs untouched. The server lives at `%LOCALAPPDATA%\Bimwright\rvt-mcp\server\current\rvt-mcp.exe` ([per-client steps, including Desktop classic/MSIX paths](docs/mcp-client-wiring.md)).
+This installs the add-in for every detected Revit 2022–2027 and registers `tbc-revit-mcp` only in Claude Desktop (the config is backed up first). For Claude Code use `-Client claude`; for multiple requested clients use a comma list. Omitting `-Client` wires every detected client; `-Client none` leaves configs untouched. The server lives at `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\server\current\tbc-revit-mcp.exe` ([per-client steps, including Desktop classic/MSIX paths](docs/mcp-client-wiring.md)).
 
 **Check it works:** restart your AI client, open a model in Revit, start MCP from the ribbon (**Add-Ins** → **RvtMcp**) and ask the agent to call `revit_get_current_view_info`. It should return the active view's name and type.
 
 **Upgrade:** close Revit and gateway clients, back up the product data folder, then run the new installer in place without uninstalling first. Settings and ToolBaker data are kept. MCPB users use `-Client none`, update Setup and extension from the same release, then check Desktop settings and permissions before reconnecting. See [the upgrade sequence](docs/install.md#upgrade). **Uninstall:** `uninstall.ps1 -Yes` removes add-ins and the server; personal data is kept unless you add `-Purge`. To remove client entries too, first run `install.ps1 -Uninstall -Client auto`.
 
-**Upgrading from v0.8.1 or v0.6.x:** those versions keep your settings and ToolBaker data in `%LOCALAPPDATA%\RvtMcp\`; v1.0.0 uses `%LOCALAPPDATA%\Bimwright\rvt-mcp\`, and the installer moves the old folder there. Close Revit and every MCP client first, because a running old server locks the folder. Check in PowerShell with `Test-Path "$env:LOCALAPPDATA\RvtMcp"`. If the installer stops with `Both … exist` or `Could not move …`, it has undone what it moved: keep the folder that holds your settings and ToolBaker data, **rename the other one (for example to `RvtMcp.bak`) instead of deleting it**, close the clients that were using it, and run the installer again.
+**Coming from upstream rvt-mcp:** this fork keeps its data in `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\`. On first start, data migrates automatically from upstream's `%LOCALAPPDATA%\Bimwright\rvt-mcp\` (and the older `%LOCALAPPDATA%\RvtMcp\` used by upstream v0.8.1/v0.6.x) into the new folder; the old folder is left in place as a backup. Close Revit and every MCP client first, because a running old server locks the folder. Check in PowerShell with `Test-Path "$env:LOCALAPPDATA\RvtMcp"`. If the installer stops with `Both … exist` or `Could not move …`, it has undone what it moved: keep the folder that holds your settings and ToolBaker data, **rename the other one (for example to `RvtMcp.bak`) instead of deleting it**, close the clients that were using it, and run the installer again.
 
 **Claude Desktop extension (MCPB, optional):** direct config above is the default for agent-assisted installs. If you want the extension/settings UI, use Setup with `-Client none`, then install the `.mcpb` through Desktop's extension UI. **Choose one route, not both.** `-Client none` does not remove an existing manual registration. Use the bundle from the same selected release as Setup; it does not install the gateway/add-ins and requires that release's exact server build. Check the release notes for its signing status. See [MCPB installation and settings](docs/install.md#claude-desktop-mcpb).
 
 ---
 
-## Videos
+## Videos (upstream project)
 
-Community videos of rvt-mcp at work. Install steps shown in a video can be older than this README — follow the steps above.
+Community videos of the upstream rvt-mcp project at work, recorded before this fork. Install steps and names shown in a video differ from this README — follow the steps above.
 
 - [Connecting ChatGPT Astra to Revit | Testing AI Changes in a Real Project](https://www.youtube.com/watch?v=J-i057B-3dI) — Revit Mentor
 - [Exploring Revit + GPT 6 Astra](https://www.youtube.com/watch?v=2_W1uLn6s_I) — BIM Pure
@@ -88,12 +88,12 @@ Community videos of rvt-mcp at work. Install steps shown in a video can be older
 
 ## Tools
 
-Counts below match the **v1.2.0 release**; later development builds can expose a different catalog.
+Counts below match this source tree; other builds can expose a different catalog.
 
 | Mode | Tools | Notes |
 |------|------:|-------|
 | Fresh install | **242** | `install.ps1` seeds `"toolsets": ["all"]` in `rvtmcp.config.json` |
-| Bare `rvt-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
+| Bare `tbc-revit-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
 | `--toolsets all` | **242** | Full catalog |
 | `all` + adaptive bake | **245** | Adds 3 suggestion-lifecycle tools |
 
@@ -138,19 +138,19 @@ A call missing a required parameter does not run. It returns `INVALID_ARGUMENT` 
 - **`revit_send_code_to_revit`** (on by default) compiles and runs a C# body inside Revit when no typed tool fits; `--read-only` or `--disable-send-code` removes it. See [docs/send-code.md](docs/send-code.md), and [docs/stairs-workflow.md](docs/stairs-workflow.md) for stairs.
 - **ToolBaker:** `revit_list_baked_tools` / `revit_run_baked_tool` need `--toolsets toolbaker`. Adaptive bake (`--enable-adaptive-bake`, off by default) suggests tools from repeated calls; nothing is added until you accept one. Bake compiles inside Revit — no Visual Studio needed. See [docs/bake.md](docs/bake.md).
 - **Ribbon:** start or stop the connection, open **History** to search past calls and review **Issues**, and switch completion **Toasts** (on by default).
-- **UI languages:** the add-in UI comes in 15 languages and follows Revit's UI language; change it with the **Language** button in the ribbon slide-out — it opens **Settings → General → Language** (`BIMWRIGHT_UI_LANGUAGE` still wins). Tool names and payloads stay English. See [docs/localization.md](docs/localization.md).
+- **UI languages:** the add-in UI comes in 15 languages and follows Revit's UI language; change it with the **Language** button in the ribbon slide-out — it opens **Settings → General → Language** (`TBC_REVIT_MCP_UI_LANGUAGE` still wins). Tool names and payloads stay English. See [docs/localization.md](docs/localization.md).
 
 ### Why activity toasts exist
 
 Toasts are work feedback, not just decoration. They grew out of three practical needs:
 
 - **Free users from watching the chat.** In real-world MCP workflows, an AI agent can work for a long time while Revit gives little visible feedback. Watching the chat just to check whether the agent is doing anything wastes attention. The activity card reports completed tool calls so users can turn to other work between updates.
-- **Support multitasking.** The maintainer develops and repeatedly tests several desktop applications in parallel. Compact notifications make it easier to follow those sessions without keeping every chat in view.
+- **Support multitasking.** The upstream maintainer develops and repeatedly tests several desktop applications in parallel. Compact notifications make it easier to follow those sessions without keeping every chat in view.
 - **Modernize the experience.** Revit-side feedback makes automation feel more responsive and understandable, without interrupting work with modal dialogs.
 
 A toast reports a tool result, **not progress inside a running tool or completion of the entire task**. Repeated results share one card; notifications may wait while Revit is minimized or blocked by a modal dialog. They do not replace reviewing the agent's work.
 
-Each card names the gateway and Revit year (for example `rvt-mcp 2022`), the latest tool, and the Success · Failed · Capture counts. A capture preview stays on the card for at least 5 seconds.
+Each card names the gateway and Revit year (for example `tbc-revit-mcp 2022`), the latest tool, and the Success · Failed · Capture counts. A capture preview stays on the card for at least 5 seconds.
 
 Deliberate hover opens an activity timeline showing the newest three results, each with its local completion time (`HH:mm:ss`). Scroll up for earlier calls in that card. Incoming results follow the bottom with a short glide-in (the rows rise, the new row fades in and its outcome dot pops; none of this with reduced motion); while you read older calls, your position stays put. Click inside the timeline to read without closing it; clicking the rest of the card opens History. This works with branding off. Summaries are bounded and redacted, stay in memory only, and clear when the card closes. Script objects/arrays show counts; an incomplete survey remains explicitly incomplete. Server-local tools do not gain toast coverage from this UI change.
 
@@ -160,7 +160,7 @@ Notifications are **on by default** and can be turned off. In **Settings → Toa
 
 ### Prompts
 
-v1.0.0 provides six MCP prompts — pick `/mcp__rvt-mcp__revit_<name>` (Claude Code) or the prompts menu (Claude Desktop), and the agent follows the script with the tools it already has:
+v1.0.0 provides six MCP prompts — pick `/mcp__tbc-revit-mcp__revit_<name>` (Claude Code) or the prompts menu (Claude Desktop), and the agent follows the script with the tools it already has:
 
 - `revit_getting_started` — orient in the open model (read-only, works on defaults).
 - `revit_drawing_layout` — supply `request`: arrange the viewports of one sheet. Reads real sheet-space positions first (`revit_get_viewport_geometry`), agrees the alignment with you, shows a dry-run plan (`revit_align_viewports`), moves only after you confirm, then reads back. Needs `query,sheets,view,meta`. In read-only mode it reports and proposes only.
@@ -181,35 +181,35 @@ Since v1.0.0 the server reports `_changes` and local per-model `_history`. Histo
 
 `revit_survey_change_impact` is a tool in `query`: a bounded, read-only survey of ten relationship groups, including with send-code disabled. `scopeThreshold` is required for each request; view/schedule iteration is opt-in through `maxViews > 0`. Partial results remain explicit and parameter observations are not trusted history snapshots. See [change-impact survey](docs/change-survey.md).
 
-Precedence, high wins: **CLI → env (`BIMWRIGHT_*`) →** `%LOCALAPPDATA%\Bimwright\rvt-mcp\rvtmcp.config.json`.
+Precedence, high wins: **CLI → env (`TBC_REVIT_MCP_*`) →** `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\rvtmcp.config.json`. The legacy upstream `BIMWRIGHT_*` names are still accepted when the matching `TBC_REVIT_MCP_*` variable is not set.
 
 | Setting | CLI | Env | JSON |
 |---------|-----|-----|------|
-| Target selector | `--target 2024` / `--target pid:12345` | `BIMWRIGHT_TARGET` | `target` |
-| Toolsets | `--toolsets query,create` | `BIMWRIGHT_TOOLSETS` | `toolsets` |
-| Read-only | `--read-only` | `BIMWRIGHT_READ_ONLY=1` | `readOnly` |
-| send_code | `--enable-send-code` / `--disable-send-code` | `BIMWRIGHT_ENABLE_SEND_CODE` | `enableSendCode` |
-| Call log | `--enable-call-log` / `--disable-call-log` | `BIMWRIGHT_ENABLE_CALL_LOG` | `enableCallLog` |
-| Warning policy (default `rollback`) | `--warning-policy rollback\|accept-and-log` | `BIMWRIGHT_WARNING_POLICY` | `warningPolicy` |
-| Change history (default ON) | `--enable-change-history` / `--disable-change-history` | `BIMWRIGHT_ENABLE_CHANGE_HISTORY` | `enableChangeHistory` |
-| Response guard | `--enable-response-guard` / `--disable-response-guard` | `BIMWRIGHT_ENABLE_RESPONSE_GUARD` | `enableResponseGuard` |
-| Warn bytes | `--response-warn-bytes` | `BIMWRIGHT_RESPONSE_WARN_BYTES` | `responseWarnBytes` |
-| Strong warn bytes | `--response-strong-warn-bytes` | `BIMWRIGHT_RESPONSE_STRONG_WARN_BYTES` | `responseStrongWarnBytes` |
-| Budget bytes | `--response-budget-bytes` | `BIMWRIGHT_RESPONSE_BUDGET_BYTES` | `responseBudgetBytes` |
-| Transport cap | `--max-response-bytes` | `BIMWRIGHT_MAX_RESPONSE_BYTES` | `maxResponseBytes` |
-| Spill retention (default 36 h) | `--spill-retention-hours <n>` | `BIMWRIGHT_SPILL_RETENTION_HOURS` | `spillRetentionHours` |
-| LAN bind (plugin) | — | `BIMWRIGHT_ALLOW_LAN_BIND=1` | `allowLanBind` |
-| Remember MCP On/Off at startup (plugin; default on) | ribbon **MCP: ON / OFF** | `BIMWRIGHT_AUTO_START_TRANSPORT=0/1` | `autoStartTransport` |
-| ToolBaker surface | `--enable-toolbaker` / `--disable-toolbaker` | `BIMWRIGHT_ENABLE_TOOLBAKER` | `enableToolbaker` |
-| Adaptive bake | `--enable-adaptive-bake` / `--disable-adaptive-bake` | `BIMWRIGHT_ENABLE_ADAPTIVE_BAKE=1` | `enableAdaptiveBake` |
-| Cache send_code bodies (bake clusters) | `--cache-send-code-bodies` / `--no-…` | `BIMWRIGHT_CACHE_SEND_CODE_BODIES=1` | `cacheSendCodeBodies` |
-| Persist send_code journal | `--persist-send-code-bodies` / `--no-…` | `BIMWRIGHT_PERSIST_SEND_CODE_BODIES=1` | `persistSendCodeBodies` |
-| Journal TTL (1h-14d) | `--persist-send-code-bodies-for 4h` | `BIMWRIGHT_PERSIST_SEND_CODE_BODIES_TTL` | `persistSendCodeBodiesUntil` |
-| Completion toast (default on) | ribbon **Toast** | `BIMWRIGHT_ENABLE_TOAST=0` | `enableToast` |
+| Target selector | `--target 2024` / `--target pid:12345` | `TBC_REVIT_MCP_TARGET` | `target` |
+| Toolsets | `--toolsets query,create` | `TBC_REVIT_MCP_TOOLSETS` | `toolsets` |
+| Read-only | `--read-only` | `TBC_REVIT_MCP_READ_ONLY=1` | `readOnly` |
+| send_code | `--enable-send-code` / `--disable-send-code` | `TBC_REVIT_MCP_ENABLE_SEND_CODE` | `enableSendCode` |
+| Call log | `--enable-call-log` / `--disable-call-log` | `TBC_REVIT_MCP_ENABLE_CALL_LOG` | `enableCallLog` |
+| Warning policy (default `rollback`) | `--warning-policy rollback\|accept-and-log` | `TBC_REVIT_MCP_WARNING_POLICY` | `warningPolicy` |
+| Change history (default ON) | `--enable-change-history` / `--disable-change-history` | `TBC_REVIT_MCP_ENABLE_CHANGE_HISTORY` | `enableChangeHistory` |
+| Response guard | `--enable-response-guard` / `--disable-response-guard` | `TBC_REVIT_MCP_ENABLE_RESPONSE_GUARD` | `enableResponseGuard` |
+| Warn bytes | `--response-warn-bytes` | `TBC_REVIT_MCP_RESPONSE_WARN_BYTES` | `responseWarnBytes` |
+| Strong warn bytes | `--response-strong-warn-bytes` | `TBC_REVIT_MCP_RESPONSE_STRONG_WARN_BYTES` | `responseStrongWarnBytes` |
+| Budget bytes | `--response-budget-bytes` | `TBC_REVIT_MCP_RESPONSE_BUDGET_BYTES` | `responseBudgetBytes` |
+| Transport cap | `--max-response-bytes` | `TBC_REVIT_MCP_MAX_RESPONSE_BYTES` | `maxResponseBytes` |
+| Spill retention (default 36 h) | `--spill-retention-hours <n>` | `TBC_REVIT_MCP_SPILL_RETENTION_HOURS` | `spillRetentionHours` |
+| LAN bind (plugin) | — | `TBC_REVIT_MCP_ALLOW_LAN_BIND=1` | `allowLanBind` |
+| Remember MCP On/Off at startup (plugin; default on) | ribbon **MCP: ON / OFF** | `TBC_REVIT_MCP_AUTO_START_TRANSPORT=0/1` | `autoStartTransport` |
+| ToolBaker surface | `--enable-toolbaker` / `--disable-toolbaker` | `TBC_REVIT_MCP_ENABLE_TOOLBAKER` | `enableToolbaker` |
+| Adaptive bake | `--enable-adaptive-bake` / `--disable-adaptive-bake` | `TBC_REVIT_MCP_ENABLE_ADAPTIVE_BAKE=1` | `enableAdaptiveBake` |
+| Cache send_code bodies (bake clusters) | `--cache-send-code-bodies` / `--no-…` | `TBC_REVIT_MCP_CACHE_SEND_CODE_BODIES=1` | `cacheSendCodeBodies` |
+| Persist send_code journal | `--persist-send-code-bodies` / `--no-…` | `TBC_REVIT_MCP_PERSIST_SEND_CODE_BODIES=1` | `persistSendCodeBodies` |
+| Journal TTL (1h-14d) | `--persist-send-code-bodies-for 4h` | `TBC_REVIT_MCP_PERSIST_SEND_CODE_BODIES_TTL` | `persistSendCodeBodiesUntil` |
+| Completion toast (default on) | ribbon **Toast** | `TBC_REVIT_MCP_ENABLE_TOAST=0` | `enableToast` |
 | Toast branding (default off, saved) | Settings → Toast → **Show branding** | — | `showBranding` |
 | Toast idle duration (default 20 s) | Settings → Toast → **Idle duration** | — | `toastIdleSeconds` |
 | Toast position (default top-left, no drag; saved) | Settings → Toast → **Horizontal / Vertical alignment**, **Allow dragging the card**, **Reset position** | — | `toastHorizontalAlign`, `toastVerticalAlign`, `toastDragEnabled`, `toastDragOffset` |
-| UI language (add-in) | ribbon **Language** | `BIMWRIGHT_UI_LANGUAGE` | `uiLanguage` |
+| UI language (add-in) | ribbon **Language** | `TBC_REVIT_MCP_UI_LANGUAGE` | `uiLanguage` |
 
 Settings warning-policy changes use **Apply / Discard** and apply to the next MCP call without retrying earlier calls. Only an explicit client CLI/environment policy overrides the host's per-call configuration; a gateway's startup JSON does not freeze the saved Settings value. A Revit-process environment override is shown in Settings and disables that row. See [warning-policy limits and receipts](docs/controlled-failures.md#warning-policy).
 
@@ -217,9 +217,9 @@ Journal retention offers exactly **1h, 4h, 8h, 12h, 24h, 2d, 7d, 14d** in Settin
 
 After changing server flags, restart the MCP connection so the client picks up the new tool list.
 
-The MCP ribbon toggle saves its last successful On/Off state as `autoStartTransport` in the same config file. Revit uses that value on its next launch; closing Revit or stopping transport programmatically does not overwrite it. The file is shared by Revit versions and instances for the same Windows user, so the last saved toggle determines startup for future instances without changing instances already running. An unset value defaults to On. `BIMWRIGHT_AUTO_START_TRANSPORT`, when set in the **Revit process** environment, overrides the saved value at startup; the ribbon still saves the user's choice, but the environment override continues to win on later launches. A save failure is reported and the toggle applies only to the current session.
+The MCP ribbon toggle saves its last successful On/Off state as `autoStartTransport` in the same config file. Revit uses that value on its next launch; closing Revit or stopping transport programmatically does not overwrite it. The file is shared by Revit versions and instances for the same Windows user, so the last saved toggle determines startup for future instances without changing instances already running. An unset value defaults to On. `TBC_REVIT_MCP_AUTO_START_TRANSPORT`, when set in the **Revit process** environment, overrides the saved value at startup; the ribbon still saves the user's choice, but the environment override continues to win on later launches. A save failure is reported and the toggle applies only to the current session.
 
-If another third-party MCP add-in is detected for that Revit version, rvt-mcp starts **Off**, even when the saved state or environment requests On. Autodesk's official Revit MCP is exempt. This startup override preserves the saved preference. Clicking the ribbon toggle to start manually shows a localized modal notice with the number of third-party MCP add-ins, including rvt-mcp; acknowledging it allows startup. Detection reads `.addin` manifests and compatible bundle registrations, recognizing MCP names/classes/assembly names and deduplicating registrations. MCP implementations hidden behind generic loader metadata may not be recognized.
+If another third-party MCP add-in is detected for that Revit version, tbc-revit-mcp starts **Off**, even when the saved state or environment requests On. Autodesk's official Revit MCP is exempt. This startup override preserves the saved preference. Clicking the ribbon toggle to start manually shows a localized modal notice with the number of third-party MCP add-ins, including tbc-revit-mcp; acknowledging it allows startup. Detection reads `.addin` manifests and compatible bundle registrations, recognizing MCP names/classes/assembly names and deduplicating registrations. MCP implementations hidden behind generic loader metadata may not be recognized.
 
 ---
 
@@ -227,7 +227,7 @@ If another third-party MCP add-in is detected for that Revit version, rvt-mcp st
 
 These controls arrive in v1.0.0. The v0.8.1 package does not include the new switches or per-tool read-only filtering. `send_code` and `run_baked_tool` must be called directly; `batch_execute` rejects them.
 
-MCP annotations describe each tool's document/file effects. Transient selection, active-view and zoom changes count as read-only. `send_code` has no annotations: keep it out of automatic permissions and confirm each arbitrary-code call. For Claude Code, copy only the read-only allow list below; do not allow the broad `mcp__rvt-mcp__*` wildcard. The list covers `--toolsets all`; your selected toolsets may expose fewer tools.
+MCP annotations describe each tool's document/file effects. Transient selection, active-view and zoom changes count as read-only. `send_code` has no annotations: keep it out of automatic permissions and confirm each arbitrary-code call. For Claude Code, copy only the read-only allow list below; do not allow the broad `mcp__tbc-revit-mcp__*` wildcard. The list covers `--toolsets all`; your selected toolsets may expose fewer tools.
 
 <details>
 <summary>Read-only allow list (generated from annotations)</summary>
@@ -237,107 +237,107 @@ MCP annotations describe each tool's document/file effects. Transient selection,
 {
   "permissions": {
     "allow": [
-      "mcp__rvt-mcp__revit_activate_view",
-      "mcp__rvt-mcp__revit_ai_element_filter",
-      "mcp__rvt-mcp__revit_analyze_geometry_complexity",
-      "mcp__rvt-mcp__revit_analyze_mep_network",
-      "mcp__rvt-mcp__revit_analyze_model_statistics",
-      "mcp__rvt-mcp__revit_analyze_sheet_layout",
-      "mcp__rvt-mcp__revit_analyze_structural_connections",
-      "mcp__rvt-mcp__revit_analyze_usage_patterns",
-      "mcp__rvt-mcp__revit_analyze_view_naming_patterns",
-      "mcp__rvt-mcp__revit_api_lookup",
-      "mcp__rvt-mcp__revit_audit_families",
-      "mcp__rvt-mcp__revit_clash_detection",
-      "mcp__rvt-mcp__revit_compute_element_area",
-      "mcp__rvt-mcp__revit_compute_element_volume",
-      "mcp__rvt-mcp__revit_detect_firm_profile",
-      "mcp__rvt-mcp__revit_detect_system_elements",
-      "mcp__rvt-mcp__revit_find_elements_in_volume",
-      "mcp__rvt-mcp__revit_find_mep_disconnects",
-      "mcp__rvt-mcp__revit_find_overlapping_elements",
-      "mcp__rvt-mcp__revit_find_schedule_elements",
-      "mcp__rvt-mcp__revit_find_undimensioned_elements",
-      "mcp__rvt-mcp__revit_find_untagged_elements",
-      "mcp__rvt-mcp__revit_get_assembly_members",
-      "mcp__rvt-mcp__revit_get_available_family_types",
-      "mcp__rvt-mcp__revit_get_change_records",
-      "mcp__rvt-mcp__revit_get_compound_structure",
-      "mcp__rvt-mcp__revit_get_current_target",
-      "mcp__rvt-mcp__revit_get_current_view_info",
-      "mcp__rvt-mcp__revit_get_element_bounding_box",
-      "mcp__rvt-mcp__revit_get_element_centroid",
-      "mcp__rvt-mcp__revit_get_element_details",
-      "mcp__rvt-mcp__revit_get_element_geometry",
-      "mcp__rvt-mcp__revit_get_element_parameters",
-      "mcp__rvt-mcp__revit_get_element_relationships",
-      "mcp__rvt-mcp__revit_get_failure_records",
-      "mcp__rvt-mcp__revit_get_family_instances",
-      "mcp__rvt-mcp__revit_get_group_members",
-      "mcp__rvt-mcp__revit_get_link_coordinate_system",
-      "mcp__rvt-mcp__revit_get_link_elements",
-      "mcp__rvt-mcp__revit_get_material_properties",
-      "mcp__rvt-mcp__revit_get_material_quantities",
-      "mcp__rvt-mcp__revit_get_mep_element_connectors",
-      "mcp__rvt-mcp__revit_get_model_warnings_summary",
-      "mcp__rvt-mcp__revit_get_operation_status",
-      "mcp__rvt-mcp__revit_get_panel_schedule",
-      "mcp__rvt-mcp__revit_get_print_settings",
-      "mcp__rvt-mcp__revit_get_project_coordinate_system",
-      "mcp__rvt-mcp__revit_get_railing_structure",
-      "mcp__rvt-mcp__revit_get_room_boundaries",
-      "mcp__rvt-mcp__revit_get_room_openings",
-      "mcp__rvt-mcp__revit_get_schedulable_fields",
-      "mcp__rvt-mcp__revit_get_schedule_data",
-      "mcp__rvt-mcp__revit_get_schedule_definition",
-      "mcp__rvt-mcp__revit_get_schedule_formulas",
-      "mcp__rvt-mcp__revit_get_selected_elements",
-      "mcp__rvt-mcp__revit_get_structural_loads",
-      "mcp__rvt-mcp__revit_get_system_inventory",
-      "mcp__rvt-mcp__revit_get_titleblock_parameters",
-      "mcp__rvt-mcp__revit_get_type_parameters",
-      "mcp__rvt-mcp__revit_get_view_visibility",
-      "mcp__rvt-mcp__revit_get_viewport_geometry",
-      "mcp__rvt-mcp__revit_health",
-      "mcp__rvt-mcp__revit_list_areas",
-      "mcp__rvt-mcp__revit_list_assemblies",
-      "mcp__rvt-mcp__revit_list_available_targets",
-      "mcp__rvt-mcp__revit_list_baked_tools",
-      "mcp__rvt-mcp__revit_list_export_settings",
-      "mcp__rvt-mcp__revit_list_family_types_in_family",
-      "mcp__rvt-mcp__revit_list_groups",
-      "mcp__rvt-mcp__revit_list_keynotes",
-      "mcp__rvt-mcp__revit_list_linked_cad",
-      "mcp__rvt-mcp__revit_list_linked_models",
-      "mcp__rvt-mcp__revit_list_loaded_families",
-      "mcp__rvt-mcp__revit_list_materials",
-      "mcp__rvt-mcp__revit_list_mep_systems",
-      "mcp__rvt-mcp__revit_list_phases",
-      "mcp__rvt-mcp__revit_list_project_parameter_bindings",
-      "mcp__rvt-mcp__revit_list_project_parameters",
-      "mcp__rvt-mcp__revit_list_rebar",
-      "mcp__rvt-mcp__revit_list_recent_models",
-      "mcp__rvt-mcp__revit_list_revisions",
-      "mcp__rvt-mcp__revit_list_rooms",
-      "mcp__rvt-mcp__revit_list_saved_selections",
-      "mcp__rvt-mcp__revit_list_schedules",
-      "mcp__rvt-mcp__revit_list_shared_parameters",
-      "mcp__rvt-mcp__revit_list_sheets",
-      "mcp__rvt-mcp__revit_list_titleblocks",
-      "mcp__rvt-mcp__revit_list_view_filters",
-      "mcp__rvt-mcp__revit_list_view_templates",
-      "mcp__rvt-mcp__revit_list_worksets",
-      "mcp__rvt-mcp__revit_load_selection",
-      "mcp__rvt-mcp__revit_lookup_message",
-      "mcp__rvt-mcp__revit_measure_distance_between_elements",
-      "mcp__rvt-mcp__revit_project_point_onto_face",
-      "mcp__rvt-mcp__revit_raycast_from_point",
-      "mcp__rvt-mcp__revit_select_elements",
-      "mcp__rvt-mcp__revit_show_element_in_view",
-      "mcp__rvt-mcp__revit_show_message",
-      "mcp__rvt-mcp__revit_suggest_view_name_corrections",
-      "mcp__rvt-mcp__revit_survey_change_impact",
-      "mcp__rvt-mcp__revit_workflow_model_audit"
+      "mcp__tbc-revit-mcp__revit_activate_view",
+      "mcp__tbc-revit-mcp__revit_ai_element_filter",
+      "mcp__tbc-revit-mcp__revit_analyze_geometry_complexity",
+      "mcp__tbc-revit-mcp__revit_analyze_mep_network",
+      "mcp__tbc-revit-mcp__revit_analyze_model_statistics",
+      "mcp__tbc-revit-mcp__revit_analyze_sheet_layout",
+      "mcp__tbc-revit-mcp__revit_analyze_structural_connections",
+      "mcp__tbc-revit-mcp__revit_analyze_usage_patterns",
+      "mcp__tbc-revit-mcp__revit_analyze_view_naming_patterns",
+      "mcp__tbc-revit-mcp__revit_api_lookup",
+      "mcp__tbc-revit-mcp__revit_audit_families",
+      "mcp__tbc-revit-mcp__revit_clash_detection",
+      "mcp__tbc-revit-mcp__revit_compute_element_area",
+      "mcp__tbc-revit-mcp__revit_compute_element_volume",
+      "mcp__tbc-revit-mcp__revit_detect_firm_profile",
+      "mcp__tbc-revit-mcp__revit_detect_system_elements",
+      "mcp__tbc-revit-mcp__revit_find_elements_in_volume",
+      "mcp__tbc-revit-mcp__revit_find_mep_disconnects",
+      "mcp__tbc-revit-mcp__revit_find_overlapping_elements",
+      "mcp__tbc-revit-mcp__revit_find_schedule_elements",
+      "mcp__tbc-revit-mcp__revit_find_undimensioned_elements",
+      "mcp__tbc-revit-mcp__revit_find_untagged_elements",
+      "mcp__tbc-revit-mcp__revit_get_assembly_members",
+      "mcp__tbc-revit-mcp__revit_get_available_family_types",
+      "mcp__tbc-revit-mcp__revit_get_change_records",
+      "mcp__tbc-revit-mcp__revit_get_compound_structure",
+      "mcp__tbc-revit-mcp__revit_get_current_target",
+      "mcp__tbc-revit-mcp__revit_get_current_view_info",
+      "mcp__tbc-revit-mcp__revit_get_element_bounding_box",
+      "mcp__tbc-revit-mcp__revit_get_element_centroid",
+      "mcp__tbc-revit-mcp__revit_get_element_details",
+      "mcp__tbc-revit-mcp__revit_get_element_geometry",
+      "mcp__tbc-revit-mcp__revit_get_element_parameters",
+      "mcp__tbc-revit-mcp__revit_get_element_relationships",
+      "mcp__tbc-revit-mcp__revit_get_failure_records",
+      "mcp__tbc-revit-mcp__revit_get_family_instances",
+      "mcp__tbc-revit-mcp__revit_get_group_members",
+      "mcp__tbc-revit-mcp__revit_get_link_coordinate_system",
+      "mcp__tbc-revit-mcp__revit_get_link_elements",
+      "mcp__tbc-revit-mcp__revit_get_material_properties",
+      "mcp__tbc-revit-mcp__revit_get_material_quantities",
+      "mcp__tbc-revit-mcp__revit_get_mep_element_connectors",
+      "mcp__tbc-revit-mcp__revit_get_model_warnings_summary",
+      "mcp__tbc-revit-mcp__revit_get_operation_status",
+      "mcp__tbc-revit-mcp__revit_get_panel_schedule",
+      "mcp__tbc-revit-mcp__revit_get_print_settings",
+      "mcp__tbc-revit-mcp__revit_get_project_coordinate_system",
+      "mcp__tbc-revit-mcp__revit_get_railing_structure",
+      "mcp__tbc-revit-mcp__revit_get_room_boundaries",
+      "mcp__tbc-revit-mcp__revit_get_room_openings",
+      "mcp__tbc-revit-mcp__revit_get_schedulable_fields",
+      "mcp__tbc-revit-mcp__revit_get_schedule_data",
+      "mcp__tbc-revit-mcp__revit_get_schedule_definition",
+      "mcp__tbc-revit-mcp__revit_get_schedule_formulas",
+      "mcp__tbc-revit-mcp__revit_get_selected_elements",
+      "mcp__tbc-revit-mcp__revit_get_structural_loads",
+      "mcp__tbc-revit-mcp__revit_get_system_inventory",
+      "mcp__tbc-revit-mcp__revit_get_titleblock_parameters",
+      "mcp__tbc-revit-mcp__revit_get_type_parameters",
+      "mcp__tbc-revit-mcp__revit_get_view_visibility",
+      "mcp__tbc-revit-mcp__revit_get_viewport_geometry",
+      "mcp__tbc-revit-mcp__revit_health",
+      "mcp__tbc-revit-mcp__revit_list_areas",
+      "mcp__tbc-revit-mcp__revit_list_assemblies",
+      "mcp__tbc-revit-mcp__revit_list_available_targets",
+      "mcp__tbc-revit-mcp__revit_list_baked_tools",
+      "mcp__tbc-revit-mcp__revit_list_export_settings",
+      "mcp__tbc-revit-mcp__revit_list_family_types_in_family",
+      "mcp__tbc-revit-mcp__revit_list_groups",
+      "mcp__tbc-revit-mcp__revit_list_keynotes",
+      "mcp__tbc-revit-mcp__revit_list_linked_cad",
+      "mcp__tbc-revit-mcp__revit_list_linked_models",
+      "mcp__tbc-revit-mcp__revit_list_loaded_families",
+      "mcp__tbc-revit-mcp__revit_list_materials",
+      "mcp__tbc-revit-mcp__revit_list_mep_systems",
+      "mcp__tbc-revit-mcp__revit_list_phases",
+      "mcp__tbc-revit-mcp__revit_list_project_parameter_bindings",
+      "mcp__tbc-revit-mcp__revit_list_project_parameters",
+      "mcp__tbc-revit-mcp__revit_list_rebar",
+      "mcp__tbc-revit-mcp__revit_list_recent_models",
+      "mcp__tbc-revit-mcp__revit_list_revisions",
+      "mcp__tbc-revit-mcp__revit_list_rooms",
+      "mcp__tbc-revit-mcp__revit_list_saved_selections",
+      "mcp__tbc-revit-mcp__revit_list_schedules",
+      "mcp__tbc-revit-mcp__revit_list_shared_parameters",
+      "mcp__tbc-revit-mcp__revit_list_sheets",
+      "mcp__tbc-revit-mcp__revit_list_titleblocks",
+      "mcp__tbc-revit-mcp__revit_list_view_filters",
+      "mcp__tbc-revit-mcp__revit_list_view_templates",
+      "mcp__tbc-revit-mcp__revit_list_worksets",
+      "mcp__tbc-revit-mcp__revit_load_selection",
+      "mcp__tbc-revit-mcp__revit_lookup_message",
+      "mcp__tbc-revit-mcp__revit_measure_distance_between_elements",
+      "mcp__tbc-revit-mcp__revit_project_point_onto_face",
+      "mcp__tbc-revit-mcp__revit_raycast_from_point",
+      "mcp__tbc-revit-mcp__revit_select_elements",
+      "mcp__tbc-revit-mcp__revit_show_element_in_view",
+      "mcp__tbc-revit-mcp__revit_show_message",
+      "mcp__tbc-revit-mcp__revit_suggest_view_name_corrections",
+      "mcp__tbc-revit-mcp__revit_survey_change_impact",
+      "mcp__tbc-revit-mcp__revit_workflow_model_audit"
     ]
   }
 }
@@ -348,7 +348,7 @@ MCP annotations describe each tool's document/file effects. Transient selection,
 
 send_code defaults **on**, independently of ToolBaker; call-log defaults **off**. CLI overrides environment variables, which override JSON. Authenticated server settings override plugin settings for that request only. Call-log off suppresses the server journal, plugin `mcp-calls.jsonl` and send-code body journal; in-memory History remains available. Body journaling needs both call-log on and its separate TTL opt-in. ToolBaker `usage.jsonl` is separate and follows adaptive-bake settings.
 
-Diagnostics from the gateway and Revit add-ins share `%LOCALAPPDATA%\Bimwright\rvt-mcp\rvt-mcp.log`: 10 MiB plus one 10 MiB backup. Entries include UTC date, process ID and Revit year; repeated messages are summarized. Logging uses a bounded background queue, so a locked file or slow disk can drop diagnostics without blocking Revit. Known legacy `revit-mcp.log`, `debug.log` and `baked/compile-refs.log` files retain only a 64 KiB tail; they are no longer copied during runtime data migration.
+Diagnostics from the gateway and Revit add-ins share `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\tbc-revit-mcp.log`: 10 MiB plus one 10 MiB backup. Entries include UTC date, process ID and Revit year; repeated messages are summarized. Logging uses a bounded background queue, so a locked file or slow disk can drop diagnostics without blocking Revit. Known legacy `revit-mcp.log`, `debug.log` and `baked/compile-refs.log` files retain only a 64 KiB tail; they are no longer copied during runtime data migration.
 
 Call logs, daily journals, send-code journals, usage and bake audit records each retain at most **30 days / 100 MiB per group**. New files rotate before an append exceeds 5 MiB and at UTC day rollover; startup maintenance and subsequent writes remove the oldest generated archives when needed. Usage analysis still covers at most 21 days and 5,000 recent records. Send-code body TTL remains an additional, shorter limit. Maintenance recognizes only generated log names and does not follow linked files or folders; models, configuration and databases are outside its scope.
 
@@ -406,7 +406,7 @@ Target error codes and recovery in writable sessions. Read-only sessions use the
 
 ## Security and privacy
 
-- Local by default: loopback TCP or a local named pipe, with a per-session auth token in the discovery files under `%LOCALAPPDATA%\Bimwright\rvt-mcp\`.
+- Local by default: loopback TCP or a local named pipe, with a per-session auth token in the discovery files under `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\`.
 - Tool arguments are schema-checked before handlers run; errors returned to the model are sanitized.
 - `send_code` runs arbitrary C# in the Revit process — powerful and risky. Use `--read-only` or `--disable-send-code` if that is unacceptable.
 - Adaptive bake, body cache and send_code journals are opt-in and stay under your user profile; defaults do not write raw send_code bodies to long-lived logs.
@@ -434,7 +434,7 @@ More: [SECURITY.md](SECURITY.md), [docs/bake.md](docs/bake.md).
 
 ## Community contributions
 
-Code, bug reports, reproducible examples and proposals help improve rvt-mcp. Thanks to:
+Code, bug reports, reproducible examples and proposals improved the upstream rvt-mcp project that this fork builds on (links point to upstream issues and pull requests). Thanks to:
 
 | Contributor | Contribution |
 |-------------|--------------|
@@ -447,30 +447,16 @@ Code, bug reports, reproducible examples and proposals help improve rvt-mcp. Tha
 
 ---
 
-## The bimwright family
+## Validation
 
-Open-source tools connecting AI assistants to BIM and CAD applications.
-
-The name **bimwright** combines **BIM** with **wright**, an old word for a maker or builder—as in *shipwright*.
-
-See [how the gateway names are chosen](https://github.com/bimwright/.github/blob/master/profile/README.md#naming).
-
-- [**rvt-mcp**](https://github.com/bimwright/rvt-mcp) — Autodesk® Revit®
-- [**dwg-mcp**](https://github.com/bimwright/dwg-mcp) — Autodesk® AutoCAD®
-- [**nwd-mcp**](https://github.com/bimwright/nwd-mcp) — Autodesk® Navisworks®
-- [**ipt-mcp**](https://github.com/bimwright/ipt-mcp) — Autodesk® Inventor®
-- [**bim-wiki**](https://github.com/bimwright/bim-wiki) — Vietnamese-first BIM knowledge base
+See the [tool descriptor benchmark](docs/benchmarks/2026-10-18-tool-descriptors.md) and [v1.2.0 validation record](docs/testing/2026-10-18-v1.2.0-validation.md), both recorded for upstream rvt-mcp before this fork. They distinguish affected regression results, earlier native evidence and pending release coverage; descriptor bytes do not measure model tokens or native performance.
 
 ---
 
-## Validation
-
-See the [tool descriptor benchmark](docs/benchmarks/2026-10-18-tool-descriptors.md) and [v1.2.0 validation record](docs/testing/2026-10-18-v1.2.0-validation.md). They distinguish affected regression results, earlier native evidence and pending release coverage; descriptor bytes do not measure model tokens or native performance.
-
-## License
+## License and attribution
 
 Apache-2.0 — [LICENSE](LICENSE).
 
-Forks and rebrands are welcome — the license terms are all that's required (keep `LICENSE` and the copyright notices, mark changed files). If rvt-mcp helped you, a star or a mention of BIMwright in your product is appreciated but entirely optional. Issues and PRs are always welcome.
+tbc-revit-mcp was originally created by Khoa Le (Bimwright) as [rvt-mcp](https://github.com/bimwright/rvt-mcp) and is modified and maintained by Nour Rouas. Changes from the original work are recorded in the git history and in [CHANGELOG.md](CHANGELOG.md); see [NOTICE](NOTICE). The Bimwright name and logo are not used to brand this fork. Issues and PRs are welcome.
 
-Revit and Autodesk are trademarks of Autodesk, Inc. bimwright is an independent open-source project and is not affiliated with, sponsored by, or endorsed by Autodesk, Inc.
+Revit and Autodesk are trademarks of Autodesk, Inc. tbc-revit-mcp is an independent open-source project and is not affiliated with, sponsored by, or endorsed by Autodesk, Inc.

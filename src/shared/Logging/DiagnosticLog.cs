@@ -44,7 +44,7 @@ namespace RvtMcp.Plugin
         {
             var safe = SecretMasker.Mask(message ?? "").Replace("\r", "\\r").Replace("\n", "\\n");
             if (safe.Length > 2048) safe = safe.Substring(0, 2048) + " [truncated]";
-            var root = Path.Combine(LocalAppDataOverride ?? Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Bimwright", "rvt-mcp");
+            var root = ProductIdentity.DataRoot(LocalAppDataOverride);
             if (!Queue.TryAdd(new Entry { Component = component, Message = safe, Year = year ?? "unknown", Root = root })) Interlocked.Increment(ref _dropped);
         }
 
@@ -57,7 +57,7 @@ namespace RvtMcp.Plugin
 
         public static void MaintainLegacyLogs()
         {
-            var root = Path.Combine(LocalAppDataOverride ?? Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Bimwright", "rvt-mcp");
+            var root = ProductIdentity.DataRoot(LocalAppDataOverride);
             // One bounded campaign per profile/process, including after retries are exhausted.
             if (!CleanupRoots.TryAdd(root, 0)) return;
             if (!Queue.TryAdd(new Entry { Cleanup = true, Root = root }))
@@ -120,7 +120,7 @@ namespace RvtMcp.Plugin
                 if (message.Length > 2300) message = message.Substring(0, 2300) + " [truncated]";
                 var root = entry.Root;
                 Directory.CreateDirectory(root);
-                var path = Path.Combine(root, "rvt-mcp.log");
+                var path = Path.Combine(root, "tbc-revit-mcp.log");
                 var text = DateTime.UtcNow.ToString("o", System.Globalization.CultureInfo.InvariantCulture) + " pid=" + Pid + " revit=" + entry.Year + " [" + entry.Component + "] " + message + "\n";
                 var bytes = Utf8.GetBytes(text);
                 BoundedLogFile.WithLock(path, () =>

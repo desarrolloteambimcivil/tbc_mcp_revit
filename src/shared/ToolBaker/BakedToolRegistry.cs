@@ -36,9 +36,7 @@ namespace RvtMcp.Plugin.ToolBaker
         private readonly object _lock = new object();
 
         public BakedToolRegistry()
-            : this(Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Bimwright", "rvt-mcp", "baked"))
+            : this(Path.Combine(ProductIdentity.DataRoot(), "baked"))
         {
         }
 

@@ -89,10 +89,7 @@ namespace RvtMcp.Plugin
 
         private static string DefaultDirectory()
         {
-            return System.IO.Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Bimwright", "rvt-mcp",
-                "spill");
+            return System.IO.Path.Combine(ProductIdentity.DataRoot(), "spill");
         }
 
         public ResponseSpillResult Write(string commandName, object? payload, ResponseSpillFormat format)

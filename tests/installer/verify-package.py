@@ -135,13 +135,15 @@ def main():
     report["smoke"] = []
     # Package-only checks use a disposable profile. The opt-in live check needs
     # the real profile's discovery files and retains its existing behavior.
-    env = {k: v for k, v in os.environ.items() if not k.upper().startswith("BIMWRIGHT_")}
+    # Drop current TBC_REVIT_MCP_* settings and the legacy BIMWRIGHT_* fallbacks.
+    env = {k: v for k, v in os.environ.items()
+           if not k.upper().startswith(("TBC_REVIT_MCP_", "BIMWRIGHT_"))}
     profile = package.parent / "smoke-profile"
     for key, path in (("USERPROFILE", profile), ("APPDATA", profile / "AppData/Roaming"),
                       ("LOCALAPPDATA", profile / "AppData/Local")):
         path.mkdir(parents=True, exist_ok=True)
         env[key] = str(path)
-    env["BIMWRIGHT_DISABLE_UPDATE_CHECK"] = "1"
+    env["TBC_REVIT_MCP_DISABLE_UPDATE_CHECK"] = "1"
     if args.live_2027:
         env = None
     report["profileMode"] = "real-profile-live-opt-in" if args.live_2027 else "disposable-package-only"

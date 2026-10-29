@@ -10,7 +10,7 @@ namespace RvtMcp.Plugin
 {
     internal static class LegacyDataMigration
     {
-        private static readonly string[] UserFolders = { "baked", "journal", "firm-profiles", "captures", "locales", "projects", "history-pending", "history-quarantine" };
+        private static readonly string[] UserFolders = { "baked", "journal", "firm-profiles", "captures", "locales", "projects", "history-pending", "history-quarantine", "failures" };
         private static readonly string[] FamilyRootFiles = { "rvtmcp.config.json", "bake.db", "mcp-calls.jsonl", "mcp-calls.version", "send-code-journal.jsonl", "send-code-journal.disabled-at", "usage.jsonl", "revit-mcp.log", "debug.log" };
 
         public static bool TryMigrateOnce(Action<string> log, string localAppDataPath = null)
@@ -27,15 +27,21 @@ namespace RvtMcp.Plugin
         public static void MigrateOnce(string localAppDataPath = null)
         {
             var local = localAppDataPath ?? Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var family = Path.Combine(local, "Bimwright");
-            var current = Path.Combine(family, "rvt-mcp");
+            var current = ProductIdentity.DataRoot(local);
+            // bimwright/rvt-mcp 1.x root. It already holds whatever its own migration copied from
+            // the two older locations below, so when it has data it is the only source.
+            var upstream = ProductIdentity.LegacyDataRoot(local);
+            bool upstreamHasData = File.Exists(Path.Combine(upstream, "rvtmcp.config.json"))
+                || File.Exists(Path.Combine(upstream, "bake.db"))
+                || new[] { "baked", "journal", "projects", "failures" }.Any(d => Directory.Exists(Path.Combine(upstream, d)));
+            var family = Path.Combine(local, ProductIdentity.LegacyVendorFolder);
             var old = Path.Combine(local, "RvtMcp");
-            bool oldExists = Directory.Exists(old);
+            bool oldExists = !upstreamHasData && Directory.Exists(old);
             // A sibling product or a lone shared bake.db does not prove this is legacy RVT data.
-            bool familyHasRvt = File.Exists(Path.Combine(family, "rvtmcp.config.json"))
+            bool familyHasRvt = !upstreamHasData && (File.Exists(Path.Combine(family, "rvtmcp.config.json"))
                 || File.Exists(Path.Combine(family, "revit-mcp.log"))
-                || new[] { "baked", "journal", "firm-profiles" }.Any(d => Directory.Exists(Path.Combine(family, d)));
-            if (!oldExists && !familyHasRvt) return;
+                || new[] { "baked", "journal", "firm-profiles" }.Any(d => Directory.Exists(Path.Combine(family, d))));
+            if (!upstreamHasData && !oldExists && !familyHasRvt) return;
             string key;
             using (var hash = SHA256.Create())
                 key = BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(Path.GetFullPath(current).ToUpperInvariant()))).Replace("-", "");
@@ -47,6 +53,7 @@ namespace RvtMcp.Plugin
                     try { acquired = gate.WaitOne(TimeSpan.FromSeconds(5)); }
                     catch (AbandonedMutexException) { acquired = true; }
                     if (!acquired) throw new IOException("Data migration is in use by another process.");
+                    if (upstreamHasData) CopyRoot(upstream, current, ".migrated-from-bimwright-rvt-mcp", false, fromUpstream: true);
                     if (oldExists) CopyRoot(old, current, ".migrated-from-rvtmcp-v2", false);
                     if (familyHasRvt) CopyRoot(family, current, ".migrated-from-bimwright-v2", true);
                 }
@@ -54,7 +61,7 @@ namespace RvtMcp.Plugin
             }
         }
 
-        private static void CopyRoot(string source, string destination, string markerName, bool familyRoot)
+        private static void CopyRoot(string source, string destination, string markerName, bool familyRoot, bool fromUpstream = false)
         {
             var marker = Path.Combine(destination, markerName);
             if (File.Exists(marker)) return;
@@ -70,6 +77,9 @@ namespace RvtMcp.Plugin
                 var name = Path.GetFileName(file);
                 if (name == "revit-mcp.log" || name == "debug.log" || name == "compile-refs.log") continue;
                 if (familyRoot && !FamilyRootFiles.Contains(name, StringComparer.OrdinalIgnoreCase)) continue;
+                // A running upstream add-in may hold its logs open, and its update state names upstream releases.
+                if (fromUpstream && (name.EndsWith(".log", StringComparison.OrdinalIgnoreCase)
+                    || name.Equals("update-check.json", StringComparison.OrdinalIgnoreCase))) continue;
                 if (name.StartsWith(".", StringComparison.Ordinal) || name.EndsWith("-wal", StringComparison.OrdinalIgnoreCase)
                     || name.EndsWith("-shm", StringComparison.OrdinalIgnoreCase)
                     || name.StartsWith("revit-20", StringComparison.OrdinalIgnoreCase)) continue;

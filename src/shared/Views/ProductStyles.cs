@@ -10,7 +10,7 @@ namespace RvtMcp.Plugin.Views
     /// animated border ring on hover, press-scale feedback. Self-contained:
     /// parsed from embedded XAML, no external resource files.
     /// </summary>
-    internal static class BimwrightStyles
+    internal static class ProductStyles
     {
         public const string ToolbarButtonKey = "BimToolbarButton";
         public const string PrimaryButtonKey = "BimPrimaryButton";

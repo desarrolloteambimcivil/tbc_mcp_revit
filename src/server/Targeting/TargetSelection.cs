@@ -1,6 +1,6 @@
 #nullable enable
 
-// Bimwright.Targeting — shared pure core for target discovery & binding (spec BW-TARGET-001).
+// RvtMcp.Targeting — shared pure core for target discovery & binding (spec BW-TARGET-001).
 // This file is copied verbatim into each product server repo. Dependencies: BCL + Newtonsoft.Json.
 // No file IO, no Process access (liveness goes through IProcessProbe), no product-specific code
 // beyond the HostProducts tables.
@@ -11,7 +11,7 @@ using System.Globalization;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
-namespace Bimwright.Targeting
+namespace RvtMcp.Targeting
 {
     internal enum HostProduct { Revit, AutoCad, Navisworks, Inventor }
 

@@ -26,7 +26,7 @@ namespace RvtMcp.Plugin.Views
             MaxHeight = SystemParameters.WorkArea.Height * 0.9; MaxWidth = SystemParameters.WorkArea.Width;
             FontFamily = new FontFamily("Segoe UI"); FontSize = 12.5; Foreground = Text; Background = Page;
             UseLayoutRounding = true; SnapsToDevicePixels = true;
-            Resources.MergedDictionaries.Add(BimwrightStyles.Dictionary);
+            Resources.MergedDictionaries.Add(ProductStyles.Dictionary);
 
             var root = new Grid();
             root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
@@ -77,7 +77,7 @@ namespace RvtMcp.Plugin.Views
             buttons.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto, SharedSizeGroup = "DecisionButton" });
             buttons.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto, SharedSizeGroup = "DecisionButton" });
             var cancel = new Button { Content = L.T("security.failure.review.cancel"), IsCancel = true, MinWidth = 110, Margin = new Thickness(0, 0, 8, 0) };
-            var approve = new Button { Content = action, MinWidth = 110, Style = (Style)BimwrightStyles.Dictionary[BimwrightStyles.PrimaryButtonKey] };
+            var approve = new Button { Content = action, MinWidth = 110, Style = (Style)ProductStyles.Dictionary[ProductStyles.PrimaryButtonKey] };
             approve.Click += (s, e) => DialogResult = true;
             Grid.SetColumn(approve, 1);
             buttons.Children.Add(cancel); buttons.Children.Add(approve);

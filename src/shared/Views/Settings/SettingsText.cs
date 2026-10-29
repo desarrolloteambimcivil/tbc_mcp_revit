@@ -33,7 +33,7 @@ namespace RvtMcp.Plugin.Views.Settings
         public const string RibbonCaption = "Language";
         public const string AutomationName = "Language";
         public const string AutomationHelp = "Select a session language. An environment override disables this control.";
-        public const string OverrideToolTip = "Environment override is active; restart uses BIMWRIGHT_UI_LANGUAGE.";
+        public const string OverrideToolTip = "Environment override is active; restart uses TBC_REVIT_MCP_UI_LANGUAGE.";
         public const string SelectionToolTip = "Select a language; changes apply immediately.";
         public const string SessionOnlyWarning = "Environment override is active; this choice is session-only.";
     }

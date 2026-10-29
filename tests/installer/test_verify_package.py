@@ -36,7 +36,7 @@ class ChecksumSidecarTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='rvt-zip-verifier-')
         self.addCleanup(self.temp.cleanup)
-        self.package = Path(self.temp.name) / 'RvtMcp.Setup-v1.1.0-win-x64.zip'
+        self.package = Path(self.temp.name) / 'TbcRevitMcp.Setup-v1.1.0-win-x64.zip'
         self.package.write_bytes(b'disposable payload')
         self.sidecar = Path(str(self.package) + '.sha256')
         self.sha256 = digest(self.package.read_bytes())
@@ -54,7 +54,7 @@ class ChecksumSidecarTests(unittest.TestCase):
             verify_checksum_sidecar(self.package, digest(self.package.read_bytes()))
 
     def test_sidecar_for_another_version_rejects_even_with_matching_bytes(self):
-        self.sidecar.write_text(f'{self.sha256}  RvtMcp.Setup-v1.0.1-win-x64.zip', encoding='ascii')
+        self.sidecar.write_text(f'{self.sha256}  TbcRevitMcp.Setup-v1.0.1-win-x64.zip', encoding='ascii')
         with self.assertRaisesRegex(AssertionError, 'filename/format mismatch'):
             verify_checksum_sidecar(self.package, self.sha256)
 
@@ -72,7 +72,7 @@ class ChecksumSidecarTests(unittest.TestCase):
 
 class ArchivePathTests(unittest.TestCase):
     def test_safe_relative_payload_paths(self):
-        for name in ('manifest.json', 'server/rvt-mcp.exe', 'plugins/RvtMcp.Plugin.R27.zip'):
+        for name in ('manifest.json', 'server/tbc-revit-mcp.exe', 'plugins/RvtMcp.Plugin.R27.zip'):
             with self.subTest(name=name):
                 safe_path(name)
 

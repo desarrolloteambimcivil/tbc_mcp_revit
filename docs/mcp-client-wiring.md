@@ -1,6 +1,6 @@
-# Wiring rvt-mcp into MCP clients
+# Wiring tbc-revit-mcp into MCP clients
 
-Procedure for connecting `rvt-mcp` to a user's MCP client. Since v0.8.1 the
+Procedure for connecting `tbc-revit-mcp` to a user's MCP client. Since v0.8.1 the
 installer implements this same procedure: every run wires each detected client
 (`-Client <names>` limits it; `-Client none` skips it; `-WhatIf` previews;
 `-Uninstall -Client <names>` unwires) — this document remains the reference for the
@@ -19,9 +19,9 @@ choosing one route. See [Desktop routes](install.md#claude-desktop-choose-one-re
 
 | Field | Value |
 |---|---|
-| Entry name | `rvt-mcp` — exactly one entry per client |
+| Entry name | `tbc-revit-mcp` — exactly one entry per client |
 | Transport | stdio |
-| Command | `%LOCALAPPDATA%\Bimwright\rvt-mcp\server\current\rvt-mcp.exe` (absolute) |
+| Command | `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\server\current\tbc-revit-mcp.exe` (absolute) |
 | Args | none required (`--toolsets all`, `--read-only` optional) |
 
 The `current` path stays the same across upgrades. Restart/reconnect the client
@@ -33,8 +33,8 @@ release because its launcher checks the executable hash.
 
 1. **Detect** the client (`where.exe <cli>` or its config path exists).
 2. **Locate** the config or native CLI (per-client table below).
-3. **Inspect** existing entries before writing: an `rvt-mcp` entry, legacy
-   `bimwright-rvt*` entries, entries with custom launchers/wrappers.
+3. **Inspect** existing entries before writing: a `tbc-revit-mcp` entry, an upstream
+   `rvt-mcp` entry, legacy `bimwright-rvt*` entries, entries with custom launchers/wrappers.
 4. **Back up** the config file (`Copy-Item $f "$f.bak"`) before editing.
 5. **Show** the exact command or diff; get the user's approval.
 6. **Apply** the edit — minimal text change, never a full JSON round-trip
@@ -59,9 +59,11 @@ See [upgrade verification](install.md#verify-an-upgrade-from-v10x-or-v110).
 
 Edge-case rules, all clients:
 
-- `rvt-mcp` pointing at `...\server\<version>\rvt-mcp.exe` (pre-0.6.3 layout)
+- `rvt-mcp` pointing at `...\server\<version>\rvt-mcp.exe` (upstream pre-0.6.3 layout)
   → repoint `command` to the `current` path, keep its args/env.
-- `bimwright-rvt*` entries → report them; remove only with consent.
+- An upstream `rvt-mcp` entry (command under `%LOCALAPPDATA%\Bimwright\rvt-mcp\`) → report it;
+  replace or remove it only with consent, and do not run both gateways against one Revit.
+- `bimwright-rvt*` entries (upstream pre-0.5 naming) → report them; remove only with consent.
 - Custom launcher/wrapper command → report; never silently replace.
 - Never delete unrelated entries. Re-running this procedure must not
   duplicate the entry.
@@ -98,13 +100,13 @@ pending and provide the exact next action.
 ### Claude Code (CLI — preferred path)
 
 ```powershell
-claude mcp add -s user rvt-mcp -- "$env:LOCALAPPDATA\Bimwright\rvt-mcp\server\current\rvt-mcp.exe"
-claude mcp get rvt-mcp     # expect Scope: User config, Status: Connected
+claude mcp add -s user tbc-revit-mcp -- "$env:LOCALAPPDATA\NourRouas\tbc-revit-mcp\server\current\tbc-revit-mcp.exe"
+claude mcp get tbc-revit-mcp     # expect Scope: User config, Status: Connected
 ```
 
 - `-s user` is required — default scope is *local* (one project) and a stale
   local entry shadows the user one. Remove it from the project directory:
-  `claude mcp remove rvt-mcp -s local`.
+  `claude mcp remove tbc-revit-mcp -s local`.
 - Config lives in `~/.claude.json`; `CLAUDE_CONFIG_DIR` redirects it.
 - Running `claude` processes can rewrite `.claude.json` from memory — check
   the file again after they exit if entries reappear.
@@ -138,8 +140,8 @@ that old message as a reason to downgrade a verified newer gateway.
 ### Codex (CLI)
 
 ```powershell
-codex mcp add rvt-mcp -- "$env:LOCALAPPDATA\Bimwright\rvt-mcp\server\current\rvt-mcp.exe"
-codex mcp get rvt-mcp --json   # verify transport.command
+codex mcp add tbc-revit-mcp -- "$env:LOCALAPPDATA\NourRouas\tbc-revit-mcp\server\current\tbc-revit-mcp.exe"
+codex mcp get tbc-revit-mcp --json   # verify transport.command
 ```
 
 - `mcp add` **replaces the whole entry** — when repointing, carry existing
@@ -154,7 +156,7 @@ codex mcp get rvt-mcp --json   # verify transport.command
   an **array**, env key is `environment`:
 
 ```jsonc
-"mcp": { "rvt-mcp": { "type": "local", "command": ["C:\\...\\rvt-mcp.exe"], "enabled": true } }
+"mcp": { "tbc-revit-mcp": { "type": "local", "command": ["C:\\...\\tbc-revit-mcp.exe"], "enabled": true } }
 ```
 
 ### Kilo (file)
@@ -162,13 +164,13 @@ codex mcp get rvt-mcp --json   # verify transport.command
 - `~/.config/kilo/kilo.jsonc` — OpenCode shape (`mcp`, array `command`,
   `environment`). `kilo mcp add` accepts no local-command flag, so file edit
   is the documented path.
-- Tool-permission patterns use single underscores (`rvt-mcp_revit_*`);
+- Tool-permission patterns use single underscores (`tbc-revit-mcp_revit_*`);
   last matching rule wins — append new rules, don't prepend.
 
 ### Grok (CLI)
 
 ```powershell
-grok mcp add rvt-mcp "$env:LOCALAPPDATA\Bimwright\rvt-mcp\server\current\rvt-mcp.exe" --transport stdio
+grok mcp add tbc-revit-mcp "$env:LOCALAPPDATA\NourRouas\tbc-revit-mcp\server\current\tbc-revit-mcp.exe" --transport stdio
 grok mcp list; grok mcp doctor
 ```
 
@@ -188,7 +190,7 @@ grok mcp list; grok mcp doctor
   Top key is **`servers`** and the entry needs `"type": "stdio"`:
 
 ```json
-"servers": { "rvt-mcp": { "type": "stdio", "command": "C:\\...\\rvt-mcp.exe", "args": [] } }
+"servers": { "tbc-revit-mcp": { "type": "stdio", "command": "C:\\...\\tbc-revit-mcp.exe", "args": [] } }
 ```
 
 ### Cline / Roo-style VS Code extensions (file)
@@ -202,7 +204,7 @@ grok mcp list; grok mcp doctor
   Top key is **`context_servers`**, command is an object:
 
 ```jsonc
-"context_servers": { "rvt-mcp": { "command": { "path": "C:\\...\\rvt-mcp.exe", "args": [] } } }
+"context_servers": { "tbc-revit-mcp": { "command": { "path": "C:\\...\\tbc-revit-mcp.exe", "args": [] } } }
 ```
 
 ### Gemini CLI (file)
@@ -249,7 +251,7 @@ MCP config lives in leveldb; do not edit files. Either:
 
 - **Deeplink** (verified schema): build
   `cherrystudio://mcp/install?servers=<base64>` where the base64 decodes to
-  `{"mcpServers":{"rvt-mcp":{"command":"C:\\...\\rvt-mcp.exe","args":[]}}}`
+  `{"mcpServers":{"tbc-revit-mcp":{"command":"C:\\...\\tbc-revit-mcp.exe","args":[]}}}`
   and hand the URL to the user to open.
 - **UI import**: Settings → MCP Servers → Add → import the same JSON.
 
@@ -257,7 +259,7 @@ MCP config lives in leveldb; do not edit files. Either:
 
 1. Client-native check where available (`claude mcp get`, `codex mcp get
    --json`, `grok mcp doctor`, `kilo mcp list`).
-2. In the **requested target client**, `tools/list` shows `rvt-mcp` tools.
+2. In the **requested target client**, `tools/list` shows `tbc-revit-mcp` tools.
    Installed servers seed `toolsets=all` in `rvtmcp.config.json`; a bare exe without
    that file defaults to `query,create,view,meta`. Respect existing toolsets and
    read-only choices instead of requiring a fixed count.
@@ -279,6 +281,6 @@ pending. A missing restart/model is not grounds for a full uninstall.
 | `PAIRING_REQUIRED` in a development build, or unsupported verified-target protocol | Loaded add-in and gateway cannot perform verified writes together | Update gateway/add-ins from one release, restart Revit and the requested client, then select and verify the intended document. |
 | Config parse error after edit | Whole-file rewrite lost JSONC comments or left a dangling comma | Restore `.bak`; re-apply as minimal text edit |
 | `invalid transport` (Codex) | Orphan `[mcp_servers.<name>.env]` table | Remove the orphan table |
-| Client can't spawn server | Command path wrong or exe missing | Re-check the `current` path; run `rvt-mcp.exe --help` |
-| Two `rvt-mcp` entries | Procedure ran twice with different scope/shape | Remove the extra via the client's remove command or a minimal edit |
+| Client can't spawn server | Command path wrong or exe missing | Re-check the `current` path; run `tbc-revit-mcp.exe --help` |
+| Two `tbc-revit-mcp` entries | Procedure ran twice with different scope/shape | Remove the extra via the client's remove command or a minimal edit |
 | Long tool call (`revit_open_model`, `revit_link_revit_model`, `revit_export_ifc`, …) still dies near the client's own timeout even with `timeout_seconds` raised | The client enforces its own tool-call limit before the plugin's wait ends (e.g. Claude Code's `MCP_TOOL_TIMEOUT`, milliseconds). IFC defaults to a 600-second plugin wait; the supported maximum is 900 seconds. | Set the client deadline above the plugin budget plus transport grace, e.g. Codex `tool_timeout_sec=960` or Claude Code `MCP_TOOL_TIMEOUT=960000`; if it still fires first, do not retry blindly — the Revit-side operation keeps running, so check state before repeating the call |

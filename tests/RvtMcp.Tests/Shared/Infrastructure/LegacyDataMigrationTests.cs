@@ -18,7 +18,7 @@ public class LegacyDataMigrationTests
 
             LegacyDataMigration.MigrateOnce(tempLocal);
 
-            Assert.False(Directory.Exists(Path.Combine(tempLocal, "Bimwright", "rvt-mcp")));
+            Assert.False(Directory.Exists(Path.Combine(tempLocal, "NourRouas", "tbc-revit-mcp")));
             Assert.Equal("{}", File.ReadAllText(Path.Combine(sibling, "tool.json")));
         }
         finally
@@ -43,9 +43,9 @@ public class LegacyDataMigrationTests
             LegacyDataMigration.MigrateOnce(tempLocal);
 
             // Assert
-            var newBaked = Path.Combine(tempLocal, "Bimwright", "rvt-mcp", "baked", "tool1.json");
+            var newBaked = Path.Combine(tempLocal, "NourRouas", "tbc-revit-mcp", "baked", "tool1.json");
             Assert.True(File.Exists(newBaked));
-            var marker = Path.Combine(tempLocal, "Bimwright", "rvt-mcp", ".migrated-from-bimwright-v2");
+            var marker = Path.Combine(tempLocal, "NourRouas", "tbc-revit-mcp", ".migrated-from-bimwright-v2");
             Assert.True(File.Exists(marker));
         }
         finally
@@ -65,12 +65,70 @@ public class LegacyDataMigrationTests
             File.WriteAllText(Path.Combine(tempLocal, "Bimwright", "baked", "tool1.json"), "{}");
 
             LegacyDataMigration.MigrateOnce(tempLocal);
-            var firstMtime = File.GetLastWriteTimeUtc(Path.Combine(tempLocal, "Bimwright", "rvt-mcp", "baked", "tool1.json"));
+            var firstMtime = File.GetLastWriteTimeUtc(Path.Combine(tempLocal, "NourRouas", "tbc-revit-mcp", "baked", "tool1.json"));
 
             LegacyDataMigration.MigrateOnce(tempLocal);   // second call — should be no-op
-            var secondMtime = File.GetLastWriteTimeUtc(Path.Combine(tempLocal, "Bimwright", "rvt-mcp", "baked", "tool1.json"));
+            var secondMtime = File.GetLastWriteTimeUtc(Path.Combine(tempLocal, "NourRouas", "tbc-revit-mcp", "baked", "tool1.json"));
 
             Assert.Equal(firstMtime, secondMtime);
+        }
+        finally
+        {
+            Directory.Delete(tempLocal, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void MigrateOnce_CopiesUpstreamRootWithoutLogsUpdateStateOrServer()
+    {
+        var tempLocal = Path.Combine(Path.GetTempPath(), "rvtmcp-migration-test-" + Guid.NewGuid());
+        var upstream = Path.Combine(tempLocal, "Bimwright", "rvt-mcp");
+        var current = Path.Combine(tempLocal, "NourRouas", "tbc-revit-mcp");
+        Directory.CreateDirectory(Path.Combine(upstream, "failures", "pending"));
+        Directory.CreateDirectory(Path.Combine(upstream, "server", "current"));
+        try
+        {
+            File.WriteAllText(Path.Combine(upstream, "rvtmcp.config.json"), "{\"toolsets\":[\"all\"]}");
+            File.WriteAllText(Path.Combine(upstream, "failures", "pending", "capture.json"), "{}");
+            File.WriteAllText(Path.Combine(upstream, "rvt-mcp.log"), "log");
+            File.WriteAllText(Path.Combine(upstream, "update-check.json"), "{}");
+            File.WriteAllText(Path.Combine(upstream, "server", "current", "rvt-mcp.exe"), "exe");
+
+            LegacyDataMigration.MigrateOnce(tempLocal);
+
+            Assert.Equal("{\"toolsets\":[\"all\"]}", File.ReadAllText(Path.Combine(current, "rvtmcp.config.json")));
+            Assert.True(File.Exists(Path.Combine(current, "failures", "pending", "capture.json")));
+            Assert.True(File.Exists(Path.Combine(current, ".migrated-from-bimwright-rvt-mcp")));
+            Assert.False(File.Exists(Path.Combine(current, "rvt-mcp.log")));
+            Assert.False(File.Exists(Path.Combine(current, "update-check.json")));
+            Assert.False(Directory.Exists(Path.Combine(current, "server")));
+            Assert.True(File.Exists(Path.Combine(upstream, "rvtmcp.config.json")));
+        }
+        finally
+        {
+            Directory.Delete(tempLocal, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void MigrateOnce_PrefersUpstreamRootOverOlderRecoveryFolders()
+    {
+        var tempLocal = Path.Combine(Path.GetTempPath(), "rvtmcp-migration-test-" + Guid.NewGuid());
+        var upstream = Path.Combine(tempLocal, "Bimwright", "rvt-mcp");
+        var older = Path.Combine(tempLocal, "RvtMcp");
+        Directory.CreateDirectory(upstream);
+        Directory.CreateDirectory(older);
+        try
+        {
+            // The older folder is recovery data that upstream already migrated and later diverged from.
+            File.WriteAllText(Path.Combine(upstream, "rvtmcp.config.json"), "{\"toolsets\":[\"all\"]}");
+            File.WriteAllText(Path.Combine(older, "rvtmcp.config.json"), "{}");
+
+            LegacyDataMigration.MigrateOnce(tempLocal);
+
+            var current = Path.Combine(tempLocal, "NourRouas", "tbc-revit-mcp");
+            Assert.Equal("{\"toolsets\":[\"all\"]}", File.ReadAllText(Path.Combine(current, "rvtmcp.config.json")));
+            Assert.False(File.Exists(Path.Combine(current, ".migrated-from-rvtmcp-v2")));
         }
         finally
         {

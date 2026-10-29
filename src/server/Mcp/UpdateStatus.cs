@@ -5,7 +5,7 @@ namespace RvtMcp.Server
 {
     /// <summary>
     /// MCP-side view of the add-in's cached update check
-    /// (%LOCALAPPDATA%\Bimwright\rvt-mcp\update-check.json). Never touches the network and
+    /// (%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\update-check.json). Never touches the network and
     /// stays silent when the user skipped that version in Revit.
     /// </summary>
     internal static class UpdateStatus

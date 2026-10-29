@@ -1,6 +1,6 @@
-﻿# RvtMcp-MCP
+﻿# tbc-revit-mcp
 
-Open-source (Apache-2.0) MCP gateway that lets Claude Code (and any MCP-capable client) drive Autodesk Revit 2022–2027.
+Open-source (Apache-2.0) MCP gateway that lets Claude Code (and any MCP-capable client) drive Autodesk Revit 2022–2027. Fork of [bimwright/rvt-mcp](https://github.com/bimwright/rvt-mcp) maintained by Nour Rouas (`nour-rouas/tbc-revit-mcp`); see `NOTICE`. Product name, author, data folder and env-var prefix live in `src/shared/Infrastructure/ProductIdentity.cs`. Env vars use the `TBC_REVIT_MCP_` prefix; the legacy `BIMWRIGHT_` names are still read when the new name is not set, and data migrates on first start from `%LOCALAPPDATA%\Bimwright\rvt-mcp\` (and the older `%LOCALAPPDATA%\RvtMcp\`), leaving the old folder in place.
 
 ## Architecture
 
@@ -14,7 +14,7 @@ Two processes:
 - **RvtMcp.Server.exe** — MCP Server, runs as separate process, stdio transport (ModelContextProtocol NuGet)
 - **RvtMcp.Plugin.dll** — Revit addin, loads inside Revit.exe, TCP listener (Revit 2022–2024) or Named Pipe (Revit 2025–2027) + ExternalEvent marshalling. Each Revit version gets its own shell DLL compiled from the same `src/shared/` source glob.
 
-Communication: newline-delimited JSON (NDJSON). Discovery files written per Revit instance in `%LOCALAPPDATA%\Bimwright\rvt-mcp\`:
+Communication: newline-delimited JSON (NDJSON). Discovery files written per Revit instance in `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\`:
 - `revit-<year>-<pid>.json` — per-instance descriptor (schema 3) for every instance, plus the legacy `revit-<year>.json` for older servers
 - `revit-2022.json` / `revit-2023.json` / `revit-2024.json` — legacy per-year files: TCP transport (port OS-assigned) + auth token + PID
 - `revit-2025.json` / `revit-2026.json` / `revit-2027.json` — legacy per-year files: Named Pipe transport + auth token + PID
@@ -108,7 +108,7 @@ MCP Server runs from `src/server/bin/Debug/net8.0/RvtMcp.Server.exe`.
 - ConcurrentQueue<PendingRequest> with per-request TaskCompletionSource
 - ExternalEvent.Raise() marshals to Revit UI thread
 - One live command per ExternalEvent (re-Raise if the queue still has work); skip completed TCS (timeout/cancel)
-- Wire responses: agent-visible warning from 64 KiB, strong warning above 256 KiB; past the ~700 KiB enforcement budget (compact bytes; headroom below the 1 MiB delivered ceiling) reads reject with command-specific scope hints and completed mutations return compact `success=true` summaries. Eight approved bulk tools support `output=inline|file` to `%LOCALAPPDATA%\Bimwright\rvt-mcp\spill\`; `send_code` and oversized `run_baked_tool` output auto-spill. Spill files are local same-machine artifacts, kept 36h by default (`--spill-retention-hours`, `BIMWRIGHT_SPILL_RETENTION_HOURS`, `spillRetentionHours`; an invalid value uses 36). Age is the only reason to delete one: no file-count cap removes a file younger than the retention time.
+- Wire responses: agent-visible warning from 64 KiB, strong warning above 256 KiB; past the ~700 KiB enforcement budget (compact bytes; headroom below the 1 MiB delivered ceiling) reads reject with command-specific scope hints and completed mutations return compact `success=true` summaries. Eight approved bulk tools support `output=inline|file` to `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\spill\`; `send_code` and oversized `run_baked_tool` output auto-spill. Spill files are local same-machine artifacts, kept 36h by default (`--spill-retention-hours`, `TBC_REVIT_MCP_SPILL_RETENTION_HOURS`, `spillRetentionHours`; an invalid value uses 36). Age is the only reason to delete one: no file-count cap removes a file younger than the retention time.
 - Shutdown: cancel all pending TCS, stop transport, dispose ExternalEvent
 
 ### Commands

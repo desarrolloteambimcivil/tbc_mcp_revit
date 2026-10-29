@@ -20,7 +20,7 @@ namespace RvtMcp.Failures
         /// <summary>Receives the type and message of a swallowed write failure. The plugin points it at its local debug log.</summary>
         public static Action<string> Diagnostic;
         public string DatabasePath { get; }
-        public static string DefaultPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Bimwright", "rvt-mcp", "failures", "ledger.db"); } }
+        public static string DefaultPath { get { return Path.Combine(RvtMcp.Plugin.ProductIdentity.DataRoot(), "failures", "ledger.db"); } }
         private string PendingPath { get { return Path.Combine(Path.GetDirectoryName(DatabasePath), "pending"); } }
         public FailureLedgerStore(string dbPath = null, bool readOnly = false)
         { DatabasePath = Path.GetFullPath(dbPath ?? DefaultPath); _readOnly = readOnly; }

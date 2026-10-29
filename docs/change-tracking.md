@@ -51,10 +51,10 @@ evidence that nothing changed.
 
 ## Local model history and reasons
 
-The server stores SQLite history under `%LOCALAPPDATA%\Bimwright\rvt-mcp\projects`.
+The server stores SQLite history under `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\projects`.
 This is independent of the call log: `enableCallLog=false` does not turn it off.
 To disable recording, set `enableChangeHistory=false` in `rvtmcp.config.json`, set
-`BIMWRIGHT_ENABLE_CHANGE_HISTORY=false`, or pass `--disable-change-history`.
+`TBC_REVIT_MCP_ENABLE_CHANGE_HISTORY=false`, or pass `--disable-change-history`.
 `--enable-change-history` enables it; CLI overrides environment, which overrides JSON.
 Existing history remains queryable when recording is off. Disabling does not delete it.
 

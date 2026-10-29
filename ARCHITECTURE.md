@@ -21,7 +21,7 @@ Revit API  (UIApplication / Document)
 
 ## Discovery
 
-Every plugin instance writes a per-instance discovery file to `%LOCALAPPDATA%\Bimwright\rvt-mcp\` on startup, named `revit-<year>-<pid>.json`, and additionally publishes the legacy per-year file `revit-<year>.json` for older servers:
+Every plugin instance writes a per-instance discovery file to `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\` on startup, named `revit-<year>-<pid>.json`, and additionally publishes the legacy per-year file `revit-<year>.json` for older servers:
 
 | Revit | Per-instance file | Legacy file | Transport |
 |-------|-------------------|-------------|-----------|
@@ -55,7 +55,7 @@ Each per-instance file is a self-describing JSON object (schema 3; the legacy fi
 
 Publication and ownership-aware cleanup use a named mutex scoped to the normalized discovery directory and Revit year. A final PID/token recheck protects reentrant publication; coordination failure leaves descriptors unchanged. Automatic selection requires one match. Writes require a selected target and a verified per-open-document token; the gateway sends `expected_document_id`, and the add-in checks it at UI-thread execution time. The `document_target_v1` capability prevents writing through an older add-in that would ignore the document guard. Each accepted switch and changed document confirmation advances the generation. Failed verification restores the prior live binding only if its provisional generation is still current. Actual host `_target` stamps survive response compaction.
 
-The server scans `revit-*.json` on connect, normalizes per-instance and legacy files into candidates (deduplicated by pid), verifies each PID is alive, and auto-deletes only files whose owner is proven dead. It binds to exactly one instance — implicitly on the first call, or explicitly through `--target` / `BIMWRIGHT_TARGET` / `revit_switch_target` with selectors `auto`, a 4-digit year, `pid:<n>` or `id:revit-<year>-<pid>`. Each tool call pins the binding generation; a mid-call switch can never slide a command onto a different instance. MCP clients register one auto-detect `rvt-mcp` entry (the installer wires clients selected by `-Client`; agents must select the requested clients explicitly, or use `-Client none` for MCPB; see [AGENTS.md](AGENTS.md) Steps 2–3); with several instances — including several of the same year — the agent calls `revit_list_available_targets`, picks by `pid`/`window_title`, and pins with `revit_switch_target("pid:<n>")` rather than guessing. **Versions are 4-digit calendar years (`2024`), not R-codes (`R24`) — v0.5+ rejects R-codes with an educational error pointing back to `revit_list_available_targets`.**
+The server scans `revit-*.json` on connect, normalizes per-instance and legacy files into candidates (deduplicated by pid), verifies each PID is alive, and auto-deletes only files whose owner is proven dead. It binds to exactly one instance — implicitly on the first call, or explicitly through `--target` / `TBC_REVIT_MCP_TARGET` / `revit_switch_target` with selectors `auto`, a 4-digit year, `pid:<n>` or `id:revit-<year>-<pid>`. Each tool call pins the binding generation; a mid-call switch can never slide a command onto a different instance. MCP clients register one auto-detect `tbc-revit-mcp` entry (the installer wires clients selected by `-Client`; agents must select the requested clients explicitly, or use `-Client none` for MCPB; see [AGENTS.md](AGENTS.md) Steps 2–3); with several instances — including several of the same year — the agent calls `revit_list_available_targets`, picks by `pid`/`window_title`, and pins with `revit_switch_target("pid:<n>")` rather than guessing. **Versions are 4-digit calendar years (`2024`), not R-codes (`R24`) — v0.5+ rejects R-codes with an educational error pointing back to `revit_list_available_targets`.**
 
 ## Multi-version strategy
 
@@ -133,15 +133,15 @@ Loaded baked IRevitCommand
 run_baked_tool(name)
 ```
 
-Baked tools persist across Revit restarts in the current local user registry and are executed only through `list_baked_tools` + `run_baked_tool`; they are not exposed as native MCP tools. SQLite-backed metadata, stronger isolation, and signed-bake verification are planned adaptive-bake hardening work. `send_code_to_revit` is the unsandboxed cousin — it executes arbitrary C# against the running Revit session and is runtime-gated by plugin-visible adaptive-bake opt-in from the Revit process environment or `%LOCALAPPDATA%\Bimwright\rvt-mcp\rvtmcp.config.json`.
+Baked tools persist across Revit restarts in the current local user registry and are executed only through `list_baked_tools` + `run_baked_tool`; they are not exposed as native MCP tools. SQLite-backed metadata, stronger isolation, and signed-bake verification are planned adaptive-bake hardening work. `send_code_to_revit` is the unsandboxed cousin — it executes arbitrary C# against the running Revit session and is runtime-gated by plugin-visible adaptive-bake opt-in from the Revit process environment or `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\rvtmcp.config.json`.
 
 ## Config precedence (A9)
 
 ```
 RvtMcpConfig.Load(args, configFilePath)
    │
-   ├── Layer 1: JSON file at %LOCALAPPDATA%\Bimwright\rvt-mcp\rvtmcp.config.json
-   ├── Layer 2: env vars (BIMWRIGHT_TARGET, BIMWRIGHT_TOOLSETS, …)
+   ├── Layer 1: JSON file at %LOCALAPPDATA%\NourRouas\tbc-revit-mcp\rvtmcp.config.json
+   ├── Layer 2: env vars (TBC_REVIT_MCP_TARGET, TBC_REVIT_MCP_TOOLSETS, …; legacy BIMWRIGHT_* names are read when unset)
    └── Layer 3: CLI args (--target, --toolsets, --read-only, …)
                     (later layers overwrite earlier; nulls don't override)
 ```

@@ -25,25 +25,25 @@ namespace RvtMcp.Plugin.Views.Settings
             if (string.IsNullOrWhiteSpace(version))
                 version = assembly.GetName().Version?.ToString() ?? "0.0.0";
 
-            var repository = "https://github.com/bimwright/rvt-mcp";
+            var repository = ProductIdentity.RepositoryUrl;
             return new AboutInfo
             {
-                ProductName = "rvt-mcp",
+                ProductName = ProductIdentity.Name,
                 PluginInformationalVersion = version,
                 RevitYear = revitYear ?? "-",
                 LicenseId = "Apache-2.0",
                 LicenseSourceUrl = CreateLicenseSourceUrl(version),
                 RepositoryUrl = repository,
                 IssuesUrl = repository + "/issues",
-                Author = "Khoa Le",
-                Copyright = "Copyright 2026 Khoa Le",
+                Author = ProductIdentity.AuthorLine + " (fork of rvt-mcp by Khoa Le)",
+                Copyright = "Copyright 2026 Khoa Le; modifications Copyright 2026 Nour Rouas",
             };
         }
 
         public static string CreateLicenseSourceUrl(string informationalVersion)
         {
             var version = string.IsNullOrWhiteSpace(informationalVersion) ? "0.0.0" : informationalVersion.Trim();
-            return "https://github.com/bimwright/rvt-mcp/blob/" + CreateReference(version) + "/LICENSE";
+            return ProductIdentity.RepositoryUrl + "/blob/" + CreateReference(version) + "/LICENSE";
         }
 
         private static string CreateReference(string version)

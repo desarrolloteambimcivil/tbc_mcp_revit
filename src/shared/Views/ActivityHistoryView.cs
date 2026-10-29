@@ -82,7 +82,7 @@ namespace RvtMcp.Plugin.Views
         {
             _vm = vm ?? throw new ArgumentNullException(nameof(vm));
             DataContext = vm;
-            Resources.MergedDictionaries.Add(BimwrightStyles.Dictionary);
+            Resources.MergedDictionaries.Add(ProductStyles.Dictionary);
             ScrollBarFadeBehavior.SetIsEnabled(this, true);
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -110,7 +110,7 @@ namespace RvtMcp.Plugin.Views
                 ItemsSource = _viewSource.View,
                 Margin = new Thickness(0)
             };
-            BimwrightStyles.KeepSelectionHighlight(_grid);
+            ProductStyles.KeepSelectionHighlight(_grid);
             _grid.LoadingRow += OnLoadingRow;
             ((INotifyCollectionChanged)_grid.Items).CollectionChanged += OnGridItemsChanged;
             // Pixel units: HistoryChrome.Wheel steps in pixels; the DataGrid default (Item) would turn one notch into ~31 rows.
@@ -265,7 +265,7 @@ namespace RvtMcp.Plugin.Views
             sections.Children.Add(_outputCard);
             _rerunButton = new Button
             {
-                Style = (Style)FindResource(BimwrightStyles.PrimaryButtonKey),
+                Style = (Style)FindResource(ProductStyles.PrimaryButtonKey),
                 HorizontalAlignment = HorizontalAlignment.Right,
                 Margin = new Thickness(0, 8, 0, 0)
             };
@@ -342,7 +342,7 @@ namespace RvtMcp.Plugin.Views
         private DockPanel CreateToolbar()
         {
             var panel = new DockPanel { LastChildFill = false, Margin = new Thickness(8, 6, 8, 6) };
-            var toolbarStyle = (Style)FindResource(BimwrightStyles.ToolbarButtonKey);
+            var toolbarStyle = (Style)FindResource(ProductStyles.ToolbarButtonKey);
             var sessionActions = new StackPanel { Orientation = Orientation.Horizontal };
 
             _logsButton = new Button { Style = toolbarStyle };
@@ -369,7 +369,7 @@ namespace RvtMcp.Plugin.Views
             };
             _searchPrompt = new TextBlock
             {
-                Style = (Style)BimwrightStyles.Dictionary[BimwrightStyles.PlaceholderTextKey],
+                Style = (Style)ProductStyles.Dictionary[ProductStyles.PlaceholderTextKey],
                 Margin = new Thickness(8, 0, 4, 0)
             };
             _searchBox.TextChanged += (s, e) =>
@@ -404,7 +404,7 @@ namespace RvtMcp.Plugin.Views
         {
             var button = new Button
             {
-                Content = "\uE8C8", Style = (Style)FindResource(BimwrightStyles.IconButtonKey),
+                Content = "\uE8C8", Style = (Style)FindResource(ProductStyles.IconButtonKey),
                 VerticalAlignment = VerticalAlignment.Center
             };
             button.Click += (s, e) =>

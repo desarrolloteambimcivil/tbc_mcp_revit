@@ -5,7 +5,7 @@
     <Assembly>RvtMcp\RvtMcp.Plugin.dll</Assembly>
     <FullClassName>RvtMcp.Plugin.App</FullClassName>
     <AddInId>{ee3a01ad-2e01-4a8d-825e-3b24d56075d5}</AddInId>
-    <VendorId>bimwright</VendorId>
-    <VendorDescription>Revit MCP Gateway</VendorDescription>
+    <VendorId>nourrouas</VendorId>
+    <VendorDescription>tbc-revit-mcp - Nour Rouas, BIM developer/modeller at TeamBIMCivil</VendorDescription>
   </AddIn>
 </RevitAddIns>

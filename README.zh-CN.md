@@ -1,25 +1,23 @@
-<!-- mcp-name: io.github.bimwright/rvt-mcp -->
+<!-- mcp-name: io.github.nour-rouas/tbc-revit-mcp -->
 
-[工具描述大小基准](docs/benchmarks/2026-10-18-tool-descriptors.md) · [v1.2.0 验证结果与待验证项目](docs/testing/2026-10-18-v1.2.0-validation.md)（英文；不代表原生执行性能）。
+[工具描述大小基准](docs/benchmarks/2026-10-18-tool-descriptors.md) · [v1.2.0 验证结果与待验证项目](docs/testing/2026-10-18-v1.2.0-validation.md)（上游 rvt-mcp 在 fork 之前的记录；英文；不代表原生执行性能）。
 
-**v1.2.0 已发布：** [Setup 和 Claude Desktop MCPB](https://github.com/bimwright/rvt-mcp/releases/tag/v1.2.0) · [NuGet（仅服务器）](https://www.nuget.org/packages/RvtMcp.Server/1.2.0) · [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.bimwright%2Frvt-mcp/versions/1.2.0)。
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/bimwright/.github/master/assets/logos/rvt-mcp.png" alt="rvt-mcp" width="180" />
-</p>
-
-<h1 align="center">rvt-mcp</h1>
+<h1 align="center">tbc-revit-mcp</h1>
 
 <p align="center">
   Autodesk Revit 的 MCP 网关 — 本地 agent 工具，可选个人 bake 循环
 </p>
 
 <p align="center">
-  <a href="https://github.com/bimwright/rvt-mcp/actions/workflows/build.yml"><img src="https://github.com/bimwright/rvt-mcp/actions/workflows/build.yml/badge.svg" alt="build" /></a>
+  作者 Nour Rouas — TeamBIMCivil BIM 开发者/建模师
+</p>
+
+<p align="center">
+  <a href="https://github.com/nour-rouas/tbc-revit-mcp/actions/workflows/build.yml"><img src="https://github.com/nour-rouas/tbc-revit-mcp/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
   <a href="#tools"><img src="https://img.shields.io/badge/MCP-242%20tools-6C47FF" alt="MCP tools" /></a>
-  <a href="https://github.com/bimwright/rvt-mcp/releases/latest"><img src="https://img.shields.io/github/v/release/bimwright/rvt-mcp" alt="latest release" /></a>
+  <a href="https://github.com/nour-rouas/tbc-revit-mcp/releases/latest"><img src="https://img.shields.io/github/v/release/nour-rouas/tbc-revit-mcp" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
 
@@ -31,9 +29,9 @@
 
 ## 这是什么
 
-**面向 Revit 的早期全 C# MCP 实现 — 自 2026 年 3 月起研究并实现。**
+`tbc-revit-mcp` 是 [bimwright/rvt-mcp](https://github.com/bimwright/rvt-mcp) 的 fork，由 Nour Rouas 维护。目前该 fork 新增了 `revit_api_lookup`、`send_code` 的 `dry_run` 模式、栏杆（railing）与复合结构（compound structure）的读取和编辑工具，以及聚焦截图（`revit_capture_view_image` 的 `element_ids`）。
 
-`rvt-mcp` 是 MCP 客户端与正在运行的 Revit 会话之间的**本地**桥。.NET 8 server 通过 stdio 提供 MCP；每个 Revit 年份（2022–2027）一个瘦 add-in 在 Revit 内运行，经 localhost TCP（≤2024）或 named pipe（≥2025）连接。数据不出本机，全部为 C#，工具边界的长度单位为 mm。细节：[ARCHITECTURE.md](ARCHITECTURE.md)。
+`tbc-revit-mcp` 是 MCP 客户端与正在运行的 Revit 会话之间的**本地**桥。.NET 8 server 通过 stdio 提供 MCP；每个 Revit 年份（2022–2027）一个瘦 add-in 在 Revit 内运行，经 localhost TCP（≤2024）或 named pipe（≥2025）连接。数据不出本机，全部为 C#，工具边界的长度单位为 mm。细节：[ARCHITECTURE.md](ARCHITECTURE.md)。
 
 Agent 可以使用覆盖常见 Revit 工作的 **typed 工具面**、应对其余情况的 C# escape hatch，以及把重复模式变成个人工具的**可选**路径（ToolBaker）：从共享运行时出发，在其上长出*你的*工具。Family Editor 创作暂不在范围内。
 
@@ -41,13 +39,15 @@ Agent 可以使用覆盖常见 Revit 工作的 **typed 工具面**、应对其�
 
 ## 安装
 
+**下载：** 从[最新发布版](https://github.com/nour-rouas/tbc-revit-mcp/releases/latest)获取 Setup ZIP 和 Claude Desktop MCPB。在本 fork 发布首个版本之前，请从源码构建（见 [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy）。
+
 **让 AI agent 为指定客户端安装。** 使用能在这台 Windows 电脑上运行 PowerShell、编辑本地文件的 agent（Claude Code、Codex、Cursor 等），而非没有本地工具的普通聊天。执行安装的 agent 可以与之后使用 Revit 工具的客户端不同。agent 按照 [AGENTS.md](AGENTS.md) 预览更改并在应用前征求同意；你仍可能需要操作界面或重启应用。
 
 如需安装到 **Claude Desktop**，粘贴：
 
 ```text
-请在这台 Windows 电脑上为 Claude Desktop 安装 rvt-mcp。
-先阅读 https://github.com/bimwright/rvt-mcp/blob/master/AGENTS.md。
+请在这台 Windows 电脑上为 Claude Desktop 安装 tbc-revit-mcp。
+先阅读 https://github.com/nour-rouas/tbc-revit-mcp/blob/master/AGENTS.md。
 只配置 Claude Desktop，不配置其他客户端。检查现有安装，预览更改并在写入前征求同意。
 如需我操作界面或重启应用，请明确说明。
 ```
@@ -57,30 +57,30 @@ Agent 可以使用覆盖常见 Revit 工作的 **typed 工具面**、应对其�
 **或者自己运行安装程序（Claude Desktop，直接配置）。** 关闭 Revit，完全退出 Claude Desktop（包括托盘进程），然后在 PowerShell 中：
 
 ```powershell
-$tag = (Invoke-RestMethod https://api.github.com/repos/bimwright/rvt-mcp/releases/latest).tag_name
-$dir = "$env:TEMP\RvtMcp.Setup-$tag-win-x64"
-Invoke-WebRequest "https://github.com/bimwright/rvt-mcp/releases/download/$tag/RvtMcp.Setup-$tag-win-x64.zip" -OutFile "$dir.zip"
+$tag = (Invoke-RestMethod https://api.github.com/repos/nour-rouas/tbc-revit-mcp/releases/latest).tag_name
+$dir = "$env:TEMP\TbcRevitMcp.Setup-$tag-win-x64"
+Invoke-WebRequest "https://github.com/nour-rouas/tbc-revit-mcp/releases/download/$tag/TbcRevitMcp.Setup-$tag-win-x64.zip" -OutFile "$dir.zip"
 Expand-Archive "$dir.zip" -DestinationPath $dir -Force
 powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -WhatIf -Client claude-desktop
 # 检查预览后再应用：
 powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-desktop
 ```
 
-此命令为检测到的所有 Revit 2022–2027 安装插件，仅在 Claude Desktop 中注册 `rvt-mcp`（先备份配置）。Claude Code 使用 `-Client claude`；多个指定客户端使用逗号分隔。省略 `-Client` 会连接所有检测到的客户端；`-Client none` 保持配置不变。server 路径为 `%LOCALAPPDATA%\Bimwright\rvt-mcp\server\current\rvt-mcp.exe`（[各客户端步骤，含 Desktop classic/MSIX 路径](docs/mcp-client-wiring.md)）。
+此命令为检测到的所有 Revit 2022–2027 安装插件，仅在 Claude Desktop 中注册 `tbc-revit-mcp`（先备份配置）。Claude Code 使用 `-Client claude`；多个指定客户端使用逗号分隔。省略 `-Client` 会连接所有检测到的客户端；`-Client none` 保持配置不变。server 路径为 `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\server\current\tbc-revit-mcp.exe`（[各客户端步骤，含 Desktop classic/MSIX 路径](docs/mcp-client-wiring.md)）。
 
 **验证：** 重启 AI 客户端，在 Revit 中打开模型，在 ribbon（**附加模块**（Add-Ins）→ **RvtMcp**）上启动 MCP，然后让 agent 调用 `revit_get_current_view_info`。返回当前视图的名称和类型即表示成功。
 
 **升级：** 关闭 Revit 和使用 gateway 的客户端，备份数据目录，然后运行新安装程序就地升级，无需先卸载。设置和 ToolBaker 数据会保留。MCPB 用户使用 `-Client none`，同时更新同一 release 的 Setup 和扩展，并在重新连接前检查 Desktop 的设置和权限。参见[升级步骤](docs/install.md#upgrade)。**卸载：** `uninstall.ps1 -Yes` 删除插件和 server；除非加上 `-Purge`，否则保留个人数据。若也要移除客户端条目，先运行 `install.ps1 -Uninstall -Client auto`。
 
-**从 v0.8.1 或 v0.6.x 升级：** 这些版本把设置和 ToolBaker 数据保存在 `%LOCALAPPDATA%\RvtMcp\`；v1.0.0 使用 `%LOCALAPPDATA%\Bimwright\rvt-mcp\`，安装程序会把旧文件夹移动过去。请先关闭 Revit 和所有 MCP 客户端，因为仍在运行的旧 server 会锁定该文件夹。可在 PowerShell 中用 `Test-Path "$env:LOCALAPPDATA\RvtMcp"` 检查。如果安装程序因 `Both … exist` 或 `Could not move …` 而停止，它会撤销已移动的内容：保留存有你的设置和 ToolBaker 数据的文件夹，**把另一个重命名（例如 `RvtMcp.bak`）而不是删除**，关闭正在使用它的客户端，然后重新运行安装程序。
+**从上游 rvt-mcp 迁移：** 本 fork 把数据保存在 `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\`。首次启动时，数据会自动从上游的 `%LOCALAPPDATA%\Bimwright\rvt-mcp\`（以及上游 v0.8.1/v0.6.x 使用的更早的 `%LOCALAPPDATA%\RvtMcp\`）迁移到新文件夹；旧文件夹会原样保留作为备份。请先关闭 Revit 和所有 MCP 客户端，因为仍在运行的旧 server 会锁定该文件夹。可在 PowerShell 中用 `Test-Path "$env:LOCALAPPDATA\RvtMcp"` 检查。如果安装程序因 `Both … exist` 或 `Could not move …` 而停止，它会撤销已移动的内容：保留存有你的设置和 ToolBaker 数据的文件夹，**把另一个重命名（例如 `RvtMcp.bak`）而不是删除**，关闭正在使用它的客户端，然后重新运行安装程序。
 
 **Claude Desktop 扩展（MCPB，可选）：** agent 辅助安装默认采用上面的直接配置。如需扩展/设置界面，用 `-Client none` 运行 Setup，再通过 Desktop 扩展界面安装 `.mcpb`。**只选一种方式，不要同时注册。** `-Client none` 不会删除已有的手动注册。使用与 Setup 同一选定 release 的 bundle；扩展不安装 gateway/插件，且要求该 release 的确切 server build。签名状态请查看 release notes。参见 [MCPB 安装与设置](docs/install.md#claude-desktop-mcpb)。
 
 ---
 
-## 视频
+## 视频（上游项目）
 
-社区制作的 rvt-mcp 使用视频。视频中的安装步骤可能比本 README 旧，请以上面的步骤为准。
+社区制作的上游 rvt-mcp 项目使用视频，录制于本 fork 之前。视频中的安装步骤和名称与本 README 不同，请以上面的步骤为准。
 
 - [Connecting ChatGPT Astra to Revit | Testing AI Changes in a Real Project](https://www.youtube.com/watch?v=J-i057B-3dI) — Revit Mentor
 - [Exploring Revit + GPT 6 Astra](https://www.youtube.com/watch?v=2_W1uLn6s_I) — BIM Pure
@@ -90,12 +90,12 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-deskt
 
 ## Tools
 
-下表数量与 **v1.2.0 发布版**一致；后续开发版本的工具目录可能不同。
+下表数量与当前源码一致；其他构建的工具目录可能不同。
 
 | 模式 | Tools | 说明 |
 |------|------:|------|
 | 全新安装 | **242** | `install.ps1` 在 `rvtmcp.config.json` 中写入 `"toolsets": ["all"]` |
-| 裸 `rvt-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
+| 裸 `tbc-revit-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
 | `--toolsets all` | **242** | 完整目录 |
 | `all` + adaptive bake | **245** | 再加 3 个 suggestion 生命周期工具 |
 
@@ -140,19 +140,19 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-deskt
 - **`revit_send_code_to_revit`**（默认开启）在没有合适 typed 工具时，于 Revit 内编译并运行 C# 正文；`--read-only` 或 `--disable-send-code` 会移除它。见 [docs/send-code.md](docs/send-code.md)；楼梯见 [docs/stairs-workflow.md](docs/stairs-workflow.md)。
 - **ToolBaker：** `revit_list_baked_tools` / `revit_run_baked_tool` 需要 `--toolsets toolbaker`。Adaptive bake（`--enable-adaptive-bake`，默认关闭）会根据重复调用建议工具；在你 accept 之前不会添加任何东西。Bake 在 Revit 内编译，不需要 Visual Studio。见 [docs/bake.md](docs/bake.md)。
 - **Ribbon：** 启动或停止连接，打开 **History** 搜索并重跑历史调用，切换完成 **Toast**（默认开启）。
-- **界面语言：** 插件 UI 支持 15 种语言，默认跟随 Revit 的界面语言；可通过 ribbon 滑出面板中的 **Language** 按钮更改，该按钮会打开 **Settings → General → Language**（`BIMWRIGHT_UI_LANGUAGE` 仍然优先）。工具名与 payload 保持英文。见 [docs/localization.md](docs/localization.md)。
+- **界面语言：** 插件 UI 支持 15 种语言，默认跟随 Revit 的界面语言；可通过 ribbon 滑出面板中的 **Language** 按钮更改，该按钮会打开 **Settings → General → Language**（`TBC_REVIT_MCP_UI_LANGUAGE` 仍然优先）。工具名与 payload 保持英文。见 [docs/localization.md](docs/localization.md)。
 
 ### 为什么有活动 toast
 
 Toast 不只是装饰，而是工作反馈。它来自三个实际需求：
 
 - **让用户不必一直盯着聊天窗口。** 在真实的 MCP 工作流中，AI 代理可能长时间工作，而 Revit 几乎没有可见的反馈。仅仅为了确认代理是否在工作而盯着聊天窗口，会白白消耗注意力。活动卡片会报告已完成的工具调用，用户可以在两次更新之间去做别的事。
-- **支持多任务。** 维护者同时开发并反复测试多个桌面应用。简短的通知让人无需把每个聊天窗口都留在视野里，也能跟进这些会话。
+- **支持多任务。** 上游维护者同时开发并反复测试多个桌面应用。简短的通知让人无需把每个聊天窗口都留在视野里，也能跟进这些会话。
 - **让体验更现代。** Revit 内的反馈让自动化更灵敏、更易理解，而且不会用模态对话框打断工作。
 
 Toast 报告的是 **单次工具的结果**，不是运行中工具的进度，也不表示整个任务已完成。连续的结果共用一张卡片；Revit 最小化或被模态对话框阻塞时，通知可能会等待。它们不能代替你检查代理的工作。
 
-每张卡片显示网关名称和 Revit 年份（例如 `rvt-mcp 2022`）、最近一次工具，以及 Success · Failed · Capture 计数。捕获预览至少在卡片上停留 5 秒。
+每张卡片显示网关名称和 Revit 年份（例如 `tbc-revit-mcp 2022`）、最近一次工具，以及 Success · Failed · Capture 计数。捕获预览至少在卡片上停留 5 秒。
 
 有意悬停会打开活动时间线，显示最新三条结果及各自的本地完成时间（`HH:mm:ss`）。向上滚动可查看该卡片中更早的调用。新结果以简短的滑入动画跟随到底部（行向上移动，新行淡入，结果圆点弹出；开启减少动态效果时这些都不会出现）；阅读较早的调用时，位置保持不变。在时间线内点击可继续阅读而不关闭它；点击卡片其余部分会打开 History。关闭 branding 时同样可用。摘要有长度限制并已脱敏，只保存在内存中，卡片关闭后清除。脚本的对象/数组显示数量；不完整的调查会明确标注为不完整。仅在 server 端运行的工具不会因这次 UI 变更而获得 toast 覆盖。
 
@@ -162,7 +162,7 @@ Toast **默认开启**，可以关闭。在 **Settings → Toast** 中可选择�
 
 ### 提示
 
-v1.0.0 提供六个 MCP 提示。在客户端提示菜单（Claude Code：`/mcp__rvt-mcp__revit_<name>`）中选择，代理会用现有工具按脚本执行：
+v1.0.0 提供六个 MCP 提示。在客户端提示菜单（Claude Code：`/mcp__tbc-revit-mcp__revit_<name>`）中选择，代理会用现有工具按脚本执行：
 
 - `revit_getting_started` — 了解已打开的模型（只读，使用默认配置即可）。
 - `revit_drawing_layout` — 通过 `request` 指定：排列一张图纸上的视口。先读取图纸空间的真实位置（`revit_get_viewport_geometry`），与你确认对齐方式，给出试运行计划（`revit_align_viewports`），确认后才移动，再读取结果。需要 `query,sheets,view,meta`。只读模式下仅报告和建议。
@@ -183,34 +183,34 @@ v1.0.0 提供六个 MCP 提示。在客户端提示菜单（Claude Code：`/mcp_
 
 `revit_survey_change_impact` 是 `query` 中的只读工具，禁用 send-code 时仍可使用。每次请求必须提供 `scopeThreshold`；仅在明确设置 `maxViews > 0` 时扫描视图和明细表。不完整结果必须保留说明，参数观察值不是可信的历史快照。参见[变更影响调查](docs/change-survey.md)。
 
-优先级从高到低：**CLI → env（`BIMWRIGHT_*`）→** `%LOCALAPPDATA%\Bimwright\rvt-mcp\rvtmcp.config.json`。
+优先级从高到低：**CLI → env（`TBC_REVIT_MCP_*`）→** `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\rvtmcp.config.json`。上游的旧名称 `BIMWRIGHT_*` 在对应的 `TBC_REVIT_MCP_*` 变量未设置时仍然有效。
 
 | 设置 | CLI | Env | JSON |
 |------|-----|-----|------|
-| 目标选择器 | `--target 2024` / `--target pid:12345` | `BIMWRIGHT_TARGET` | `target` |
-| Toolsets | `--toolsets query,create` | `BIMWRIGHT_TOOLSETS` | `toolsets` |
-| 只读 | `--read-only` | `BIMWRIGHT_READ_ONLY=1` | `readOnly` |
-| send_code | `--enable-send-code` / `--disable-send-code` | `BIMWRIGHT_ENABLE_SEND_CODE` | `enableSendCode` |
-| Call log | `--enable-call-log` / `--disable-call-log` | `BIMWRIGHT_ENABLE_CALL_LOG` | `enableCallLog` |
-| Warning policy（默认 `rollback`） | `--warning-policy <mode>` | `BIMWRIGHT_WARNING_POLICY` | `warningPolicy` |
-| Change history (default ON) | `--enable-change-history` / `--disable-change-history` | `BIMWRIGHT_ENABLE_CHANGE_HISTORY` | `enableChangeHistory` |
-| Response guard | `--enable-response-guard` / `--disable-response-guard` | `BIMWRIGHT_ENABLE_RESPONSE_GUARD` | `enableResponseGuard` |
-| Warn bytes | `--response-warn-bytes` | `BIMWRIGHT_RESPONSE_WARN_BYTES` | `responseWarnBytes` |
-| Strong warn bytes | `--response-strong-warn-bytes` | `BIMWRIGHT_RESPONSE_STRONG_WARN_BYTES` | `responseStrongWarnBytes` |
-| Budget bytes | `--response-budget-bytes` | `BIMWRIGHT_RESPONSE_BUDGET_BYTES` | `responseBudgetBytes` |
-| Transport cap | `--max-response-bytes` | `BIMWRIGHT_MAX_RESPONSE_BYTES` | `maxResponseBytes` |
-| spill 文件保留时间（默认 36 小时） | `--spill-retention-hours <n>` | `BIMWRIGHT_SPILL_RETENTION_HOURS` | `spillRetentionHours` |
-| LAN 绑定（插件） | — | `BIMWRIGHT_ALLOW_LAN_BIND=1` | `allowLanBind` |
-| ToolBaker 表面 | `--enable-toolbaker` / `--disable-toolbaker` | `BIMWRIGHT_ENABLE_TOOLBAKER` | `enableToolbaker` |
-| Adaptive bake | `--enable-adaptive-bake` / `--disable-adaptive-bake` | `BIMWRIGHT_ENABLE_ADAPTIVE_BAKE=1` | `enableAdaptiveBake` |
-| 缓存 send_code 正文（bake 聚类） | `--cache-send-code-bodies` / `--no-…` | `BIMWRIGHT_CACHE_SEND_CODE_BODIES=1` | `cacheSendCodeBodies` |
-| 持久化 send_code journal | `--persist-send-code-bodies` / `--no-…` | `BIMWRIGHT_PERSIST_SEND_CODE_BODIES=1` | `persistSendCodeBodies` |
-| Journal TTL（1h-14d） | `--persist-send-code-bodies-for 4h` | `BIMWRIGHT_PERSIST_SEND_CODE_BODIES_TTL` | `persistSendCodeBodiesUntil` |
-| 完成 toast（默认开启） | ribbon **Toast** | `BIMWRIGHT_ENABLE_TOAST=0` | `enableToast` |
+| 目标选择器 | `--target 2024` / `--target pid:12345` | `TBC_REVIT_MCP_TARGET` | `target` |
+| Toolsets | `--toolsets query,create` | `TBC_REVIT_MCP_TOOLSETS` | `toolsets` |
+| 只读 | `--read-only` | `TBC_REVIT_MCP_READ_ONLY=1` | `readOnly` |
+| send_code | `--enable-send-code` / `--disable-send-code` | `TBC_REVIT_MCP_ENABLE_SEND_CODE` | `enableSendCode` |
+| Call log | `--enable-call-log` / `--disable-call-log` | `TBC_REVIT_MCP_ENABLE_CALL_LOG` | `enableCallLog` |
+| Warning policy（默认 `rollback`） | `--warning-policy <mode>` | `TBC_REVIT_MCP_WARNING_POLICY` | `warningPolicy` |
+| Change history (default ON) | `--enable-change-history` / `--disable-change-history` | `TBC_REVIT_MCP_ENABLE_CHANGE_HISTORY` | `enableChangeHistory` |
+| Response guard | `--enable-response-guard` / `--disable-response-guard` | `TBC_REVIT_MCP_ENABLE_RESPONSE_GUARD` | `enableResponseGuard` |
+| Warn bytes | `--response-warn-bytes` | `TBC_REVIT_MCP_RESPONSE_WARN_BYTES` | `responseWarnBytes` |
+| Strong warn bytes | `--response-strong-warn-bytes` | `TBC_REVIT_MCP_RESPONSE_STRONG_WARN_BYTES` | `responseStrongWarnBytes` |
+| Budget bytes | `--response-budget-bytes` | `TBC_REVIT_MCP_RESPONSE_BUDGET_BYTES` | `responseBudgetBytes` |
+| Transport cap | `--max-response-bytes` | `TBC_REVIT_MCP_MAX_RESPONSE_BYTES` | `maxResponseBytes` |
+| spill 文件保留时间（默认 36 小时） | `--spill-retention-hours <n>` | `TBC_REVIT_MCP_SPILL_RETENTION_HOURS` | `spillRetentionHours` |
+| LAN 绑定（插件） | — | `TBC_REVIT_MCP_ALLOW_LAN_BIND=1` | `allowLanBind` |
+| ToolBaker 表面 | `--enable-toolbaker` / `--disable-toolbaker` | `TBC_REVIT_MCP_ENABLE_TOOLBAKER` | `enableToolbaker` |
+| Adaptive bake | `--enable-adaptive-bake` / `--disable-adaptive-bake` | `TBC_REVIT_MCP_ENABLE_ADAPTIVE_BAKE=1` | `enableAdaptiveBake` |
+| 缓存 send_code 正文（bake 聚类） | `--cache-send-code-bodies` / `--no-…` | `TBC_REVIT_MCP_CACHE_SEND_CODE_BODIES=1` | `cacheSendCodeBodies` |
+| 持久化 send_code journal | `--persist-send-code-bodies` / `--no-…` | `TBC_REVIT_MCP_PERSIST_SEND_CODE_BODIES=1` | `persistSendCodeBodies` |
+| Journal TTL（1h-14d） | `--persist-send-code-bodies-for 4h` | `TBC_REVIT_MCP_PERSIST_SEND_CODE_BODIES_TTL` | `persistSendCodeBodiesUntil` |
+| 完成 toast（默认开启） | ribbon **Toast** | `TBC_REVIT_MCP_ENABLE_TOAST=0` | `enableToast` |
 | toast branding（默认关闭，已保存） | Settings → Toast → **Show branding** | — | `showBranding` |
 | toast 空闲时长（默认 20 秒） | Settings → Toast → **Idle duration** | — | `toastIdleSeconds` |
 | toast 位置（默认左上、不可拖动，已保存） | Settings → Toast → **Horizontal / Vertical alignment**、**Allow dragging the card**、**Reset position** | — | `toastHorizontalAlign`, `toastVerticalAlign`, `toastDragEnabled`, `toastDragOffset` |
-| 界面语言（插件） | ribbon **Language** | `BIMWRIGHT_UI_LANGUAGE` | `uiLanguage` |
+| 界面语言（插件） | ribbon **Language** | `TBC_REVIT_MCP_UI_LANGUAGE` | `uiLanguage` |
 
 Warning policy 使用 **Apply / Discard**，从下一次 MCP call 生效，不改变正在运行的 call，也不会自动重试。只有客户端明确指定的 CLI/env 才覆盖 host 策略；gateway 启动时的 JSON 不会冻结之后的 Settings 变更。Revit 进程中的 env override 会显示出来，并禁用该行编辑。
 
@@ -224,7 +224,7 @@ Journal 恰有八个选项：**1h, 4h, 8h, 12h, 24h, 2d, 7d, 14d**，默认仍�
 
 这些 controls 自 v1.0.0 起提供。v0.8.1 包不包含新 switch 和按工具筛选的 read-only 模式。`send_code` 与 `run_baked_tool` 必须直接调用；`batch_execute` 会拒绝它们。
 
-Annotations 描述每个工具对文档和文件的影响。临时 selection、active view 和 zoom 变化算作 read-only。`send_code` 没有 annotations：不要加入自动授权，并逐次确认代码执行。Claude Code 仅使用以下 read-only allow list；不要允许宽泛的 `mcp__rvt-mcp__*` wildcard。此列表对应 `--toolsets all`，所选 toolset 可能公开更少工具。
+Annotations 描述每个工具对文档和文件的影响。临时 selection、active view 和 zoom 变化算作 read-only。`send_code` 没有 annotations：不要加入自动授权，并逐次确认代码执行。Claude Code 仅使用以下 read-only allow list；不要允许宽泛的 `mcp__tbc-revit-mcp__*` wildcard。此列表对应 `--toolsets all`，所选 toolset 可能公开更少工具。
 
 <details>
 <summary>从 annotations 生成的 read-only allow list</summary>
@@ -234,107 +234,107 @@ Annotations 描述每个工具对文档和文件的影响。临时 selection、a
 {
   "permissions": {
     "allow": [
-      "mcp__rvt-mcp__revit_activate_view",
-      "mcp__rvt-mcp__revit_ai_element_filter",
-      "mcp__rvt-mcp__revit_analyze_geometry_complexity",
-      "mcp__rvt-mcp__revit_analyze_mep_network",
-      "mcp__rvt-mcp__revit_analyze_model_statistics",
-      "mcp__rvt-mcp__revit_analyze_sheet_layout",
-      "mcp__rvt-mcp__revit_analyze_structural_connections",
-      "mcp__rvt-mcp__revit_analyze_usage_patterns",
-      "mcp__rvt-mcp__revit_analyze_view_naming_patterns",
-      "mcp__rvt-mcp__revit_api_lookup",
-      "mcp__rvt-mcp__revit_audit_families",
-      "mcp__rvt-mcp__revit_clash_detection",
-      "mcp__rvt-mcp__revit_compute_element_area",
-      "mcp__rvt-mcp__revit_compute_element_volume",
-      "mcp__rvt-mcp__revit_detect_firm_profile",
-      "mcp__rvt-mcp__revit_detect_system_elements",
-      "mcp__rvt-mcp__revit_find_elements_in_volume",
-      "mcp__rvt-mcp__revit_find_mep_disconnects",
-      "mcp__rvt-mcp__revit_find_overlapping_elements",
-      "mcp__rvt-mcp__revit_find_schedule_elements",
-      "mcp__rvt-mcp__revit_find_undimensioned_elements",
-      "mcp__rvt-mcp__revit_find_untagged_elements",
-      "mcp__rvt-mcp__revit_get_assembly_members",
-      "mcp__rvt-mcp__revit_get_available_family_types",
-      "mcp__rvt-mcp__revit_get_change_records",
-      "mcp__rvt-mcp__revit_get_compound_structure",
-      "mcp__rvt-mcp__revit_get_current_target",
-      "mcp__rvt-mcp__revit_get_current_view_info",
-      "mcp__rvt-mcp__revit_get_element_bounding_box",
-      "mcp__rvt-mcp__revit_get_element_centroid",
-      "mcp__rvt-mcp__revit_get_element_details",
-      "mcp__rvt-mcp__revit_get_element_geometry",
-      "mcp__rvt-mcp__revit_get_element_parameters",
-      "mcp__rvt-mcp__revit_get_element_relationships",
-      "mcp__rvt-mcp__revit_get_failure_records",
-      "mcp__rvt-mcp__revit_get_family_instances",
-      "mcp__rvt-mcp__revit_get_group_members",
-      "mcp__rvt-mcp__revit_get_link_coordinate_system",
-      "mcp__rvt-mcp__revit_get_link_elements",
-      "mcp__rvt-mcp__revit_get_material_properties",
-      "mcp__rvt-mcp__revit_get_material_quantities",
-      "mcp__rvt-mcp__revit_get_mep_element_connectors",
-      "mcp__rvt-mcp__revit_get_model_warnings_summary",
-      "mcp__rvt-mcp__revit_get_operation_status",
-      "mcp__rvt-mcp__revit_get_panel_schedule",
-      "mcp__rvt-mcp__revit_get_print_settings",
-      "mcp__rvt-mcp__revit_get_project_coordinate_system",
-      "mcp__rvt-mcp__revit_get_railing_structure",
-      "mcp__rvt-mcp__revit_get_room_boundaries",
-      "mcp__rvt-mcp__revit_get_room_openings",
-      "mcp__rvt-mcp__revit_get_schedulable_fields",
-      "mcp__rvt-mcp__revit_get_schedule_data",
-      "mcp__rvt-mcp__revit_get_schedule_definition",
-      "mcp__rvt-mcp__revit_get_schedule_formulas",
-      "mcp__rvt-mcp__revit_get_selected_elements",
-      "mcp__rvt-mcp__revit_get_structural_loads",
-      "mcp__rvt-mcp__revit_get_system_inventory",
-      "mcp__rvt-mcp__revit_get_titleblock_parameters",
-      "mcp__rvt-mcp__revit_get_type_parameters",
-      "mcp__rvt-mcp__revit_get_view_visibility",
-      "mcp__rvt-mcp__revit_get_viewport_geometry",
-      "mcp__rvt-mcp__revit_health",
-      "mcp__rvt-mcp__revit_list_areas",
-      "mcp__rvt-mcp__revit_list_assemblies",
-      "mcp__rvt-mcp__revit_list_available_targets",
-      "mcp__rvt-mcp__revit_list_baked_tools",
-      "mcp__rvt-mcp__revit_list_export_settings",
-      "mcp__rvt-mcp__revit_list_family_types_in_family",
-      "mcp__rvt-mcp__revit_list_groups",
-      "mcp__rvt-mcp__revit_list_keynotes",
-      "mcp__rvt-mcp__revit_list_linked_cad",
-      "mcp__rvt-mcp__revit_list_linked_models",
-      "mcp__rvt-mcp__revit_list_loaded_families",
-      "mcp__rvt-mcp__revit_list_materials",
-      "mcp__rvt-mcp__revit_list_mep_systems",
-      "mcp__rvt-mcp__revit_list_phases",
-      "mcp__rvt-mcp__revit_list_project_parameter_bindings",
-      "mcp__rvt-mcp__revit_list_project_parameters",
-      "mcp__rvt-mcp__revit_list_rebar",
-      "mcp__rvt-mcp__revit_list_recent_models",
-      "mcp__rvt-mcp__revit_list_revisions",
-      "mcp__rvt-mcp__revit_list_rooms",
-      "mcp__rvt-mcp__revit_list_saved_selections",
-      "mcp__rvt-mcp__revit_list_schedules",
-      "mcp__rvt-mcp__revit_list_shared_parameters",
-      "mcp__rvt-mcp__revit_list_sheets",
-      "mcp__rvt-mcp__revit_list_titleblocks",
-      "mcp__rvt-mcp__revit_list_view_filters",
-      "mcp__rvt-mcp__revit_list_view_templates",
-      "mcp__rvt-mcp__revit_list_worksets",
-      "mcp__rvt-mcp__revit_load_selection",
-      "mcp__rvt-mcp__revit_lookup_message",
-      "mcp__rvt-mcp__revit_measure_distance_between_elements",
-      "mcp__rvt-mcp__revit_project_point_onto_face",
-      "mcp__rvt-mcp__revit_raycast_from_point",
-      "mcp__rvt-mcp__revit_select_elements",
-      "mcp__rvt-mcp__revit_show_element_in_view",
-      "mcp__rvt-mcp__revit_show_message",
-      "mcp__rvt-mcp__revit_suggest_view_name_corrections",
-      "mcp__rvt-mcp__revit_survey_change_impact",
-      "mcp__rvt-mcp__revit_workflow_model_audit"
+      "mcp__tbc-revit-mcp__revit_activate_view",
+      "mcp__tbc-revit-mcp__revit_ai_element_filter",
+      "mcp__tbc-revit-mcp__revit_analyze_geometry_complexity",
+      "mcp__tbc-revit-mcp__revit_analyze_mep_network",
+      "mcp__tbc-revit-mcp__revit_analyze_model_statistics",
+      "mcp__tbc-revit-mcp__revit_analyze_sheet_layout",
+      "mcp__tbc-revit-mcp__revit_analyze_structural_connections",
+      "mcp__tbc-revit-mcp__revit_analyze_usage_patterns",
+      "mcp__tbc-revit-mcp__revit_analyze_view_naming_patterns",
+      "mcp__tbc-revit-mcp__revit_api_lookup",
+      "mcp__tbc-revit-mcp__revit_audit_families",
+      "mcp__tbc-revit-mcp__revit_clash_detection",
+      "mcp__tbc-revit-mcp__revit_compute_element_area",
+      "mcp__tbc-revit-mcp__revit_compute_element_volume",
+      "mcp__tbc-revit-mcp__revit_detect_firm_profile",
+      "mcp__tbc-revit-mcp__revit_detect_system_elements",
+      "mcp__tbc-revit-mcp__revit_find_elements_in_volume",
+      "mcp__tbc-revit-mcp__revit_find_mep_disconnects",
+      "mcp__tbc-revit-mcp__revit_find_overlapping_elements",
+      "mcp__tbc-revit-mcp__revit_find_schedule_elements",
+      "mcp__tbc-revit-mcp__revit_find_undimensioned_elements",
+      "mcp__tbc-revit-mcp__revit_find_untagged_elements",
+      "mcp__tbc-revit-mcp__revit_get_assembly_members",
+      "mcp__tbc-revit-mcp__revit_get_available_family_types",
+      "mcp__tbc-revit-mcp__revit_get_change_records",
+      "mcp__tbc-revit-mcp__revit_get_compound_structure",
+      "mcp__tbc-revit-mcp__revit_get_current_target",
+      "mcp__tbc-revit-mcp__revit_get_current_view_info",
+      "mcp__tbc-revit-mcp__revit_get_element_bounding_box",
+      "mcp__tbc-revit-mcp__revit_get_element_centroid",
+      "mcp__tbc-revit-mcp__revit_get_element_details",
+      "mcp__tbc-revit-mcp__revit_get_element_geometry",
+      "mcp__tbc-revit-mcp__revit_get_element_parameters",
+      "mcp__tbc-revit-mcp__revit_get_element_relationships",
+      "mcp__tbc-revit-mcp__revit_get_failure_records",
+      "mcp__tbc-revit-mcp__revit_get_family_instances",
+      "mcp__tbc-revit-mcp__revit_get_group_members",
+      "mcp__tbc-revit-mcp__revit_get_link_coordinate_system",
+      "mcp__tbc-revit-mcp__revit_get_link_elements",
+      "mcp__tbc-revit-mcp__revit_get_material_properties",
+      "mcp__tbc-revit-mcp__revit_get_material_quantities",
+      "mcp__tbc-revit-mcp__revit_get_mep_element_connectors",
+      "mcp__tbc-revit-mcp__revit_get_model_warnings_summary",
+      "mcp__tbc-revit-mcp__revit_get_operation_status",
+      "mcp__tbc-revit-mcp__revit_get_panel_schedule",
+      "mcp__tbc-revit-mcp__revit_get_print_settings",
+      "mcp__tbc-revit-mcp__revit_get_project_coordinate_system",
+      "mcp__tbc-revit-mcp__revit_get_railing_structure",
+      "mcp__tbc-revit-mcp__revit_get_room_boundaries",
+      "mcp__tbc-revit-mcp__revit_get_room_openings",
+      "mcp__tbc-revit-mcp__revit_get_schedulable_fields",
+      "mcp__tbc-revit-mcp__revit_get_schedule_data",
+      "mcp__tbc-revit-mcp__revit_get_schedule_definition",
+      "mcp__tbc-revit-mcp__revit_get_schedule_formulas",
+      "mcp__tbc-revit-mcp__revit_get_selected_elements",
+      "mcp__tbc-revit-mcp__revit_get_structural_loads",
+      "mcp__tbc-revit-mcp__revit_get_system_inventory",
+      "mcp__tbc-revit-mcp__revit_get_titleblock_parameters",
+      "mcp__tbc-revit-mcp__revit_get_type_parameters",
+      "mcp__tbc-revit-mcp__revit_get_view_visibility",
+      "mcp__tbc-revit-mcp__revit_get_viewport_geometry",
+      "mcp__tbc-revit-mcp__revit_health",
+      "mcp__tbc-revit-mcp__revit_list_areas",
+      "mcp__tbc-revit-mcp__revit_list_assemblies",
+      "mcp__tbc-revit-mcp__revit_list_available_targets",
+      "mcp__tbc-revit-mcp__revit_list_baked_tools",
+      "mcp__tbc-revit-mcp__revit_list_export_settings",
+      "mcp__tbc-revit-mcp__revit_list_family_types_in_family",
+      "mcp__tbc-revit-mcp__revit_list_groups",
+      "mcp__tbc-revit-mcp__revit_list_keynotes",
+      "mcp__tbc-revit-mcp__revit_list_linked_cad",
+      "mcp__tbc-revit-mcp__revit_list_linked_models",
+      "mcp__tbc-revit-mcp__revit_list_loaded_families",
+      "mcp__tbc-revit-mcp__revit_list_materials",
+      "mcp__tbc-revit-mcp__revit_list_mep_systems",
+      "mcp__tbc-revit-mcp__revit_list_phases",
+      "mcp__tbc-revit-mcp__revit_list_project_parameter_bindings",
+      "mcp__tbc-revit-mcp__revit_list_project_parameters",
+      "mcp__tbc-revit-mcp__revit_list_rebar",
+      "mcp__tbc-revit-mcp__revit_list_recent_models",
+      "mcp__tbc-revit-mcp__revit_list_revisions",
+      "mcp__tbc-revit-mcp__revit_list_rooms",
+      "mcp__tbc-revit-mcp__revit_list_saved_selections",
+      "mcp__tbc-revit-mcp__revit_list_schedules",
+      "mcp__tbc-revit-mcp__revit_list_shared_parameters",
+      "mcp__tbc-revit-mcp__revit_list_sheets",
+      "mcp__tbc-revit-mcp__revit_list_titleblocks",
+      "mcp__tbc-revit-mcp__revit_list_view_filters",
+      "mcp__tbc-revit-mcp__revit_list_view_templates",
+      "mcp__tbc-revit-mcp__revit_list_worksets",
+      "mcp__tbc-revit-mcp__revit_load_selection",
+      "mcp__tbc-revit-mcp__revit_lookup_message",
+      "mcp__tbc-revit-mcp__revit_measure_distance_between_elements",
+      "mcp__tbc-revit-mcp__revit_project_point_onto_face",
+      "mcp__tbc-revit-mcp__revit_raycast_from_point",
+      "mcp__tbc-revit-mcp__revit_select_elements",
+      "mcp__tbc-revit-mcp__revit_show_element_in_view",
+      "mcp__tbc-revit-mcp__revit_show_message",
+      "mcp__tbc-revit-mcp__revit_suggest_view_name_corrections",
+      "mcp__tbc-revit-mcp__revit_survey_change_impact",
+      "mcp__tbc-revit-mcp__revit_workflow_model_audit"
     ]
   }
 }
@@ -361,7 +361,7 @@ Response guard 默认 **开启**：UTF-8 警告阈值 65536 byte，强警告高�
 
 ## 多个 Revit 实例
 
-服务器始终只绑定一个 Revit 实例 —— 即使同一年份有多个实例同时运行。首次调用时隐式绑定，或通过 `--target` / `BIMWRIGHT_TARGET` / `revit_switch_target` 显式绑定。选择器：`auto`、4 位年份（`2024`）、`pid:<n>` 或 `id:revit-<year>-<pid>`；旧的 R 代码如 `R24` 会被拒绝。
+服务器始终只绑定一个 Revit 实例 —— 即使同一年份有多个实例同时运行。首次调用时隐式绑定，或通过 `--target` / `TBC_REVIT_MCP_TARGET` / `revit_switch_target` 显式绑定。选择器：`auto`、4 位年份（`2024`）、`pid:<n>` 或 `id:revit-<year>-<pid>`；旧的 R 代码如 `R24` 会被拒绝。
 
 当运行多个实例时 —— 尤其是同一年份的多个实例 —— 不要猜测目标。在允许写入的会话中：
 
@@ -391,7 +391,7 @@ Response guard 默认 **开启**：UTF-8 警告阈值 65536 byte，强警告高�
 
 ## 安全与隐私
 
-- 默认本地：loopback TCP 或本机 named pipe，`%LOCALAPPDATA%\Bimwright\rvt-mcp\` 下的 discovery 文件含每会话 auth token。
+- 默认本地：loopback TCP 或本机 named pipe，`%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\` 下的 discovery 文件含每会话 auth token。
 - 工具参数在 handler 运行前做 schema 校验；返回模型的错误经过脱敏。
 - `send_code` 可在 Revit 进程中运行任意 C# — 强大且有风险。无法接受时请使用 `--read-only` 或 `--disable-send-code`。
 - Adaptive bake、body cache 与 send_code journal 均为 opt-in，留在用户配置目录下；默认不把原始 send_code 正文写入长期日志。
@@ -418,7 +418,7 @@ Response guard 默认 **开启**：UTF-8 警告阈值 65536 byte，强警告高�
 
 ## 社区贡献
 
-代码、问题报告、复现示例和建议帮助 rvt-mcp 持续改进。感谢：
+代码、问题报告、复现示例和建议帮助改进了本 fork 所基于的上游 rvt-mcp 项目（链接指向上游的 Issue 和 PR）。感谢：
 
 | 贡献者 | 贡献 |
 |--------|------|
@@ -431,26 +431,10 @@ Response guard 默认 **开启**：UTF-8 警告阈值 65536 byte，强警告高�
 
 ---
 
-## bimwright 家族
-
-连接 AI 助手与 BIM、CAD 应用的开源工具。
-
-**bimwright** 这个名字由 **BIM** 和 **wright** 组成。wright 是英语中表示制作者或建造者的旧词，如 *shipwright*（造船工）。
-
-参见[网关名称的由来](https://github.com/bimwright/.github/blob/master/profile/README.md#naming)。
-
-- [**rvt-mcp**](https://github.com/bimwright/rvt-mcp) —— Autodesk® Revit®
-- [**dwg-mcp**](https://github.com/bimwright/dwg-mcp) —— Autodesk® AutoCAD®
-- [**nwd-mcp**](https://github.com/bimwright/nwd-mcp) —— Autodesk® Navisworks®
-- [**ipt-mcp**](https://github.com/bimwright/ipt-mcp) —— Autodesk® Inventor®
-- [**bim-wiki**](https://github.com/bimwright/bim-wiki) —— 越南语优先的 BIM 知识库
-
----
-
-## License
+## 许可证与署名
 
 Apache-2.0 — [LICENSE](LICENSE)。
 
-欢迎 fork 和重新品牌化——只需遵守许可证条款（保留 `LICENSE` 和版权声明，并标注已修改的文件）。如果 rvt-mcp 对你有帮助，欢迎 star 或在你的产品中提及 BIMwright，但这完全是自愿的。随时欢迎 Issue 和 PR。
+tbc-revit-mcp 最初由 Khoa Le（Bimwright）以 [rvt-mcp](https://github.com/bimwright/rvt-mcp) 之名创建，由 Nour Rouas 修改并维护。相对原作的修改记录在 git 历史和 [CHANGELOG.md](CHANGELOG.md) 中；参见 [NOTICE](NOTICE)。本 fork 不使用 Bimwright 的名称和标志作为品牌。随时欢迎 Issue 和 PR。
 
-Revit 与 Autodesk 为 Autodesk, Inc. 商标。bimwright 为独立开源项目，与 Autodesk 无隶属关系。
+Revit 与 Autodesk 为 Autodesk, Inc. 商标。tbc-revit-mcp 为独立开源项目，与 Autodesk 无隶属关系。

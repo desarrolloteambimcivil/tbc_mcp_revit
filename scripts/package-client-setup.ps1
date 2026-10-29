@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-  Build the end-user RvtMcp setup ZIP.
+  Build the end-user tbc-revit-mcp setup ZIP (TbcRevitMcp.Setup-<version>-win-x64.zip).
 
 .DESCRIPTION
   Produces a single client-facing archive that contains:
@@ -94,7 +94,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 $publishedServerExe = Join-Path $serverStage 'RvtMcp.Server.exe'
-$friendlyServerExe = Join-Path $serverStage 'rvt-mcp.exe'
+$friendlyServerExe = Join-Path $serverStage 'tbc-revit-mcp.exe'
 if (-not (Test-Path $publishedServerExe)) {
     throw "Published server executable not found: $publishedServerExe"
 }
@@ -187,7 +187,7 @@ foreach ($file in @(Get-ChildItem -Path $stageRoot -File -Recurse | Sort-Object 
 }
 
 $manifest = [ordered]@{
-    name = 'RvtMcp.Setup'
+    name = 'TbcRevitMcp.Setup'
     version = $Version
     generatedAtUtc = (Get-Date).ToUniversalTime().ToString('o')
     commit = $commit
@@ -195,7 +195,7 @@ $manifest = [ordered]@{
     platform = 'win-x64'
     supportedRevitYears = @(2022, 2023, 2024, 2025, 2026, 2027)
     server = [ordered]@{
-        command = 'server/rvt-mcp.exe'
+        command = 'server/tbc-revit-mcp.exe'
         selfContained = $true
         requiresDotnet = $false
     }
@@ -206,7 +206,7 @@ $manifest = [ordered]@{
 $manifestPath = Join-Path $stageRoot 'manifest.json'
 $manifest | ConvertTo-Json -Depth 20 | Set-Content -Path $manifestPath -Encoding UTF8
 
-$setupZip = Join-Path $OutputDir ("RvtMcp.Setup-{0}-win-x64.zip" -f $displayVersion)
+$setupZip = Join-Path $OutputDir ("TbcRevitMcp.Setup-{0}-win-x64.zip" -f $displayVersion)
 if (Test-Path $setupZip) {
     Remove-Item -Path $setupZip -Force
 }

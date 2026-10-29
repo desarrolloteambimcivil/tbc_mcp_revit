@@ -316,7 +316,7 @@ namespace RvtMcp.Tests
         {
             public TempDir()
             {
-                Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "bimwright-usage-test-" + Guid.NewGuid().ToString("N"));
+                Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "tbc-revit-mcp-usage-test-" + Guid.NewGuid().ToString("N"));
                 Directory.CreateDirectory(Path);
             }
 

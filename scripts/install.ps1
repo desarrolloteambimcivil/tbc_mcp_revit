@@ -1,33 +1,38 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-  Install, update or uninstall the RvtMcp Revit add-ins and MCP server.
+  Install, update or uninstall the tbc-revit-mcp Revit add-ins (RvtMcp) and MCP server.
 
 .DESCRIPTION
   In a client setup ZIP, this script installs:
     - the matching per-Revit add-in from plugins/ for every installed Revit
       2022-2027 (a year counts when its Revit.exe exists)
     - the self-contained MCP server from server/ at the fixed path
-      %LOCALAPPDATA%\Bimwright\rvt-mcp\server\current\rvt-mcp.exe
-    - a default %LOCALAPPDATA%\Bimwright\rvt-mcp\rvtmcp.config.json with
+      %LOCALAPPDATA%\NourRouas\tbc-revit-mcp\server\current\tbc-revit-mcp.exe
+    - a default %LOCALAPPDATA%\NourRouas\tbc-revit-mcp\rvtmcp.config.json with
       toolsets=["all"] (skipped when the file already sets toolsets)
 
-  An existing %LOCALAPPDATA%\RvtMcp\ data folder is moved whole to
-  %LOCALAPPDATA%\Bimwright\rvt-mcp\ before anything else is written (Revit and
-  MCP clients using rvt-mcp must be closed); when both folders exist the
-  install stops so nothing is merged silently.
+  Data of the upstream product (%LOCALAPPDATA%\Bimwright\rvt-mcp\) is never
+  moved or changed: the server and add-in copy it into the new folder on their
+  first start. Only when that upstream folder does not exist, an old
+  pre-rename %LOCALAPPDATA%\RvtMcp\ data folder is moved whole to
+  %LOCALAPPDATA%\NourRouas\tbc-revit-mcp\ before anything else is written
+  (Revit and MCP clients using it must be closed); when both folders exist
+  without a completed migration marker the install stops so nothing is merged
+  silently.
 
   It then wires every detected MCP client (-Client <names> limits this,
   -Client none skips it) with the procedures in docs/mcp-client-wiring.md -
   minimal text edits (JSONC comments survive), a <config>.bak backup first,
-  client-native verification where available, custom launchers and legacy
-  bimwright-rvt* entries reported but never replaced. Updating keeps the
-  server path, so wired clients only need a restart.
+  client-native verification where available, custom launchers, legacy
+  bimwright-rvt* entries and the upstream rvt-mcp entry reported but never
+  replaced. Updating keeps the server path, so wired clients only need a
+  restart.
 
   Every replacement is recorded and rolled back on error. Other add-in
-  manifests carrying RvtMcp's AddInId (Bimwright-era copies) are removed; a
-  machine-wide copy blocks the install. The installed add-ins are verified
-  against the package and the server is started once with --help.
+  manifests carrying RvtMcp's AddInId (upstream and Bimwright-era copies) are
+  removed; a machine-wide copy blocks the install. The installed add-ins are
+  verified against the package and the server is started once with --help.
 
   It also remains compatible with the older plugin-only release layout where
   per-Revit plugin ZIPs sit beside this script.
@@ -47,8 +52,9 @@
   (same as 'auto'/'all'). A comma list of client names (claude, codex,
   cursor, vscode, ...) wires only those; 'none' leaves client configs
   untouched. Every edit is previewed under -WhatIf and backed up to
-  <config>.bak first. With -Uninstall, removes the rvt-mcp entry from the
-  named clients; without -Client, uninstall leaves client configs alone.
+  <config>.bak first. With -Uninstall, removes the tbc-revit-mcp entry from
+  the named clients (an upstream rvt-mcp entry is kept); without -Client,
+  uninstall leaves client configs alone.
 
 .PARAMETER WireClient
   Deprecated alias of -Client; merged into the client list if passed.
@@ -129,7 +135,7 @@ if ($setupVersion -notmatch '^v?\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?$' -and $set
 # Fixed path for every version: MCP clients are configured once and an update
 # only replaces the files behind it.
 if (-not $ServerInstallRoot) {
-    $ServerInstallRoot = Join-Path $env:LOCALAPPDATA 'Bimwright\rvt-mcp\server\current'
+    $ServerInstallRoot = Join-Path $env:LOCALAPPDATA 'NourRouas\tbc-revit-mcp\server\current'
 }
 
 # A year counts only when Revit.exe exists: registry keys survive uninstalls.
@@ -222,11 +228,18 @@ function Get-DuplicateAddinItems([int]$Year, [string]$AddinsRoot, [string]$KeepM
 function Find-ServerSourceExe {
     param([string]$ServerDir)
     if (-not $ServerDir) { return $null }
-    $preferred = Join-Path $ServerDir 'rvt-mcp.exe'
-    if (Test-Path $preferred) { return $preferred }
-    $fallback = Join-Path $ServerDir 'RvtMcp.Server.exe'
-    if (Test-Path $fallback) { return $fallback }
+    # tbc-revit-mcp.exe is the packaged name; rvt-mcp.exe (upstream-style
+    # package) and the raw build output RvtMcp.Server.exe are accepted too.
+    foreach ($name in Get-ServerExeNames) {
+        $candidate = Join-Path $ServerDir $name
+        if (Test-Path $candidate) { return $candidate }
+    }
     return $null
+}
+
+# Server executable names, preferred first. Cleanup probes every one of them.
+function Get-ServerExeNames {
+    return @('tbc-revit-mcp.exe', 'rvt-mcp.exe', 'RvtMcp.Server.exe')
 }
 
 function Get-RvtMcpAddinId([int]$Year) {
@@ -249,7 +262,7 @@ function Get-AgentsGuidePath([string]$ScriptRoot) {
             if (Test-Path -LiteralPath $candidate -PathType Leaf) { return $candidate }
         }
     }
-    return 'https://github.com/bimwright/rvt-mcp/blob/master/AGENTS.md'
+    return 'https://github.com/nour-rouas/tbc-revit-mcp/blob/master/AGENTS.md'
 }
 
 # Every backup is beside its target. Never delete a caller-supplied directory
@@ -287,17 +300,25 @@ function Move-ToRollback([string]$Path) {
 
 # Pre-rename installs kept every per-user file under %LOCALAPPDATA%\RvtMcp\,
 # server copies nested as rvt\server\<name>. The product root is now
-# %LOCALAPPDATA%\Bimwright\rvt-mcp\. The old tree is moved whole - a rename,
-# never a copy - so data stays byte-identical, then the nested rvt\server is
-# flattened to server\. Each rename is recorded as a Relocate entry so a failed
-# install restores the old folder exactly; Remove-InstallPath never sees these
-# entries, so neither root can be deleted by the transaction.
+# %LOCALAPPDATA%\NourRouas\tbc-revit-mcp\. The old tree is moved whole - a
+# rename, never a copy - so data stays byte-identical, then the nested
+# rvt\server is flattened to server\. Each rename is recorded as a Relocate
+# entry so a failed install restores the old folder exactly; Remove-InstallPath
+# never sees these entries, so neither root can be deleted by the transaction.
+# When the upstream %LOCALAPPDATA%\Bimwright\rvt-mcp\ exists nothing is moved:
+# the runtime copies from that upstream root and treats RvtMcp\ as already
+# migrated recovery data, so a moved RvtMcp\ tree would conflict with that copy.
 function Move-LegacyProductRoot {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param([string]$LocalAppData = $env:LOCALAPPDATA)
     $oldRoot = Join-Path $LocalAppData 'RvtMcp'
-    $newRoot = Join-Path $LocalAppData 'Bimwright\rvt-mcp'
+    $upstreamRoot = Join-Path $LocalAppData 'Bimwright\rvt-mcp'
+    $newRoot = Join-Path $LocalAppData 'NourRouas\tbc-revit-mcp'
     if (-not (Test-Path -LiteralPath $oldRoot -PathType Container)) { return }
+    if (Test-Path -LiteralPath $upstreamRoot -PathType Container) {
+        Write-Host ("[migrate] {0} exists; keeping {1} in place - the server copies upstream data into {2} on first start." -f $upstreamRoot, $oldRoot, $newRoot)
+        return
+    }
     if (Test-Path -LiteralPath $newRoot) {
         # Runtime migration copies user data and retains the source as recovery data.
         if (Test-Path -LiteralPath (Join-Path $newRoot '.migrated-from-rvtmcp-v2') -PathType Leaf) {
@@ -312,8 +333,8 @@ function Move-LegacyProductRoot {
     }
     $nestedServer = Join-Path $newRoot 'rvt\server'
     $flatServer = Join-Path $newRoot 'server'
-    $closeHint = 'Close Revit and any MCP clients using rvt-mcp, then run the installer again.'
-    if (-not $PSCmdlet.ShouldProcess("$oldRoot -> $newRoot", 'Relocate legacy rvt-mcp data folder')) {
+    $closeHint = 'Close Revit and any MCP clients using this server, then run the installer again.'
+    if (-not $PSCmdlet.ShouldProcess("$oldRoot -> $newRoot", 'Relocate legacy RvtMcp data folder')) {
         Write-Host ("[migrate] preview move {0} -> {1}" -f $oldRoot, $newRoot)
         if ((Test-Path -LiteralPath (Join-Path $oldRoot 'rvt\server') -PathType Container)) {
             Write-Host ("[migrate] preview move {0} -> {1}" -f (Join-Path $oldRoot 'rvt\server'), $flatServer)
@@ -509,13 +530,13 @@ function Get-OtherServerVersions([string]$InstallRoot) {
 }
 
 function Test-ServerCopy([string]$Dir) {
-    return (Test-Path -LiteralPath (Join-Path $Dir 'rvt-mcp.exe')) -or (Test-Path -LiteralPath (Join-Path $Dir 'RvtMcp.Server.exe'))
+    return @(Get-ServerExeNames | Where-Object { Test-Path -LiteralPath (Join-Path $Dir $_) }).Count -gt 0
 }
 
 # A running server's exe cannot be deleted. Probe it first so a copy that an
 # MCP client still runs is kept whole instead of half-deleted.
 function Remove-ServerCopy([string]$Dir) {
-    foreach ($name in 'rvt-mcp.exe', 'RvtMcp.Server.exe') {
+    foreach ($name in Get-ServerExeNames) {
         $exe = Join-Path $Dir $name
         if (Test-Path -LiteralPath $exe) {
             try { Remove-Item -LiteralPath $exe -Force -ErrorAction Stop } catch { return $false }
@@ -562,7 +583,8 @@ function Remove-StaleServerVersions {
 # so JSONC comments and key order survive - with a <path>.bak backup and a
 # parse-check that restores the backup on failure. CLI clients go through
 # their own `mcp add`. Nothing is touched unless -Client names it.
-# The config entry key is always the literal 'rvt-mcp'.
+# The config entry key is always the literal 'tbc-revit-mcp'. The upstream
+# product's 'rvt-mcp' entry is only reported - never replaced or deleted.
 
 # Per-client spec. Kind: cli (own `mcp` command), file (edit config),
 # deeplink (no safe file path - hand the user a cherrystudio:// URL).
@@ -599,7 +621,7 @@ function Get-McpClientSpecs {
     )
 }
 
-# The rvt-mcp entry literal per client shape (path escaped for JSON).
+# The tbc-revit-mcp entry literal per client shape (path escaped for JSON).
 function Get-McpEntryText([string]$EntryKind, [string]$Exe) {
     $e = $Exe.Replace('\', '\\')
     switch ($EntryKind) {
@@ -770,18 +792,26 @@ function Save-McpConfigText([string]$Path, [string]$NewText, [string]$OldText) {
     [IO.File]::WriteAllText($Path, $NewText)
 }
 
-# True when the config's top-level <RootKey> object has an rvt-mcp member.
-# Text scan only, so a file ConvertFrom-Json rejects is still inspected.
-function Test-McpConfigHasEntry([string]$Path, [string]$RootKey) {
+# True when the config's top-level <RootKey> object has a member named $Name
+# (default: this product's tbc-revit-mcp entry). Text scan only, so a file
+# ConvertFrom-Json rejects is still inspected.
+function Test-McpConfigHasEntry([string]$Path, [string]$RootKey, [string]$Name = 'tbc-revit-mcp') {
+    if (-not $Path -or -not (Test-Path -LiteralPath $Path -PathType Leaf)) { return $false }
     $text = [IO.File]::ReadAllText($Path)
     $rootOpen = Skip-JsonSpace $text 0
     if ($rootOpen -ge $text.Length -or $text[$rootOpen] -ne '{') { return $false }
     $keySpan = Get-JsonMemberSpan $text $rootOpen $RootKey
     if ($null -eq $keySpan -or $text[$keySpan.ValueStart] -ne '{') { return $false }
-    return $null -ne (Get-JsonMemberSpan $text $keySpan.ValueStart 'rvt-mcp')
+    return $null -ne (Get-JsonMemberSpan $text $keySpan.ValueStart $Name)
 }
 
-# Minimal-edit add/remove of the rvt-mcp entry in a file config.
+# The upstream product (bimwright/rvt-mcp) registers itself as 'rvt-mcp'.
+# Such an entry is left exactly as it is and reported once per client.
+function Get-UpstreamEntryNote([string]$ClientName) {
+    return "${ClientName}: upstream rvt-mcp entry kept; remove it if you no longer use upstream"
+}
+
+# Minimal-edit add/remove of the tbc-revit-mcp entry in a file config.
 # Returns a status word: created|added|repointed|already|custom|removed|absent|previewed.
 function Set-McpConfigEntry {
     [CmdletBinding(SupportsShouldProcess = $true)]
@@ -794,15 +824,25 @@ function Set-McpConfigEntry {
     $entryText = if ($Exe) { Get-McpEntryText $EntryKind $Exe } else { $null }
     # Spans the whole JSON string value (quote to quote), so a repoint replaces
     # the full path rather than splicing the new one after the old prefix.
-    # Repoint entries whose command is under the old %LOCALAPPDATA%\RvtMcp root
-    # (any server folder, including its own current\) or at a versioned copy
-    # under the new %LOCALAPPDATA%\Bimwright\rvt-mcp root (never its current\).
-    $legacyRx = '(?i)(?<=")(?:[^"]*?rvtmcp(?:\\{2}|\\)+rvt(?:\\{2}|\\)+server(?:\\{2}|\\)+[^"\\]+(?:\\{2}|\\)+rvt-mcp\.exe|[^"]*?rvt-mcp(?:\\{2}|\\)+server(?:\\{2}|\\)+(?!current(?:\\{2}|\\)+)[^"\\]+(?:\\{2}|\\)+rvt-mcp\.exe)(?=")'
+    # Only the tbc-revit-mcp entry is ever matched (the span below is that
+    # member), so an upstream rvt-mcp entry is never rewritten. Inside it,
+    # repoint commands under the old %LOCALAPPDATA%\RvtMcp root (any server
+    # folder, including its own current\), under the upstream
+    # %LOCALAPPDATA%\Bimwright\rvt-mcp root (any server folder, including its
+    # fixed current\rvt-mcp.exe), or at a versioned copy under the new
+    # %LOCALAPPDATA%\NourRouas\tbc-revit-mcp root (never its current\).
+    $sep = '(?:\\{2}|\\)+'
+    $exeName = '(?:tbc-revit-mcp|rvt-mcp)\.exe'
+    $legacyRx = '(?i)(?<=")(?:' +
+        '[^"]*?rvtmcp' + $sep + 'rvt' + $sep + 'server' + $sep + '[^"\\]+' + $sep + $exeName +
+        '|[^"]*?bimwright' + $sep + 'rvt-mcp' + $sep + 'server' + $sep + '[^"\\]+' + $sep + 'rvt-mcp\.exe' +
+        '|[^"]*?tbc-revit-mcp' + $sep + 'server' + $sep + '(?!current' + $sep + ')[^"\\]+' + $sep + $exeName +
+        ')(?=")'
 
     if (-not (Test-Path -LiteralPath $full)) {
         if ($Remove) { return 'absent' }
-        $body = '{ "' + $RootKey + '": { "rvt-mcp": ' + $entryText + ' } }'
-        if ($PSCmdlet.ShouldProcess($full, 'Wire rvt-mcp into client config')) {
+        $body = '{ "' + $RootKey + '": { "tbc-revit-mcp": ' + $entryText + ' } }'
+        if ($PSCmdlet.ShouldProcess($full, 'Wire tbc-revit-mcp into client config')) {
             New-Item -ItemType Directory -Path (Split-Path -Parent $full) -Force | Out-Null
             [IO.File]::WriteAllText($full, $body)
             return 'created'
@@ -814,8 +854,8 @@ function Set-McpConfigEntry {
     if ($text -notmatch '\S') {
         # Empty file (windsurf ships one) - write the full skeleton.
         if ($Remove) { return 'absent' }
-        $body = '{ "' + $RootKey + '": { "rvt-mcp": ' + $entryText + ' } }'
-        if (-not $PSCmdlet.ShouldProcess($full, 'Wire rvt-mcp into client config')) { return 'previewed' }
+        $body = '{ "' + $RootKey + '": { "tbc-revit-mcp": ' + $entryText + ' } }'
+        if (-not $PSCmdlet.ShouldProcess($full, 'Wire tbc-revit-mcp into client config')) { return 'previewed' }
         Save-McpConfigText $full $body $text
         return 'created'
     }
@@ -831,7 +871,8 @@ function Set-McpConfigEntry {
         return 'skipped'
     }
     $keySpan = Get-JsonMemberSpan $text $rootOpen $RootKey
-    # Legacy pre-rename entries are reported, never removed silently.
+    # Legacy pre-rename entries are reported, never removed silently. The
+    # upstream rvt-mcp entry is reported by Invoke-McpClientWiring's summary.
     if ($null -ne $keySpan -and $text[$keySpan.ValueStart] -eq '{') {
         $legacy = @(Get-JsonObjectMemberNames $text $keySpan.ValueStart | Where-Object { $_ -like 'bimwright-rvt*' })
         if ($legacy.Count) {
@@ -841,7 +882,7 @@ function Set-McpConfigEntry {
 
     if ($Remove) {
         if ($null -eq $keySpan -or $text[$keySpan.ValueStart] -ne '{') { return 'absent' }
-        $entrySpan = Get-JsonMemberSpan $text $keySpan.ValueStart 'rvt-mcp'
+        $entrySpan = Get-JsonMemberSpan $text $keySpan.ValueStart 'tbc-revit-mcp'
         if ($null -eq $entrySpan) { return 'absent' }
         # Cut the member plus one adjacent comma (trailing preferred).
         $after = Skip-JsonSpace $text $entrySpan.MemberEnd
@@ -852,29 +893,29 @@ function Set-McpConfigEntry {
             $before = Skip-JsonSpaceBack $text ($entrySpan.MemberStart - 1)
             if ($before -ge 0 -and $text[$before] -eq ',') { $from = $before }
         }
-        if (-not $PSCmdlet.ShouldProcess($full, 'Remove rvt-mcp from client config')) { return 'previewed' }
+        if (-not $PSCmdlet.ShouldProcess($full, 'Remove tbc-revit-mcp from client config')) { return 'previewed' }
         Save-McpConfigText $full ($text.Substring(0, $from) + $text.Substring($to)) $text
         return 'removed'
     }
 
     if ($null -eq $keySpan -or $text[$keySpan.ValueStart] -ne '{') {
-        # Insert "<RootKey>": { "rvt-mcp": <entry> } as the first root member.
-        $inner = '"' + $RootKey + '": { "rvt-mcp": ' + $entryText + ' }'
+        # Insert "<RootKey>": { "tbc-revit-mcp": <entry> } as the first root member.
+        $inner = '"' + $RootKey + '": { "tbc-revit-mcp": ' + $entryText + ' }'
         $next = Skip-JsonSpace $text ($rootOpen + 1)
         if ($next -lt $text.Length -and $text[$next] -ne '}') { $inner += ',' }
         $newText = $text.Insert($rootOpen + 1, "`n    " + $inner + "`n")
-        if (-not $PSCmdlet.ShouldProcess($full, 'Wire rvt-mcp into client config')) { return 'previewed' }
+        if (-not $PSCmdlet.ShouldProcess($full, 'Wire tbc-revit-mcp into client config')) { return 'previewed' }
         Save-McpConfigText $full $newText $text
         return 'added'
     }
 
-    $entrySpan = Get-JsonMemberSpan $text $keySpan.ValueStart 'rvt-mcp'
+    $entrySpan = Get-JsonMemberSpan $text $keySpan.ValueStart 'tbc-revit-mcp'
     if ($null -eq $entrySpan) {
         $next = Skip-JsonSpace $text ($keySpan.ValueStart + 1)
-        $inner = '"rvt-mcp": ' + $entryText
+        $inner = '"tbc-revit-mcp": ' + $entryText
         if ($next -lt $text.Length -and $text[$next] -ne '}') { $inner += ',' }
         $newText = $text.Insert($keySpan.ValueStart + 1, "`n        " + $inner + "`n    ")
-        if (-not $PSCmdlet.ShouldProcess($full, 'Wire rvt-mcp into client config')) { return 'previewed' }
+        if (-not $PSCmdlet.ShouldProcess($full, 'Wire tbc-revit-mcp into client config')) { return 'previewed' }
         Save-McpConfigText $full $newText $text
         return 'added'
     }
@@ -889,7 +930,7 @@ function Set-McpConfigEntry {
         # metachar reinterpretation of the replacement string.
         $newMember = [regex]::Replace($memberText, $legacyRx, { param($m) $escapedExe })
         $newText = $text.Substring(0, $entrySpan.MemberStart) + $newMember + $text.Substring($entrySpan.MemberEnd)
-        if (-not $PSCmdlet.ShouldProcess($full, 'Repoint rvt-mcp to the current server')) { return 'previewed' }
+        if (-not $PSCmdlet.ShouldProcess($full, 'Repoint tbc-revit-mcp to the current server')) { return 'previewed' }
         Save-McpConfigText $full $newText $text
         return 'repointed'
     }
@@ -928,22 +969,29 @@ function Resolve-McpConfigPath($spec) {
 }
 
 # codex `mcp add` replaces the whole entry - pull args forward from the
-# existing [mcp_servers.rvt-mcp] table so a repoint doesn't drop them.
+# existing [mcp_servers.tbc-revit-mcp] table so a repoint doesn't drop them.
 function Read-CodexEntryArgs([string]$TomlPath) {
     if (-not (Test-Path -LiteralPath $TomlPath)) { return @() }
     $text = [IO.File]::ReadAllText($TomlPath)
-    $m = [regex]::Match($text, '(?ms)^\[mcp_servers\.rvt-mcp\]\s*$(.*?)(?=^\[|\z)')
+    $m = [regex]::Match($text, '(?ms)^\[mcp_servers\.tbc-revit-mcp\]\s*$(.*?)(?=^\[|\z)')
     if (-not $m.Success) { return @() }
     $a = [regex]::Match($m.Groups[1].Value, 'args\s*=\s*\[(.*?)\]')
     if (-not $a.Success) { return @() }
     return @([regex]::Matches($a.Groups[1].Value, '"((?:[^"\\]|\\.)*)"') | ForEach-Object { $_.Groups[1].Value -replace '\\(.)', '$1' })
 }
 
+# True when codex's config.toml has the upstream [mcp_servers.rvt-mcp] table.
+function Test-CodexUpstreamEntry([string]$TomlPath) {
+    if (-not (Test-Path -LiteralPath $TomlPath -PathType Leaf)) { return $false }
+    return [regex]::IsMatch([IO.File]::ReadAllText($TomlPath), '(?m)^\[mcp_servers\.rvt-mcp\]\s*$')
+}
+
 # Fresh installs default the server to the full tool surface: seed
 # rvtmcp.config.json with toolsets=["all"]. An existing toolsets key is the
 # user's explicit choice and is kept; --toolsets/--read-only args and
-# BIMWRIGHT_* env vars still outrank the file. The write rides the install
-# transaction, so a failed install restores the previous config.
+# TBC_REVIT_MCP_* env vars (legacy BIMWRIGHT_* names are still read) outrank
+# the file. The write rides the install transaction, so a failed install
+# restores the previous config.
 function Set-DefaultToolsetsConfig {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param([string]$ConfigPath)
@@ -1011,9 +1059,17 @@ function Invoke-McpClientWiring {
     foreach ($name in $requested) {
         $spec = $specs | Where-Object { $_.Name -eq $name } | Select-Object -First 1
         if (-not $spec) { $report.Add("${name}: unknown client"); continue }
+        # Set when the client also holds the upstream rvt-mcp entry; reported
+        # after the switch (a `continue` inside a switch only leaves the switch).
+        $upstreamEntry = $false
         try {
             switch ($spec.Kind) {
                 'cli' {
+                    if ($spec.Name -eq 'claude' -and $spec.Paths) {
+                        $upstreamEntry = Test-McpConfigHasEntry $spec.Paths[0] $spec.RootKey 'rvt-mcp'
+                    } elseif ($spec.Name -eq 'codex') {
+                        $upstreamEntry = Test-CodexUpstreamEntry (Join-Path ($(if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $env:USERPROFILE '.codex' })) 'config.toml')
+                    }
                     $cli = Get-Command $spec.Cli -ErrorAction SilentlyContinue
                     if ($spec.Name -eq 'claude' -and $spec.Paths -and (Test-Path $spec.Paths[0]) -and
                         (-not $cli -or ($Mode -eq 'Add' -and (Test-McpConfigHasEntry $spec.Paths[0] $spec.RootKey)))) {
@@ -1027,41 +1083,41 @@ function Invoke-McpClientWiring {
                     }
                     if (-not $cli) { $report.Add("$($spec.Name): $($spec.Cli) CLI not on PATH"); continue }
                     if ($Mode -eq 'Add') {
-                        if (-not $PSCmdlet.ShouldProcess($spec.Name, 'wire rvt-mcp via client CLI')) { $report.Add("$($spec.Name): previewed"); continue }
+                        if (-not $PSCmdlet.ShouldProcess($spec.Name, 'wire tbc-revit-mcp via client CLI')) { $report.Add("$($spec.Name): previewed"); continue }
                         switch ($spec.Name) {
                             'claude' {
-                                $null = Invoke-ClientCli claude @('mcp', 'remove', 'rvt-mcp', '-s', 'local')  # drop any project-local shadow
-                                $out = Invoke-ClientCli claude @('mcp', 'add', '-s', 'user', 'rvt-mcp', '--', $Exe)
-                                $verify = Invoke-ClientCli claude @('mcp', 'get', 'rvt-mcp')
+                                $null = Invoke-ClientCli claude @('mcp', 'remove', 'tbc-revit-mcp', '-s', 'local')  # drop any project-local shadow
+                                $out = Invoke-ClientCli claude @('mcp', 'add', '-s', 'user', 'tbc-revit-mcp', '--', $Exe)
+                                $verify = Invoke-ClientCli claude @('mcp', 'get', 'tbc-revit-mcp')
                             }
                             'codex' {
                                 $toml = Join-Path ($(if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $env:USERPROFILE '.codex' })) 'config.toml'
                                 $oldArgs = Read-CodexEntryArgs $toml
-                                $out = Invoke-ClientCli codex (@('mcp', 'add', 'rvt-mcp', '--', $Exe) + @($oldArgs))
-                                $verify = Invoke-ClientCli codex @('mcp', 'get', 'rvt-mcp', '--json')
+                                $out = Invoke-ClientCli codex (@('mcp', 'add', 'tbc-revit-mcp', '--', $Exe) + @($oldArgs))
+                                $verify = Invoke-ClientCli codex @('mcp', 'get', 'tbc-revit-mcp', '--json')
                             }
                             'grok' {
-                                $out = Invoke-ClientCli grok @('mcp', 'add', 'rvt-mcp', $Exe, '--transport', 'stdio')
+                                $out = Invoke-ClientCli grok @('mcp', 'add', 'tbc-revit-mcp', $Exe, '--transport', 'stdio')
                                 $verify = Invoke-ClientCli grok @('mcp', 'list')
                             }
                         }
                         # A refused add leaves the old entry in place; `get`
-                        # still finds rvt-mcp, so it must not read as wired.
+                        # still finds tbc-revit-mcp, so it must not read as wired.
                         if (($out | Out-String) -match 'already exists') {
-                            $report.Add("$($spec.Name): existing rvt-mcp entry left unchanged - inspect it with $($spec.Cli) mcp list")
+                            $report.Add("$($spec.Name): existing tbc-revit-mcp entry left unchanged - inspect it with $($spec.Cli) mcp list")
                             continue
                         }
-                        $verified = ($verify | Out-String) -match 'rvt-mcp'
+                        $verified = ($verify | Out-String) -match 'tbc-revit-mcp'
                         $report.Add("$($spec.Name): " + $(if ($verified) { 'wired' } else { 'wired (verify inconclusive - check the client)' }))
                         if ($spec.Name -eq 'grok' -and ($verify | Out-String) -match '\(project\)') {
                             $report.Add('grok: a project-scope entry may shadow the user one - check grok mcp list from the repo')
                         }
                     } else {
-                        if (-not $PSCmdlet.ShouldProcess($spec.Name, 'remove rvt-mcp via client CLI')) { $report.Add("$($spec.Name): previewed"); continue }
+                        if (-not $PSCmdlet.ShouldProcess($spec.Name, 'remove tbc-revit-mcp via client CLI')) { $report.Add("$($spec.Name): previewed"); continue }
                         switch ($spec.Name) {
-                            'claude' { $null = Invoke-ClientCli claude @('mcp', 'remove', 'rvt-mcp', '-s', 'user') }
-                            'codex'  { $null = Invoke-ClientCli codex @('mcp', 'remove', 'rvt-mcp') }
-                            'grok'   { $null = Invoke-ClientCli grok @('mcp', 'remove', 'rvt-mcp') }
+                            'claude' { $null = Invoke-ClientCli claude @('mcp', 'remove', 'tbc-revit-mcp', '-s', 'user') }
+                            'codex'  { $null = Invoke-ClientCli codex @('mcp', 'remove', 'tbc-revit-mcp') }
+                            'grok'   { $null = Invoke-ClientCli grok @('mcp', 'remove', 'tbc-revit-mcp') }
                         }
                         $report.Add("$($spec.Name): removed")
                     }
@@ -1075,6 +1131,7 @@ function Invoke-McpClientWiring {
                     if (-not $path) { $report.Add("$($spec.Name): no config file found - wire it manually per docs/mcp-client-wiring.md"); continue }
                     $status = Set-McpConfigEntry -Path $path -RootKey $spec.RootKey -EntryKind $spec.EntryKind -Exe $Exe -Remove:($Mode -eq 'Remove')
                     $report.Add("$($spec.Name): $status -> $path")
+                    $upstreamEntry = Test-McpConfigHasEntry $path $spec.RootKey 'rvt-mcp'
                     # Some apps (Claude Desktop) persist their config from
                     # memory on quit - an edit made while the app runs can be
                     # overwritten. Surface it instead of silently losing the entry.
@@ -1087,12 +1144,13 @@ function Invoke-McpClientWiring {
                     }
                 }
                 'deeplink' {
-                    if ($Mode -eq 'Remove') { $report.Add('cherry-studio: remove rvt-mcp in Settings -> MCP Servers'); continue }
-                    $json = '{"mcpServers":{"rvt-mcp":{"command":"' + $Exe.Replace('\', '\\') + '","args":[]}}}'
+                    if ($Mode -eq 'Remove') { $report.Add('cherry-studio: remove tbc-revit-mcp in Settings -> MCP Servers'); continue }
+                    $json = '{"mcpServers":{"tbc-revit-mcp":{"command":"' + $Exe.Replace('\', '\\') + '","args":[]}}}'
                     $url = 'cherrystudio://mcp/install?servers=' + [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
                     $report.Add('cherry-studio: open this URL to install: ' + $url)
                 }
             }
+            if ($upstreamEntry) { $report.Add((Get-UpstreamEntryNote $spec.Name)) }
         } catch {
             $report.Add("$($spec.Name): failed - $($_.Exception.Message)")
         }
@@ -1181,6 +1239,7 @@ try {
         }
         # Relocate the pre-rename %LOCALAPPDATA%\RvtMcp\ tree before the first
         # write under the new product root (server deploy, config seeding).
+        # Skipped while the upstream Bimwright\rvt-mcp\ root exists.
         Move-LegacyProductRoot -LocalAppData $env:LOCALAPPDATA
     }
 
@@ -1261,7 +1320,7 @@ try {
                 $verified += "R$yearTwo"
             }
         }
-        $configDefault = Set-DefaultToolsetsConfig -ConfigPath (Join-Path $env:LOCALAPPDATA 'Bimwright\rvt-mcp\rvtmcp.config.json')
+        $configDefault = Set-DefaultToolsetsConfig -ConfigPath (Join-Path $env:LOCALAPPDATA 'NourRouas\tbc-revit-mcp\rvtmcp.config.json')
         if (@($Client | Where-Object { $_ -ne 'none' }).Count) {
             if ($serverCommand) {
                 $wiredClients = @(Invoke-McpClientWiring -Clients $Client -Exe $serverCommand -Mode Add)
@@ -1306,7 +1365,7 @@ if (-not $Uninstall -and -not $WhatIfPreference -and $serverCommand -and $ownSer
 # A relocated legacy tree can leave an emptied <root>\rvt\ behind once its
 # server\ was flattened to server\. Remove it only when completely empty.
 if (-not $Uninstall -and -not $WhatIfPreference) {
-    $strayRvt = Join-Path $env:LOCALAPPDATA 'Bimwright\rvt-mcp\rvt'
+    $strayRvt = Join-Path $env:LOCALAPPDATA 'NourRouas\tbc-revit-mcp\rvt'
     if (Test-Path -LiteralPath $strayRvt -PathType Container) {
         if (@(Get-ChildItem -LiteralPath $strayRvt -Force -ErrorAction SilentlyContinue).Count -eq 0) {
             Remove-Item -LiteralPath $strayRvt -Recurse -Force
@@ -1332,11 +1391,11 @@ if (-not $Uninstall) {
     if ($serverCommand) { Write-Host ("Server  : {0} (check: {1})" -f $serverCommand, $serverCheck) }
     else { Write-Host 'Server  : not in this package' }
     switch ($configDefault) {
-        'seeded'    { Write-Host ("Config  : seeded toolsets=all -> {0}\Bimwright\rvt-mcp\rvtmcp.config.json" -f $env:LOCALAPPDATA) }
-        'merged'    { Write-Host ("Config  : added toolsets=all to {0}\Bimwright\rvt-mcp\rvtmcp.config.json" -f $env:LOCALAPPDATA) }
+        'seeded'    { Write-Host ("Config  : seeded toolsets=all -> {0}\NourRouas\tbc-revit-mcp\rvtmcp.config.json" -f $env:LOCALAPPDATA) }
+        'merged'    { Write-Host ("Config  : added toolsets=all to {0}\NourRouas\tbc-revit-mcp\rvtmcp.config.json" -f $env:LOCALAPPDATA) }
         'kept'      { Write-Host 'Config  : kept existing toolsets setting' }
         'skipped'   { Write-Host 'Config  : unreadable config - unchanged' }
-        'previewed' { Write-Host ("Config  : preview seed toolsets=all -> {0}\Bimwright\rvt-mcp\rvtmcp.config.json" -f $env:LOCALAPPDATA) }
+        'previewed' { Write-Host ("Config  : preview seed toolsets=all -> {0}\NourRouas\tbc-revit-mcp\rvtmcp.config.json" -f $env:LOCALAPPDATA) }
     }
 }
 foreach ($w in $wiredClients) { Write-Host ("Client  : {0}" -f $w) }
@@ -1345,4 +1404,4 @@ if ($Uninstall -and -not @($Client | Where-Object { $_ -ne 'none' }).Count) {
 }
 if ($inUse.Count) { Write-Host ("In use  : {0} - restart MCP clients; removed at next install" -f ($inUse -join ', ')) }
 if ($legacyServers.Count) { Write-Host ("Legacy  : {0} - repoint clients to the Server path, then run install.ps1 -PruneOldServers" -f (($legacyServers | ForEach-Object { $_.Name }) -join ', ')) }
-if (-not $Uninstall) { Write-Host ("Next    : restart wired MCP clients to load rvt-mcp; manual wiring: {0}" -f $agentsGuide) }
+if (-not $Uninstall) { Write-Host ("Next    : restart wired MCP clients to load tbc-revit-mcp; manual wiring: {0}" -f $agentsGuide) }

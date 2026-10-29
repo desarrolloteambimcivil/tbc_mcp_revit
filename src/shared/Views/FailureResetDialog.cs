@@ -17,7 +17,7 @@ namespace RvtMcp.Plugin.Views
             MaxHeight = SystemParameters.WorkArea.Height * 0.9;
             ResizeMode = ResizeMode.NoResize; WindowStartupLocation = WindowStartupLocation.CenterOwner;
             ShowInTaskbar = false;
-            Resources.MergedDictionaries.Add(BimwrightStyles.Dictionary);
+            Resources.MergedDictionaries.Add(ProductStyles.Dictionary);
             var panel = new StackPanel { Margin = new Thickness(20) };
             panel.Children.Add(new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap });
             _acknowledged = new CheckBox {
@@ -30,7 +30,7 @@ namespace RvtMcp.Plugin.Views
             var cancel = new Button { Content = L.T("security.failure.review.cancel"), IsCancel = true, MinWidth = 110,
                 Margin = new Thickness(0, 0, 8, 0) };
             _reset = new Button { Content = L.T("failure.reset"), MinWidth = 110,
-                Style = (Style)BimwrightStyles.Dictionary[BimwrightStyles.PrimaryButtonKey] };
+                Style = (Style)ProductStyles.Dictionary[ProductStyles.PrimaryButtonKey] };
             _acknowledged.Checked += (s, e) => _reset.IsEnabled = true;
             _acknowledged.Unchecked += (s, e) => _reset.IsEnabled = false;
             _reset.Click += (s, e) => { if (_acknowledged.IsChecked == true) DialogResult = true; };

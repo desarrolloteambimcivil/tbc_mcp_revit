@@ -752,7 +752,7 @@ namespace RvtMcp.Plugin.Views.Settings
             _warningPolicyCaption.Text = SettingsText.Text("security.warningPolicy.help",
                 "Rollback is the default. Accept and log applies only to supported warnings with complete capture and durable recording.")
                 + (_viewModel.IsWarningPolicyWriteDisabled ? " " + SettingsText.Text("security.warningPolicy.environmentOverride",
-                    "BIMWRIGHT_WARNING_POLICY overrides the saved setting in this Revit process.") : "");
+                    "TBC_REVIT_MCP_WARNING_POLICY overrides the saved setting in this Revit process.") : "");
             AutomationProperties.SetHelpText(_warningPolicy, _warningPolicyCaption.Text);
             // Legacy values remain display-only; they never add a selectable preset or change the model.
             _journalHours.IsEditable = !_journalHours.Items.Contains(_viewModel.PersistSendCodeBodiesHours);
@@ -830,7 +830,7 @@ namespace RvtMcp.Plugin.Views.Settings
                 Dispatcher.BeginInvoke(new Action(UpdateLocalizedChrome));
                 return;
             }
-            Title = SettingsText.Text("settings.window.title", "rvt-mcp · Settings");
+            Title = SettingsText.Text("settings.window.title", "tbc-revit-mcp · Settings");
             _tabItems[SettingsTab.General].Header = SettingsText.Text("settings.tab.general", "General");
             _tabItems[SettingsTab.Toast].Header = SettingsText.Text("settings.tab.toast", "Toast");
             // Tools is an invariant tab caption by contract.
@@ -902,7 +902,7 @@ namespace RvtMcp.Plugin.Views.Settings
             if (_closing || !_viewModel.IsDirty) return;
             var answer = MessageBox.Show(this,
                 SettingsText.Text("settings.footer.discardPrompt", "You have unapplied changes. Close without applying them?"),
-                SettingsText.Text("settings.window.title", "rvt-mcp · Settings"), MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+                SettingsText.Text("settings.window.title", "tbc-revit-mcp · Settings"), MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
             if (answer != MessageBoxResult.Yes) e.Cancel = true;
             else _closing = true;
         }

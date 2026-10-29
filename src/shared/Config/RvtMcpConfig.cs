@@ -15,34 +15,34 @@ namespace RvtMcp.Plugin
     /// ToolBaker adaptive services consume <see cref="EnableAdaptiveBake"/> /
     /// <see cref="CacheSendCodeBodies"/>.
     ///
-    /// Precedence (high → low): CLI args > env vars (BIMWRIGHT_*) > JSON file.
+    /// Precedence (high → low): CLI args > env vars (TBC_REVIT_MCP_*, legacy BIMWRIGHT_*) > JSON file.
     /// Fields stay nullable so "not set" is distinguishable from "explicitly default-valued";
     /// resolved defaults are exposed via the *OrDefault accessors.
     /// </summary>
     public class RvtMcpConfig
     {
-        public const string EnvTarget                    = "BIMWRIGHT_TARGET";
-        public const string EnvToolsets                  = "BIMWRIGHT_TOOLSETS";
-        public const string EnvReadOnly                  = "BIMWRIGHT_READ_ONLY";
-        public const string EnvAllowLanBind              = "BIMWRIGHT_ALLOW_LAN_BIND";
-        public const string EnvEnableToolbaker           = "BIMWRIGHT_ENABLE_TOOLBAKER";
-        public const string EnvEnableAdaptiveBake        = "BIMWRIGHT_ENABLE_ADAPTIVE_BAKE";
-        public const string EnvCacheSendCodeBodies       = "BIMWRIGHT_CACHE_SEND_CODE_BODIES";
-        public const string EnvEnableToast               = "BIMWRIGHT_ENABLE_TOAST";
-        public const string EnvAutoStartTransport        = "BIMWRIGHT_AUTO_START_TRANSPORT";
-        public const string EnvPersistSendCodeBodies     = "BIMWRIGHT_PERSIST_SEND_CODE_BODIES";
-        public const string EnvPersistSendCodeBodiesTtl  = "BIMWRIGHT_PERSIST_SEND_CODE_BODIES_TTL";
-        public const string EnvUiLanguage                = "BIMWRIGHT_UI_LANGUAGE";
-        public const string EnvEnableSendCode = "BIMWRIGHT_ENABLE_SEND_CODE";
-        public const string EnvEnableCallLog = "BIMWRIGHT_ENABLE_CALL_LOG";
-        public const string EnvEnableChangeHistory = "BIMWRIGHT_ENABLE_CHANGE_HISTORY";
-        public const string EnvEnableResponseGuard = "BIMWRIGHT_ENABLE_RESPONSE_GUARD";
-        public const string EnvResponseWarnBytes = "BIMWRIGHT_RESPONSE_WARN_BYTES";
-        public const string EnvResponseStrongWarnBytes = "BIMWRIGHT_RESPONSE_STRONG_WARN_BYTES";
-        public const string EnvResponseBudgetBytes = "BIMWRIGHT_RESPONSE_BUDGET_BYTES";
-        public const string EnvMaxResponseBytes = "BIMWRIGHT_MAX_RESPONSE_BYTES";
-        public const string EnvSpillRetentionHours = "BIMWRIGHT_SPILL_RETENTION_HOURS";
-        public const string EnvWarningPolicy = "BIMWRIGHT_WARNING_POLICY";
+        public const string EnvTarget                    = "TBC_REVIT_MCP_TARGET";
+        public const string EnvToolsets                  = "TBC_REVIT_MCP_TOOLSETS";
+        public const string EnvReadOnly                  = "TBC_REVIT_MCP_READ_ONLY";
+        public const string EnvAllowLanBind              = "TBC_REVIT_MCP_ALLOW_LAN_BIND";
+        public const string EnvEnableToolbaker           = "TBC_REVIT_MCP_ENABLE_TOOLBAKER";
+        public const string EnvEnableAdaptiveBake        = "TBC_REVIT_MCP_ENABLE_ADAPTIVE_BAKE";
+        public const string EnvCacheSendCodeBodies       = "TBC_REVIT_MCP_CACHE_SEND_CODE_BODIES";
+        public const string EnvEnableToast               = "TBC_REVIT_MCP_ENABLE_TOAST";
+        public const string EnvAutoStartTransport        = "TBC_REVIT_MCP_AUTO_START_TRANSPORT";
+        public const string EnvPersistSendCodeBodies     = "TBC_REVIT_MCP_PERSIST_SEND_CODE_BODIES";
+        public const string EnvPersistSendCodeBodiesTtl  = "TBC_REVIT_MCP_PERSIST_SEND_CODE_BODIES_TTL";
+        public const string EnvUiLanguage                = "TBC_REVIT_MCP_UI_LANGUAGE";
+        public const string EnvEnableSendCode = "TBC_REVIT_MCP_ENABLE_SEND_CODE";
+        public const string EnvEnableCallLog = "TBC_REVIT_MCP_ENABLE_CALL_LOG";
+        public const string EnvEnableChangeHistory = "TBC_REVIT_MCP_ENABLE_CHANGE_HISTORY";
+        public const string EnvEnableResponseGuard = "TBC_REVIT_MCP_ENABLE_RESPONSE_GUARD";
+        public const string EnvResponseWarnBytes = "TBC_REVIT_MCP_RESPONSE_WARN_BYTES";
+        public const string EnvResponseStrongWarnBytes = "TBC_REVIT_MCP_RESPONSE_STRONG_WARN_BYTES";
+        public const string EnvResponseBudgetBytes = "TBC_REVIT_MCP_RESPONSE_BUDGET_BYTES";
+        public const string EnvMaxResponseBytes = "TBC_REVIT_MCP_MAX_RESPONSE_BYTES";
+        public const string EnvSpillRetentionHours = "TBC_REVIT_MCP_SPILL_RETENTION_HOURS";
+        public const string EnvWarningPolicy = "TBC_REVIT_MCP_WARNING_POLICY";
 
         public const bool DefaultReadOnly                  = false;
         public const bool DefaultAllowLanBind              = false;
@@ -285,10 +285,7 @@ namespace RvtMcp.Plugin
         }
 
         public static string DefaultConfigFilePath =>
-            Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Bimwright", "rvt-mcp",
-                "rvtmcp.config.json");
+            Path.Combine(ProductIdentity.DataRoot(), "rvtmcp.config.json");
 
         /// <summary>Test hook: redirects every Load that does not pass an explicit path.</summary>
         internal static string ConfigFilePathOverride { get; set; }
@@ -383,7 +380,8 @@ namespace RvtMcp.Plugin
             string configFilePath,
             bool allowPersistenceWriteBack)
         {
-            lookup = lookup ?? Environment.GetEnvironmentVariable;
+            // Legacy BIMWRIGHT_* names still apply when the TBC_REVIT_MCP_* name is not set.
+            lookup = ProductIdentity.WithLegacyFallback(lookup);
 
             var target = lookup(EnvTarget);
             if (!string.IsNullOrWhiteSpace(target)) config.Target = target.Trim();
@@ -424,7 +422,7 @@ namespace RvtMcp.Plugin
             var autoStartTransport = ParseBool(lookup(EnvAutoStartTransport));
             if (autoStartTransport.HasValue) config.AutoStartTransport = autoStartTransport;
 
-            // BIMWRIGHT_UI_LANGUAGE is a Revit.exe process env var (Windows user/machine);
+            // TBC_REVIT_MCP_UI_LANGUAGE is a Revit.exe process env var (Windows user/machine);
             // the env block in MCP client configs reaches the server, not the plugin.
             var uiLanguage = lookup(EnvUiLanguage);
             if (!string.IsNullOrWhiteSpace(uiLanguage)) config.UiLanguage = uiLanguage.Trim();
@@ -446,7 +444,7 @@ namespace RvtMcp.Plugin
                         {
                             var clamped = PersistSendCodeTtl.Clamp(parsedTtl);
                             if (clamped != parsedTtl)
-                                Console.Error.WriteLine($"[rvt-mcp] persist send_code TTL '{ttlStr}' clamped to {FormatTtl(clamped)} (allowed 1h-14d).");
+                                Console.Error.WriteLine($"[tbc-revit-mcp] persist send_code TTL '{ttlStr}' clamped to {FormatTtl(clamped)} (allowed 1h-14d).");
                             ttl = clamped;
                         }
                         var until = DateTimeOffset.UtcNow.Add(ttl);
@@ -556,12 +554,12 @@ namespace RvtMcp.Plugin
                             {
                                 var clamped = PersistSendCodeTtl.Clamp(parsedTtl);
                                 if (clamped != parsedTtl)
-                                    Console.Error.WriteLine($"[rvt-mcp] persist send_code TTL '{ttlStr}' clamped to {FormatTtl(clamped)} (allowed 1h-14d).");
+                                    Console.Error.WriteLine($"[tbc-revit-mcp] persist send_code TTL '{ttlStr}' clamped to {FormatTtl(clamped)} (allowed 1h-14d).");
                                 ttl = clamped;
                             }
                             else
                             {
-                                Console.Error.WriteLine($"[rvt-mcp] invalid persist send_code TTL '{ttlStr}'; using default {FormatTtl(PersistSendCodeTtl.Default)}.");
+                                Console.Error.WriteLine($"[tbc-revit-mcp] invalid persist send_code TTL '{ttlStr}'; using default {FormatTtl(PersistSendCodeTtl.Default)}.");
                             }
                             var until = DateTimeOffset.UtcNow.Add(ttl);
                             config.PersistSendCodeBodies = true;
@@ -594,7 +592,7 @@ namespace RvtMcp.Plugin
                 return;
             }
             config.SpillRetentionHours = null;
-            Console.Error.WriteLine($"[rvt-mcp] {source}: '{text}' is not 1-{MaxSpillRetentionHours} hours; using {DefaultSpillRetentionHours}.");
+            Console.Error.WriteLine($"[tbc-revit-mcp] {source}: '{text}' is not 1-{MaxSpillRetentionHours} hours; using {DefaultSpillRetentionHours}.");
         }
 
         private static void ApplyWarningPolicyOverride(RvtMcpConfig config, string value)
@@ -1110,8 +1108,7 @@ namespace RvtMcp.Plugin
 
         private static bool IsAllowedConfigDirectory(string directory, bool explicitPath)
         {
-            var profileRoot = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Bimwright", "rvt-mcp");
+            var profileRoot = ProductIdentity.DataRoot();
             if (IsPathWithin(directory, profileRoot))
                 return true;
 

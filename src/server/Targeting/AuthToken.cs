@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Bimwright.Targeting;
+using RvtMcp.Targeting;
 using Newtonsoft.Json.Linq;
 
 namespace RvtMcp.Server
 {
     /// <summary>
     /// Snapshot of a Revit plugin advertising itself via a discovery file in
-    /// %LOCALAPPDATA%\Bimwright\rvt-mcp\revit-YYYY.json.
+    /// %LOCALAPPDATA%\NourRouas\tbc-revit-mcp\revit-YYYY.json.
     /// </summary>
     internal sealed class DiscoveredRevit
     {
@@ -40,9 +40,7 @@ namespace RvtMcp.Server
 
         public static string DiscoveryDir()
         {
-            return DiscoveryDirOverride ?? Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Bimwright", "rvt-mcp");
+            return DiscoveryDirOverride ?? RvtMcp.Plugin.ProductIdentity.DataRoot();
         }
 
         public static string DiscoveryFileName(string year)

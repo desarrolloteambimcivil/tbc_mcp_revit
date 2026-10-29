@@ -1,29 +1,30 @@
 <#
 .SYNOPSIS
-  Remove RvtMcp from this machine (Revit add-ins + server + discovery files + spill cache).
-  Personal data under %LOCALAPPDATA%\Bimwright\rvt-mcp is kept unless -Purge.
-  A leftover legacy %LOCALAPPDATA%\RvtMcp folder gets the same treatment.
+  Remove tbc-revit-mcp from this machine (Revit add-ins + server + discovery files + spill cache).
+  Personal data under %LOCALAPPDATA%\NourRouas\tbc-revit-mcp is kept unless -Purge.
+  Upstream data (%LOCALAPPDATA%\Bimwright\rvt-mcp, legacy %LOCALAPPDATA%\RvtMcp)
+  belongs to the upstream rvt-mcp product and is never touched.
   MCP client configs are never read or changed.
 
 .DESCRIPTION
   Runs this sweep:
     1. RvtMcp add-ins for every Revit year 2022-2027, including other manifests
-       that carry RvtMcp's AddInId such as Bimwright-era copies (delegates to
-       install.ps1 -Uninstall).
-    2. Legacy .NET global tool RvtMcp.Server, if present.
-    3. MCP client configs are not touched: remove the 'rvt-mcp' entry from each
-       client you configured yourself (see AGENTS.md).
+       that carry RvtMcp's AddInId such as upstream and Bimwright-era copies
+       (delegates to install.ps1 -Uninstall).
+    2. .NET global tool TbcRevitMcp.Server, if present.
+    3. MCP client configs are not touched: remove the 'tbc-revit-mcp' entry from
+       each client you configured yourself (see AGENTS.md). An upstream
+       'rvt-mcp' entry belongs to the upstream product.
     4. Server copies, discovery files (revit-YYYY.json and revit-YYYY-PID.json)
-       and the spill cache in
-       %LOCALAPPDATA%\Bimwright\rvt-mcp\ (and a leftover legacy
-       %LOCALAPPDATA%\RvtMcp\, if one still exists). A server copy that an MCP
-       client is still running is kept whole and reported; close that client
-       and run again. Everything else there - settings, locales\, ToolBaker
-       data (bake.db + sidecars, baked\), firm-profiles\, shared-parameters.txt,
-       the .migrated-from-bimwright marker, logs, journals, captures and anything
-       unrecognized - is kept. -Purge deletes the whole folder; -Purge -KeepLogs
-       keeps logs. The shared %LOCALAPPDATA%\Bimwright\ parent and other
-       bimwright product folders are never removed.
+       and the spill cache in %LOCALAPPDATA%\NourRouas\tbc-revit-mcp\. A server
+       copy that an MCP client is still running is kept whole and reported;
+       close that client and run again. Everything else there - settings,
+       locales\, ToolBaker data (bake.db + sidecars, baked\), firm-profiles\,
+       shared-parameters.txt, the .migrated-from-* markers, logs, journals,
+       captures and anything unrecognized - is kept. -Purge deletes the whole
+       folder; -Purge -KeepLogs keeps logs. The %LOCALAPPDATA%\NourRouas\
+       parent, %LOCALAPPDATA%\Bimwright\ (upstream rvt-mcp and its siblings) and
+       a legacy %LOCALAPPDATA%\RvtMcp\ are never removed, not even by -Purge.
 
   Each step is independently skippable if the target does not exist. Failure mid-step
   does not abort the chain; exit code 1 is returned at the end if any step failed.
@@ -40,11 +41,11 @@
   - any loose `*.log` / `*.jsonl` files at the root of the product folder
 
 .PARAMETER Purge
-  Delete the whole %LOCALAPPDATA%\Bimwright\rvt-mcp\ tree during step 4 (and a
-  leftover %LOCALAPPDATA%\RvtMcp\ tree), including settings, locales\,
-  ToolBaker data (bake.db + sidecars, baked\), firm-profiles\,
-  shared-parameters.txt, the .migrated-from-bimwright marker, journals,
-  captures and logs. Combine with -KeepLogs to still keep logs.
+  Delete the whole %LOCALAPPDATA%\NourRouas\tbc-revit-mcp\ tree during step 4,
+  including settings, locales\, ToolBaker data (bake.db + sidecars, baked\),
+  firm-profiles\, shared-parameters.txt, the .migrated-from-* markers,
+  journals, captures and logs. Combine with -KeepLogs to still keep logs.
+  Upstream folders are never purged.
 
 .EXAMPLE
   pwsh scripts/uninstall-all.ps1 -WhatIf
@@ -68,7 +69,7 @@ $script:failed  = @()
 # A running server's exe cannot be deleted. Probe it first so a copy that an
 # MCP client still runs is kept whole instead of half-deleted.
 function Remove-ServerCopy([string]$Dir) {
-    foreach ($name in 'rvt-mcp.exe', 'RvtMcp.Server.exe') {
+    foreach ($name in 'tbc-revit-mcp.exe', 'rvt-mcp.exe', 'RvtMcp.Server.exe') {
         $exe = Join-Path $Dir $name
         if (Test-Path -LiteralPath $exe) {
             try { Remove-Item -LiteralPath $exe -Force -ErrorAction Stop } catch { return $false }
@@ -76,6 +77,17 @@ function Remove-ServerCopy([string]$Dir) {
     }
     try { Remove-Item -LiteralPath $Dir -Recurse -Force -ErrorAction Stop; return $true }
     catch { Write-Warning ("Could not fully remove {0}: {1}" -f $Dir, $_.Exception.Message); return $false }
+}
+
+# The only per-user data root this product owns (and therefore sweeps/purges).
+function Get-ProductDataRoot([string]$LocalAppData = $env:LOCALAPPDATA) {
+    return Join-Path $LocalAppData 'NourRouas\tbc-revit-mcp'
+}
+
+# Upstream rvt-mcp data roots: the runtime copies from them on first start and
+# they stay as the upstream product's data. Reported, never swept or purged.
+function Get-UpstreamDataRoots([string]$LocalAppData = $env:LOCALAPPDATA) {
+    return @((Join-Path $LocalAppData 'Bimwright\rvt-mcp'), (Join-Path $LocalAppData 'RvtMcp'))
 }
 
 function Confirm-Sweep {
@@ -110,7 +122,7 @@ function Invoke-Step1-Plugin {
 }
 
 function Invoke-Step2-DotnetTool {
-    $toolName = 'RvtMcp.Server'
+    $toolName = 'TbcRevitMcp.Server'
     try {
         $list = & dotnet tool list -g 2>&1 | Out-String
     } catch {
@@ -164,7 +176,7 @@ function Invoke-Step4-Discovery {
         }
     }
     if ($inUse.Count) {
-        Write-Warning ("[step4] server copies still used by an MCP client were kept: {0}. Close MCP clients that use rvt-mcp, then run again." -f ($inUse -join ', '))
+        Write-Warning ("[step4] server copies still used by an MCP client were kept: {0}. Close MCP clients that use tbc-revit-mcp, then run again." -f ($inUse -join ', '))
         $script:failed += 'step4-discovery'
     }
 
@@ -242,15 +254,15 @@ function Invoke-Step4-Discovery {
 }
 
 # --- Main ---
-$step4Plan = 'Step4: %LOCALAPPDATA%\Bimwright\rvt-mcp\ server copies (kept while an MCP client still runs them), discovery files (revit-YYYY.json and revit-YYYY-PID.json) and spill cache (settings, translations, ToolBaker data, logs and captures are kept); a leftover %LOCALAPPDATA%\RvtMcp\ gets the same sweep'
+$step4Plan = 'Step4: %LOCALAPPDATA%\NourRouas\tbc-revit-mcp\ server copies (kept while an MCP client still runs them), discovery files (revit-YYYY.json and revit-YYYY-PID.json) and spill cache (settings, translations, ToolBaker data, logs and captures are kept); upstream %LOCALAPPDATA%\Bimwright\rvt-mcp\ and %LOCALAPPDATA%\RvtMcp\ are not touched'
 if ($Purge) {
-    $step4Plan = 'Step4 (-Purge): PERMANENTLY delete %LOCALAPPDATA%\Bimwright\rvt-mcp\ (and a leftover %LOCALAPPDATA%\RvtMcp\) including settings, translations, ToolBaker data, firm profiles, shared parameters, captures and logs; the Bimwright parent and sibling products are never touched'
+    $step4Plan = 'Step4 (-Purge): PERMANENTLY delete %LOCALAPPDATA%\NourRouas\tbc-revit-mcp\ including settings, translations, ToolBaker data, firm profiles, shared parameters, captures and logs; the NourRouas parent, upstream %LOCALAPPDATA%\Bimwright\ products and %LOCALAPPDATA%\RvtMcp\ are never touched'
     if ($KeepLogs) { $step4Plan += ' (logs kept)' }
 }
 $planned = @(
-    'Step1: RvtMcp add-ins for Revit 2022-2027, including legacy manifests with the same AddInId (via install.ps1 -Uninstall)'
-    'Step2: global tool RvtMcp.Server, if present'
-    'Step3: MCP client configs - not touched; remove the rvt-mcp entry from your clients yourself (see AGENTS.md)'
+    'Step1: RvtMcp add-ins for Revit 2022-2027, including upstream and legacy manifests with the same AddInId (via install.ps1 -Uninstall)'
+    'Step2: global tool TbcRevitMcp.Server, if present'
+    'Step3: MCP client configs - not touched; remove the tbc-revit-mcp entry from your clients yourself (see AGENTS.md)'
     $step4Plan
 )
 
@@ -262,9 +274,13 @@ if (-not (Confirm-Sweep $planned)) {
 try {
     Invoke-Step1-Plugin
     Invoke-Step2-DotnetTool
-    Invoke-Step4-Discovery -Root (Join-Path $env:LOCALAPPDATA 'Bimwright\rvt-mcp')
-    # A leftover pre-rename %LOCALAPPDATA%\RvtMcp\ gets the same Keep/Purge sweep.
-    Invoke-Step4-Discovery -Root (Join-Path $env:LOCALAPPDATA 'RvtMcp')
+    Invoke-Step4-Discovery -Root (Get-ProductDataRoot)
+    # Upstream data roots are the upstream product's: report them, never sweep.
+    foreach ($upstream in Get-UpstreamDataRoots) {
+        if (Test-Path -LiteralPath $upstream) {
+            Write-Host ("[step4] {0} belongs to upstream rvt-mcp - left in place" -f $upstream)
+        }
+    }
 } catch {
     Write-Warning ("[main] unexpected error - summary follows. Error: {0}" -f $_.Exception.Message)
     $script:failed += 'main-unexpected-error'
@@ -276,7 +292,7 @@ try {
     Write-Host ("Handled: {0}" -f (($script:handled) -join ', '))
     if ($script:skipped.Count -gt 0) { Write-Host ("Skipped: {0}" -f (($script:skipped) -join ', ')) }
     if ($script:failed.Count  -gt 0) { Write-Host ("Failed : {0}" -f (($script:failed)  -join ', ')) }
-    Write-Host "Clients: MCP client entries were not changed. Remove the 'rvt-mcp' entry from each MCP client you configured (see AGENTS.md)."
+    Write-Host "Clients: MCP client entries were not changed. Remove the 'tbc-revit-mcp' entry from each MCP client you configured (see AGENTS.md); an 'rvt-mcp' entry belongs to upstream rvt-mcp."
 }
 
 if ($script:failed.Count -gt 0) { exit 1 } else { exit 0 }

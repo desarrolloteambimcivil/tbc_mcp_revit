@@ -18,12 +18,12 @@ namespace RvtMcp.Tests
         {
             var text = File.ReadAllText(Path.Combine(RepoRoot(), file));
             Assert.Contains("Permissions & auto mode", text);
-            Assert.Contains("`mcp__rvt-mcp__*`", text);
+            Assert.Contains("`mcp__tbc-revit-mcp__*`", text);
             var start = text.IndexOf("<!-- BEGIN READ_ONLY_ALLOWLIST -->");
             var end = text.IndexOf("<!-- END READ_ONLY_ALLOWLIST -->");
             Assert.True(start >= 0 && end > start);
             var block = text.Substring(start, end - start);
-            var actual = Regex.Matches(block, "mcp__rvt-mcp__revit_([a-z0-9_]+)")
+            var actual = Regex.Matches(block, "mcp__tbc-revit-mcp__revit_([a-z0-9_]+)")
                 .Select(match => match.Groups[1].Value).OrderBy(n => n);
             Assert.Equal(ToolReadPolicy.ReadOnlyCommands.OrderBy(n => n), actual);
         }

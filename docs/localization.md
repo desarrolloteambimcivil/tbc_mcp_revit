@@ -1,6 +1,6 @@
 # UI Localization
 
-rvt-mcp's **plugin UI** (ribbon labels, tooltips, toasts, History window, dialogs,
+tbc-revit-mcp's **plugin UI** (ribbon labels, tooltips, toasts, History window, dialogs,
 Bake Inbox) is localized. The MCP-facing surface — tool names, schemas,
 descriptions, wire payloads, logs, and anything an agent writes — stays English.
 
@@ -8,10 +8,10 @@ descriptions, wire payloads, logs, and anything an agent writes — stays Englis
 
 Resolution order, evaluated once per Revit session:
 
-1. `BIMWRIGHT_UI_LANGUAGE` environment variable (Windows user/machine env var
+1. `TBC_REVIT_MCP_UI_LANGUAGE` environment variable (Windows user/machine env var
    read by the **Revit.exe process** — the `env` block in an MCP client config
    does *not* reach the plugin).
-2. `uiLanguage` in `%LOCALAPPDATA%\Bimwright\rvt-mcp\rvtmcp.config.json` — written when you
+2. `uiLanguage` in `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\rvtmcp.config.json` — written when you
    pick a language in Settings → General → Language.
 3. `auto` → follow Revit's UI language (`ControlledApplication.Language`).
 
@@ -25,7 +25,7 @@ Pick a language via the **Language** button in the ribbon slide-out (RvtMcp
 panel → expand the slide-out) — it opens **Settings → General → Language**.
 The language combo always shows the *effective* language, including when the
 env var is overriding. Selection persists across restarts unless
-`BIMWRIGHT_UI_LANGUAGE` is set — the env var wins every launch.
+`TBC_REVIT_MCP_UI_LANGUAGE` is set — the env var wins every launch.
 
 Two Revit instances share one config file and one `locales\` folder: a language
 picked in one session applies to the other after its next restart (same as
@@ -33,7 +33,7 @@ picked in one session applies to the other after its next restart (same as
 
 ## Fixing a translation yourself
 
-Override files live in `%LOCALAPPDATA%\Bimwright\rvt-mcp\locales\`:
+Override files live in `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\locales\`:
 
 ```
 locales\
@@ -78,14 +78,14 @@ English → the key itself**.
 
 ## For agents
 
-`rvt-mcp/AGENTS.md` documents this workflow for the install-side agent. In
+`tbc-revit-mcp/AGENTS.md` documents this workflow for the install-side agent. In
 short: read `_active.<locale>.json` to see what the user currently sees, write
 the fix into `strings.<locale>.json`, re-read `_report.<locale>.json` to confirm
 the key was accepted, and tell the user it applied live.
 
 ## Caveats
 
-- `uninstall.ps1` keeps `%LOCALAPPDATA%\Bimwright\rvt-mcp\locales\` and your overrides
+- `uninstall.ps1` keeps `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\locales\` and your overrides
   unless run with `-Purge`, which deletes the whole folder.
 - MessageBox buttons (OK/Cancel/Yes/No) come from Windows and follow the OS
   language, not this setting.
@@ -110,13 +110,13 @@ Run once per release on at least the oldest and newest shells (Revit 2022 /
       pre-selected.
 - [ ] Pick `Deutsch` → ribbon labels, tooltips, History window re-render
       immediately; restart Revit → still German (`uiLanguage` persisted).
-- [ ] Set `BIMWRIGHT_UI_LANGUAGE=fr` as a Windows user env var, restart Revit →
+- [ ] Set `TBC_REVIT_MCP_UI_LANGUAGE=fr` as a Windows user env var, restart Revit →
       UI is French regardless of the saved pick; the Settings language combo
       shows French. Unset.
 
 **Overrides + hot reload**
 
-- [ ] With `en` active, create `%LOCALAPPDATA%\Bimwright\rvt-mcp\locales\strings.en.json`
+- [ ] With `en` active, create `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\locales\strings.en.json`
       with one changed key (e.g. `ribbon.history.text`) → ribbon updates within
       ~1s, no restart. (Under another locale the shipped translation still wins —
       en overrides are the fallback layer.)

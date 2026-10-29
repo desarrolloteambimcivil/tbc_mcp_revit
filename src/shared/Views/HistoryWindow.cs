@@ -39,7 +39,7 @@ namespace RvtMcp.Plugin.Views
             Height = Math.Min(Math.Max(720, MinHeight), MaxHeight);
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             FontFamily = new FontFamily("Segoe UI");
-            Resources.MergedDictionaries.Add(BimwrightStyles.Dictionary);
+            Resources.MergedDictionaries.Add(ProductStyles.Dictionary);
             Resources.MergedDictionaries.Add(HistoryChrome.TabDictionary());
             ScrollBarFadeBehavior.SetIsEnabled(this, true);
             _activitiesView = new ActivityHistoryView(_vm.Activities);

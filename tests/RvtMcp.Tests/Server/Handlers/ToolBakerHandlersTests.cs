@@ -100,7 +100,7 @@ namespace RvtMcp.Tests
 
             var url = CreateBakeIssueDraftHandler.Handle(suggestion, "2026");
 
-            Assert.StartsWith("https://github.com/bimwright/rvt-mcp/issues/new?", url);
+            Assert.StartsWith("https://github.com/nour-rouas/tbc-revit-mcp/issues/new?", url);
             Assert.Contains("title=MCP%20gap%20signal%3A%20recurring%20send_code_to_revit%20pattern", url);
             Assert.Contains("labels=mcp-gap", url);
 
@@ -134,7 +134,7 @@ namespace RvtMcp.Tests
                 "2026",
                 auditLog);
 
-            Assert.StartsWith("https://github.com/bimwright/rvt-mcp/issues/new?", url);
+            Assert.StartsWith("https://github.com/nour-rouas/tbc-revit-mcp/issues/new?", url);
 
             var stored = db.GetSuggestion("s1")!;
             Assert.Equal("never", stored.State);
@@ -673,7 +673,7 @@ namespace RvtMcp.Tests
         {
             public TempDir()
             {
-                Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "bimwright-suggestions-test-" + Guid.NewGuid().ToString("N"));
+                Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "tbc-revit-mcp-suggestions-test-" + Guid.NewGuid().ToString("N"));
                 Directory.CreateDirectory(Path);
             }
 

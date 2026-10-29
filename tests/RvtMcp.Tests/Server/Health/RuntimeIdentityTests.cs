@@ -23,7 +23,7 @@ public sealed class RuntimeIdentityTests
     {
         var assembly = typeof(RuntimeIdentity).Assembly;
         var data = RuntimeIdentity.Capture(assembly, component, hostYear);
-        Assert.Equal("rvt-mcp", data.Value<string>("product_id"));
+        Assert.Equal("tbc-revit-mcp", data.Value<string>("product_id"));
         Assert.Equal(component, data.Value<string>("component"));
         Assert.Equal(hostYear, data.Value<int?>("host_year"));
         Assert.Equal(Environment.ProcessId, data.Value<int>("process_id"));

@@ -1,6 +1,6 @@
 # MCP Configuration for OpenAI Codex (CLI, Desktop, IDE Extension)
 
-> **Audience:** anyone wiring `rvt-mcp.exe` (or any other stdio MCP server) into one of OpenAI's Codex clients.
+> **Audience:** anyone wiring `tbc-revit-mcp.exe` (or any other stdio MCP server) into one of OpenAI's Codex clients.
 > **Last verified:** 2026-09-25 against `developers.openai.com/codex/mcp`, `developers.openai.com/codex/config-reference`, and the open `openai/codex` issue tracker.
 > **Canonical procedure:** [mcp-client-wiring.md](mcp-client-wiring.md) — this file is the deeper per-vendor reference.
 
@@ -20,7 +20,7 @@ For Anthropic clients (Claude Code CLI, Claude Code VS Code extension, Claude De
 
 The Codex docs state explicitly: *"The CLI and the IDE extension share this configuration."* Desktop is the odd one out: as of 2026-05-22, [openai/codex#13025](https://github.com/openai/codex/issues/13025) reports — and OpenAI has not closed — that Codex Desktop silently ignores any `.codex/config.toml` placed inside a project root. Only `~/.codex/config.toml` (user-scope) is read.
 
-**Implication for RvtMcp:** if your users include Codex Desktop, you **must** wire RvtMcp into user-scope config. Project-scope wiring is invisible to Desktop.
+**Implication for tbc-revit-mcp:** if your users include Codex Desktop, you **must** wire tbc-revit-mcp into user-scope config. Project-scope wiring is invisible to Desktop.
 
 ### Config file paths
 
@@ -38,21 +38,21 @@ The Codex docs state explicitly: *"The CLI and the IDE extension share this conf
 
 Codex uses **TOML**, not JSON. The MCP server registry lives under tables named `[mcp_servers.<server-name>]`.
 
-### Minimal stdio entry for RvtMcp
+### Minimal stdio entry for tbc-revit-mcp
 
 ```toml
-[mcp_servers.rvt-mcp]
-command = "C:\\Users\\<user>\\AppData\\Local\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe"
+[mcp_servers.tbc-revit-mcp]
+command = "C:\\Users\\<user>\\AppData\\Local\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe"
 args = []
 ```
 
 ### Full entry with all knobs
 
 ```toml
-[mcp_servers.rvt-mcp]
-command = "C:\\Users\\<user>\\AppData\\Local\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe"
+[mcp_servers.tbc-revit-mcp]
+command = "C:\\Users\\<user>\\AppData\\Local\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe"
 args = ["--target", "2024"]         # optional: pin a Revit calendar year (4 digits, never R-codes)
-cwd = "%LOCALAPPDATA%\\Bimwright\\rvt-mcp"      # optional: working dir for the process
+cwd = "%LOCALAPPDATA%\\NourRouas\\tbc-revit-mcp"      # optional: working dir for the process
 
 # Lifecycle
 enabled = true                       # default true; set false to keep entry but disable
@@ -66,18 +66,18 @@ disabled_tools = ["revit_send_code_to_revit"]   # deny list — applied after al
 default_tools_approval_mode = "auto" # "auto" | "prompt" | "approve" (auto = no prompt, approve = always ask)
 
 # Per-tool approval override
-[mcp_servers.rvt-mcp.tools.revit_batch_execute]
+[mcp_servers.tbc-revit-mcp.tools.revit_batch_execute]
 approval_mode = "prompt"             # ask before each revit_batch_execute call even if server default is "auto"
 
 # Environment variables passed to the server process
-[mcp_servers.rvt-mcp.env]
-BIMWRIGHT_READ_ONLY = "0"
-BIMWRIGHT_TOOLSETS = "query,create,view,sheets,families"
+[mcp_servers.tbc-revit-mcp.env]
+TBC_REVIT_MCP_READ_ONLY = "0"
+TBC_REVIT_MCP_TOOLSETS = "query,create,view,sheets,families"
 ```
 
 `tool_timeout_sec` is the client's own deadline. IFC export defaults to a 600-second plugin wait; other long tools also accept up to 900 seconds. Use a client deadline above that budget plus transport grace, as in the example. Increasing `timeout_seconds` on the tool cannot override a shorter client deadline. The client default in the reference below is unchanged.
 
-### Streamable HTTP entry (not applicable to RvtMcp, shown for completeness)
+### Streamable HTTP entry (not applicable to tbc-revit-mcp, shown for completeness)
 
 ```toml
 [mcp_servers.some-http-server]
@@ -127,16 +127,16 @@ You can edit `config.toml` by hand OR use the CLI:
 
 ```bash
 # Basic stdio
-codex mcp add rvt-mcp -- "%LOCALAPPDATA%\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe"
+codex mcp add tbc-revit-mcp -- "%LOCALAPPDATA%\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe"
 
 # With env vars
-codex mcp add rvt-mcp \
-  --env BIMWRIGHT_READ_ONLY=0 \
-  --env BIMWRIGHT_TOOLSETS=query,create,view \
-  -- "%LOCALAPPDATA%\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe"
+codex mcp add tbc-revit-mcp \
+  --env TBC_REVIT_MCP_READ_ONLY=0 \
+  --env TBC_REVIT_MCP_TOOLSETS=query,create,view \
+  -- "%LOCALAPPDATA%\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe"
 
 # Pin a specific Revit year
-codex mcp add rvt-mcp-2024 -- "%LOCALAPPDATA%\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe" --target 2024
+codex mcp add tbc-revit-mcp-2024 -- "%LOCALAPPDATA%\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe" --target 2024
 ```
 
 The `--` separates Codex's own flags from the command + args passed to the MCP server, identical convention to `claude mcp add`.
@@ -145,7 +145,7 @@ Other commands:
 
 ```bash
 codex mcp list             # show all configured servers
-codex mcp remove rvt-mcp   # delete entry
+codex mcp remove tbc-revit-mcp   # delete entry
 # Inside an active session:
 /mcp                       # show connection status + tools
 ```
@@ -163,7 +163,7 @@ Codex supports per-project config overrides at `<project-root>/.codex/config.tom
 In `~/.codex/config.toml`:
 
 ```toml
-[projects."D:/Projects/bimwright/rvt-mcp"]
+[projects."D:/Projects/tbc-revit-mcp"]
 trust_level = "trusted"
 ```
 
@@ -191,13 +191,13 @@ Status as of 2026-05-22: **issue still open**, no patch released. If your instal
 
 ---
 
-## 6. Wiring Codex for RvtMcp
+## 6. Wiring Codex for tbc-revit-mcp
 
 The installer **no longer edits client configs** — connect Codex with the procedure in [mcp-client-wiring.md](mcp-client-wiring.md):
 
 ```powershell
-codex mcp add rvt-mcp -- "$env:LOCALAPPDATA\Bimwright\rvt-mcp\server\current\rvt-mcp.exe"
-codex mcp get rvt-mcp --json
+codex mcp add tbc-revit-mcp -- "$env:LOCALAPPDATA\NourRouas\tbc-revit-mcp\server\current\tbc-revit-mcp.exe"
+codex mcp get tbc-revit-mcp --json
 ```
 
 It writes to **user-scope** `~/.codex/config.toml`, which is the only file Codex Desktop reads. CLI and IDE extension also read this file, so a single registration covers all three Codex surfaces. ✅
@@ -218,7 +218,7 @@ codex mcp list                    # CLI
 
 Codex's docs do not currently publish the exact prefix format Codex uses internally for MCP tool names (Anthropic publishes `mcp__<server>__<tool>` with a 64-char limit; OpenAI has not documented an equivalent). Empirically Codex prefixes tools with the server name but accepts longer names than Claude Code's 64-char ceiling. Until OpenAI publishes a spec, **keep tool names ≤ 51 chars** to stay safe across both vendors.
 
-For RvtMcp v0.5+ (longest tool name = `revit_measure_distance_between_elements` at 39 chars), this is well within both limits.
+For tbc-revit-mcp v0.5+ (longest tool name = `revit_measure_distance_between_elements` at 39 chars), this is well within both limits.
 
 ---
 

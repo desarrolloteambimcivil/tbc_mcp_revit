@@ -38,7 +38,7 @@ public class WarningPolicyConfigTests : IDisposable
         Directory.CreateDirectory(_folder);
         const string json = "{\"warningPolicy\":\"rollback\",\"readOnly\":true}";
         File.WriteAllText(ConfigPath, json);
-        string Env(string name) => name == "BIMWRIGHT_WARNING_POLICY" ? "accept-and-log" : null;
+        string Env(string name) => name == "TBC_REVIT_MCP_WARNING_POLICY" ? "accept-and-log" : null;
         Assert.Equal("accept-and-log", RvtMcpConfig.Load(null, ConfigPath, Env).WarningPolicyOrDefault);
         Assert.Equal("rollback", RvtMcpConfig.Load(new[] { "--warning-policy", "rollback" }, ConfigPath, Env).WarningPolicyOrDefault);
         Assert.Equal(json, File.ReadAllText(ConfigPath));
@@ -65,7 +65,7 @@ public class WarningPolicyConfigTests : IDisposable
         RvtMcpConfig.ApplyCliArgs(config, new[] { "--warning-policy", "--read-only" });
         Assert.Equal("rollback", config.WarningPolicyOrDefault);
         Assert.True(config.ReadOnlyOrDefault);
-        RvtMcpConfig.ApplyEnvVars(config, name => name == "BIMWRIGHT_WARNING_POLICY" ? "bad" : null, null, false);
+        RvtMcpConfig.ApplyEnvVars(config, name => name == "TBC_REVIT_MCP_WARNING_POLICY" ? "bad" : null, null, false);
         Assert.Equal("rollback", config.WarningPolicyOrDefault);
     }
 

@@ -155,7 +155,7 @@ internal static class Program
                 var hasProductHeader = false;
                 foreach (var child in header.Children)
                 {
-                    if (child is TextBlock text && text.Text == "rvt-mcp")
+                    if (child is TextBlock text && text.Text == "tbc-revit-mcp")
                     {
                         hasProductHeader = true;
                         break;
@@ -235,13 +235,13 @@ internal static class Program
             if (window == null)
                 throw new Exception("The activity card was not created.");
             var footer = BrandRow(window);
-            if (TitleText(window) != "rvt-mcp" || ToolText(window) != "List Rooms"
+            if (TitleText(window) != "tbc-revit-mcp" || ToolText(window) != "List Rooms"
                 || footer.Visibility != Visibility.Collapsed)
                 throw new Exception("A card opened with branding off must omit the wordmark row.");
             show = true;
             manager.ApplyShowBranding();
             Pump();
-            if (TitleText(window) != "rvt-mcp" || ToolText(window) != "List Rooms"
+            if (TitleText(window) != "tbc-revit-mcp" || ToolText(window) != "List Rooms"
                 || footer.Visibility != Visibility.Hidden)
                 throw new Exception("Turning branding on must reserve a blank brand row and leave the text alone.");
         }
@@ -271,7 +271,7 @@ internal static class Program
         var plain = new McpToastWindow(snapshot, null, null, null, null, null);
         try
         {
-            if (TitleText(plain) != "rvt-mcp")
+            if (TitleText(plain) != "tbc-revit-mcp")
                 throw new Exception("A card without identity must fall back to the product name.");
         }
         finally { plain.CloseImmediate(); }

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Bimwright.Targeting;
+using RvtMcp.Targeting;
 using RvtMcp.Plugin;
 using RvtMcp.Server.Bake;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,15 +41,15 @@ namespace RvtMcp.Server
                 var binding = RevitTargetBinding.Binding;
                 binding.CaptureGeneration();
                 binding.PlanCall(0, scan.Live);
-                MetaTools.TargetEnvelope(new Bimwright.Targeting.TargetPayload
+                MetaTools.TargetEnvelope(new RvtMcp.Targeting.TargetPayload
                 {
-                    Code = Bimwright.Targeting.TargetCode.NoTarget,
+                    Code = RvtMcp.Targeting.TargetCode.NoTarget,
                     Message = "warmup",
                     NextStep = "warmup",
                     Candidates = scan.Live.Count == 0
-                        ? new List<Bimwright.Targeting.CandidateInfo>
-                            { new Bimwright.Targeting.CandidateInfo("warmup", 2024, 0, false, null) }
-                        : Array.Empty<Bimwright.Targeting.CandidateInfo>()
+                        ? new List<RvtMcp.Targeting.CandidateInfo>
+                            { new RvtMcp.Targeting.CandidateInfo("warmup", 2024, 0, false, null) }
+                        : Array.Empty<RvtMcp.Targeting.CandidateInfo>()
                 });
                 ToolGateway.WarmUpWire();
             }
@@ -94,7 +94,7 @@ namespace RvtMcp.Server
                 services.AddHostedService(_ => new Memory.HistoryRecoveryService(ToolGateway.History));
         }
 
-        /// <summary>Parse a --target/BIMWRIGHT_TARGET/config selector (§6.1); R-codes get the educational error.</summary>
+        /// <summary>Parse a --target/TBC_REVIT_MCP_TARGET/config selector (§6.1); R-codes get the educational error.</summary>
         internal static bool TryResolveTargetSelector(string raw, out TargetSelector selector, out string error)
         {
             if (SelectorParser.TryParse(HostProduct.Revit, raw, out selector, out var selError, out var selMessage))

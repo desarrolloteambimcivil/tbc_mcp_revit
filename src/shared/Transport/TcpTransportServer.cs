@@ -50,7 +50,7 @@ namespace RvtMcp.Plugin
                 try
                 {
 
-                    // S7 fail-closed default: bind loopback only unless BIMWRIGHT_ALLOW_LAN_BIND is
+                    // S7 fail-closed default: bind loopback only unless TBC_REVIT_MCP_ALLOW_LAN_BIND is
                     // explicitly opted in. Token auth stays active in either mode (see AuthToken).
                     bool allowLan = IsLanBindAllowed();
                     var bindAddress = allowLan ? IPAddress.Any : IPAddress.Loopback;
@@ -87,7 +87,7 @@ namespace RvtMcp.Plugin
 
         internal static bool IsLanBindAllowed()
         {
-            var value = Environment.GetEnvironmentVariable("BIMWRIGHT_ALLOW_LAN_BIND");
+            var value = ProductIdentity.GetEnv(RvtMcpConfig.EnvAllowLanBind);
             if (string.IsNullOrWhiteSpace(value)) return false;
             value = value.Trim();
             return value == "1"

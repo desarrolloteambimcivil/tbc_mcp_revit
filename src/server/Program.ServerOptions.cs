@@ -21,11 +21,11 @@ namespace RvtMcp.Server
         {
             opts.ServerInfo = new ModelContextProtocol.Protocol.Implementation
             {
-                Name = "rvt-mcp",
-                Title = "Revit MCP",
+                Name = RvtMcp.Plugin.ProductIdentity.Name,
+                Title = "TBC Revit MCP",
                 Version = ServerInformationalVersion,
                 Description = "Model Context Protocol gateway for Autodesk Revit 2022-2027",
-                WebsiteUrl = "https://github.com/bimwright/rvt-mcp"
+                WebsiteUrl = RvtMcp.Plugin.ProductIdentity.RepositoryUrl
             };
             // Health owns component-aware update guidance. A cached semantic-version notice cannot
             // establish the loaded plugin identity or authorize replacement of a development pair.

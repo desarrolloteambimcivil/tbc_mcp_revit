@@ -1,6 +1,6 @@
 # MCP Configuration for OpenCode CLI and Kilo Code CLI
 
-> **Audience:** anyone wiring `rvt-mcp.exe` (or any other stdio MCP server) into OpenCode CLI or Kilo Code CLI.
+> **Audience:** anyone wiring `tbc-revit-mcp.exe` (or any other stdio MCP server) into OpenCode CLI or Kilo Code CLI.
 > **Last verified:** 2026-09-25 against `opencode.ai/docs` and `kilo.ai/docs`.
 > **Canonical procedure:** [mcp-client-wiring.md](mcp-client-wiring.md) — this file is the deeper per-vendor reference.
 
@@ -50,9 +50,9 @@ Precedence (low → high):
 7. Managed system config
 8. macOS MDM managed preferences (highest)
 
-**Windows reality check:** the official docs list `%ProgramData%\opencode`, but in practice many users (and rvt-mcp's `install.ps1`) wire to `%USERPROFILE%\.config\opencode\opencode.json` (XDG-style). OpenCode reads both — the install script uses the user-level XDG path because it does not require admin rights, while `%ProgramData%` does.
+**Windows reality check:** the official docs list `%ProgramData%\opencode`, but in practice many users (and tbc-revit-mcp's `install.ps1`) wire to `%USERPROFILE%\.config\opencode\opencode.json` (XDG-style). OpenCode reads both — the install script uses the user-level XDG path because it does not require admin rights, while `%ProgramData%` does.
 
-For RvtMcp, **prefer user-level XDG path on Windows**: `%USERPROFILE%\.config\opencode\opencode.json`.
+For tbc-revit-mcp, **prefer user-level XDG path on Windows**: `%USERPROFILE%\.config\opencode\opencode.json`.
 
 ### 2.2 Full JSONC format example
 
@@ -60,14 +60,14 @@ For RvtMcp, **prefer user-level XDG path on Windows**: `%USERPROFILE%\.config\op
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
-    "rvt-mcp": {
+    "tbc-revit-mcp": {
       "type": "local",
       "command": [
-        "C:\\Users\\<user>\\AppData\\Local\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe"
+        "C:\\Users\\<user>\\AppData\\Local\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe"
       ],
       "environment": {
-        "BIMWRIGHT_READ_ONLY": "0",
-        "BIMWRIGHT_TOOLSETS": "query,create,view,sheets,families"
+        "TBC_REVIT_MCP_READ_ONLY": "0",
+        "TBC_REVIT_MCP_TOOLSETS": "query,create,view,sheets,families"
       },
       "enabled": true,
       "timeout": 30000
@@ -76,7 +76,7 @@ For RvtMcp, **prefer user-level XDG path on Windows**: `%USERPROFILE%\.config\op
 }
 ```
 
-Remote (Streamable HTTP) variant — included for completeness, not applicable to RvtMcp:
+Remote (Streamable HTTP) variant — included for completeness, not applicable to tbc-revit-mcp:
 
 ```jsonc
 {
@@ -112,10 +112,10 @@ OpenCode lets you allow / deny individual tools via glob in the top-level `tools
 
 ```jsonc
 {
-  "mcp": { "rvt-mcp": { /* ... */ } },
+  "mcp": { "tbc-revit-mcp": { /* ... */ } },
   "tools": {
-    "rvt-mcp*": true,                // allow everything (default if absent)
-    "rvt-mcp_revit_send_code_to_revit": false   // but deny one specific tool
+    "tbc-revit-mcp*": true,                // allow everything (default if absent)
+    "tbc-revit-mcp_revit_send_code_to_revit": false   // but deny one specific tool
   }
 }
 ```
@@ -161,21 +161,21 @@ Precedence: **project > global** (project wins on conflicting keys, no merge bey
 ```jsonc
 {
   "mcp": {
-    "rvt-mcp": {
+    "tbc-revit-mcp": {
       "type": "local",
       "command": [
-        "C:\\Users\\<user>\\AppData\\Local\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe"
+        "C:\\Users\\<user>\\AppData\\Local\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe"
       ],
       "environment": {
-        "BIMWRIGHT_READ_ONLY": "0"
+        "TBC_REVIT_MCP_READ_ONLY": "0"
       },
       "enabled": true,
       "timeout": 30000
     }
   },
   "permissions": {
-    "rvt-mcp_revit_send_code_to_revit": "ask",     // prompt before running
-    "rvt-mcp_*": "allow"                     // allow everything else from this server
+    "tbc-revit-mcp_revit_send_code_to_revit": "ask",     // prompt before running
+    "tbc-revit-mcp_*": "allow"                     // allow everything else from this server
   }
 }
 ```
@@ -222,13 +222,13 @@ Kilo unifies permissions for **built-in tools and MCP tools** under one top-leve
 
 Naming pattern: `<server-name>_<tool-name>` with single underscore. Glob `*` supported.
 
-Example for RvtMcp's locked-down read-only mode:
+Example for tbc-revit-mcp's locked-down read-only mode:
 ```jsonc
 {
   "permissions": {
-    "rvt-mcp_revit_send_code_to_revit": "deny",
-    "rvt-mcp_revit_batch_execute": "ask",
-    "rvt-mcp_*": "allow"
+    "tbc-revit-mcp_revit_send_code_to_revit": "deny",
+    "tbc-revit-mcp_revit_batch_execute": "ask",
+    "tbc-revit-mcp_*": "allow"
   }
 }
 ```
@@ -253,10 +253,10 @@ Kilo's official docs include this caution prominently:
 
 > "MCP servers add to your context, so be careful with which ones you enable. Certain MCP servers with many tools can quickly add up and exceed the context limit."
 
-For RvtMcp (installed machines default to the full 229 via the seeded `toolsets=all`; a bare server defaults to 44; 232 with adaptive bake), this is **the** issue. Two mitigations:
+For tbc-revit-mcp (installed machines default to the full 229 via the seeded `toolsets=all`; a bare server defaults to 44; 232 with adaptive bake), this is **the** issue. Two mitigations:
 
-1. Use `enabled_tools` filter via permissions (`"rvt-mcp_*": "deny"` then enable specific ones with `"rvt-mcp_revit_create_grid": "allow"`).
-2. Run RvtMcp with a narrower toolset via env var: `"environment": { "BIMWRIGHT_TOOLSETS": "query,view" }`.
+1. Use `enabled_tools` filter via permissions (`"tbc-revit-mcp_*": "deny"` then enable specific ones with `"tbc-revit-mcp_revit_create_grid": "allow"`).
+2. Run tbc-revit-mcp with a narrower toolset via env var: `"environment": { "TBC_REVIT_MCP_TOOLSETS": "query,view" }`.
 
 ---
 
@@ -276,14 +276,14 @@ A fourth subtle one for **Kilo specifically**: tool permissions use `<server>_<t
 
 ---
 
-## 5. Wiring these clients for RvtMcp
+## 5. Wiring these clients for tbc-revit-mcp
 
 The installer **no longer edits client configs** — wire both clients by editing their config files directly (see [mcp-client-wiring.md](mcp-client-wiring.md)). Both take the same JSONC shape:
 
 ```jsonc
-"rvt-mcp": {
+"tbc-revit-mcp": {
   "type": "local",
-  "command": ["C:\\Users\\<user>\\AppData\\Local\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe"],
+  "command": ["C:\\Users\\<user>\\AppData\\Local\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe"],
   "enabled": true
 }
 ```
@@ -296,7 +296,7 @@ Differences:
 | Extra fields | none | `timeout = 30000` recommended (Kilo's default 5000 ms is too short for Revit cold-start) |
 | CLI alternative | `opencode` reads this file; no documented local-server `mcp add` flag | `kilo mcp add` accepts no local-command flag — file edit is the path |
 
-Optional per-server env knobs (`BIMWRIGHT_TOOLSETS`, `BIMWRIGHT_READ_ONLY`) go in an `"environment"` block on the entry.
+Optional per-server env knobs (`TBC_REVIT_MCP_TOOLSETS`, `TBC_REVIT_MCP_READ_ONLY`) go in an `"environment"` block on the entry.
 
 ---
 

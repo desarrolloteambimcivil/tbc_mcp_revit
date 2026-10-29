@@ -9,7 +9,7 @@ namespace RvtMcp.Tests.Lint
         [Fact]
         public void Empty_library_folder_returns_no_profiles()
         {
-            var tempDir = Path.Combine(Path.GetTempPath(), "bimwright-test-" + System.Guid.NewGuid().ToString("N"));
+            var tempDir = Path.Combine(Path.GetTempPath(), "tbc-revit-mcp-test-" + System.Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(tempDir);
             try
             {
@@ -25,7 +25,7 @@ namespace RvtMcp.Tests.Lint
         [Fact]
         public void Missing_library_folder_returns_no_profiles()
         {
-            var nonExistent = Path.Combine(Path.GetTempPath(), "bimwright-does-not-exist-" + System.Guid.NewGuid().ToString("N"));
+            var nonExistent = Path.Combine(Path.GetTempPath(), "tbc-revit-mcp-does-not-exist-" + System.Guid.NewGuid().ToString("N"));
             var lib = FirmProfileLibrary.LoadFrom(new[] { nonExistent });
             Assert.Empty(lib.Profiles);
         }
@@ -33,7 +33,7 @@ namespace RvtMcp.Tests.Lint
         [Fact]
         public void Finds_profile_when_json_present()
         {
-            var tempDir = Path.Combine(Path.GetTempPath(), "bimwright-test-" + System.Guid.NewGuid().ToString("N"));
+            var tempDir = Path.Combine(Path.GetTempPath(), "tbc-revit-mcp-test-" + System.Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(tempDir);
             try
             {

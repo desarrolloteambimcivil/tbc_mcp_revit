@@ -42,8 +42,8 @@ namespace RvtMcp.Tests
             if (error == "PAIRING_REQUIRED")
             {
                 Assert.DoesNotContain("revit_switch_target(verify=true) before", rejection);
-                Assert.Contains("connected rvt-mcp gateway", rejection);
-                Assert.Contains("same rvt-mcp Setup release", rejection);
+                Assert.Contains("connected tbc-revit-mcp gateway", rejection);
+                Assert.Contains("same tbc-revit-mcp Setup release", rejection);
                 Assert.Contains("restart Revit", rejection);
                 Assert.Contains("MCP client", rejection);
             }

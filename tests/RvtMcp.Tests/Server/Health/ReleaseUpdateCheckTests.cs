@@ -36,8 +36,8 @@ public sealed class ReleaseUpdateCheckTests
             var path = request.RequestUri.AbsolutePath;
             string body;
             var status = RefStatus;
-            if (path == "/repos/bimwright/rvt-mcp/releases/latest") { body = Body; status = Status; }
-            else if (path.StartsWith("/repos/bimwright/rvt-mcp/git/ref/tags/", StringComparison.Ordinal))
+            if (path == "/repos/nour-rouas/tbc-revit-mcp/releases/latest") { body = Body; status = Status; }
+            else if (path.StartsWith("/repos/nour-rouas/tbc-revit-mcp/git/ref/tags/", StringComparison.Ordinal))
             {
                 var tag = path.Split('/').Last();
                 body = RefBody ?? new JObject { ["ref"] = "refs/tags/" + tag,
@@ -45,7 +45,7 @@ public sealed class ReleaseUpdateCheckTests
             }
             else
             {
-                Assert.Equal("/repos/bimwright/rvt-mcp/git/tags/" + new string('b', 40), path);
+                Assert.Equal("/repos/nour-rouas/tbc-revit-mcp/git/tags/" + new string('b', 40), path);
                 body = TagBody!;
             }
             return new HttpResponseMessage(status) { Content = new StringContent(body, Encoding.UTF8, "application/json") };
@@ -73,7 +73,7 @@ public sealed class ReleaseUpdateCheckTests
         Assert.Equal(expected, result["components"]!["server"]!.Value<bool>("update_available"));
         Assert.Equal(expected, result["components"]!["plugin"]!.Value<bool>("update_available"));
         if (!expected) Assert.Null(result.Value<bool?>("update_available"));
-        Assert.Equal("https://github.com/bimwright/rvt-mcp/releases/tag/" + tag, result.Value<string>("release_url"));
+        Assert.Equal("https://github.com/nour-rouas/tbc-revit-mcp/releases/tag/" + tag, result.Value<string>("release_url"));
         Assert.DoesNotContain("untrusted", result.ToString());
     }
 
@@ -165,7 +165,7 @@ public sealed class ReleaseUpdateCheckTests
             Assert.True(result.Value<bool>("update_available"));
             Assert.Equal("NEW_RELEASE_AVAILABLE", (string?)result["notification"]?["code"]);
             Assert.Equal(new[] { "plugin" }, result["notification"]!["components"]!.Values<string>());
-            Assert.StartsWith("rvt-mcp ", (string?)result["notification"]?["message"]);
+            Assert.StartsWith("tbc-revit-mcp ", (string?)result["notification"]?["message"]);
             Assert.True(result["notification"]!.Value<bool>("requires_user_authorization"));
         }
         else if (status == "release_match")

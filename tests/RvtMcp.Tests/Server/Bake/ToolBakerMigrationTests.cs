@@ -19,7 +19,7 @@ namespace RvtMcp.Tests
             var paths = new BakePaths(@"C:\local-appdata-test");
 
             Assert.Equal(
-                Path.Combine(@"C:\local-appdata-test", "Bimwright", "rvt-mcp", "bake-audit.jsonl"),
+                Path.Combine(@"C:\local-appdata-test", "NourRouas", "tbc-revit-mcp", "bake-audit.jsonl"),
                 paths.AuditJsonl);
         }
 
@@ -203,7 +203,7 @@ namespace RvtMcp.Tests
         {
             public TempDir()
             {
-                Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "bimwright-migration-test-" + Guid.NewGuid().ToString("N"));
+                Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "tbc-revit-mcp-migration-test-" + Guid.NewGuid().ToString("N"));
                 Directory.CreateDirectory(Path);
             }
 

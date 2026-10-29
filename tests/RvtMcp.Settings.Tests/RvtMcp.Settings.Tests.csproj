@@ -57,7 +57,7 @@
     <Compile Include="../../src/shared/Views/Settings/ToolRow.cs" Link="Settings\ToolRow.cs" />
     <Compile Include="../../src/shared/Config/ToastPositionOptions.cs" Link="ToastPositionOptions.cs" />
     <Compile Include="../../src/shared/Views/BrandAssets.cs" Link="BrandAssets.cs" />
-    <Compile Include="../../src/shared/Views/BimwrightStyles.cs" Link="BimwrightStyles.cs" />
+    <Compile Include="../../src/shared/Views/ProductStyles.cs" Link="ProductStyles.cs" />
     <Compile Include="../../src/shared/Views/ScrollBarFadeBehavior.cs" Link="ScrollBarFadeBehavior.cs" />
     <Compile Include="../../src/shared/ToolCatalog/ToolCatalogModels.cs" Link="ToolCatalog\ToolCatalogModels.cs" />
     <Compile Include="../../src/shared/Localization/L.cs" Link="Localization\L.cs" />

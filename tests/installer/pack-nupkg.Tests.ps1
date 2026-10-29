@@ -18,10 +18,10 @@ function Test([string]$Name, [scriptblock]$Body) {
 function New-PackFixture {
     $root = Join-Path $testRoot ([guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path "$root/src/server", "$root/artifacts" -Force | Out-Null
-    Set-Content -LiteralPath "$root/src/server/RvtMcp.Server.csproj" '<Project><PropertyGroup><PackageId>RvtMcp.Server</PackageId><Version>1.1.0</Version></PropertyGroup></Project>'
-    Set-Content -LiteralPath "$root/artifacts/RvtMcp.Server.9.9.9.nupkg" 'unrelated-build'
+    Set-Content -LiteralPath "$root/src/server/RvtMcp.Server.csproj" '<Project><PropertyGroup><PackageId>TbcRevitMcp.Server</PackageId><Version>1.1.0</Version></PropertyGroup></Project>'
+    Set-Content -LiteralPath "$root/artifacts/TbcRevitMcp.Server.9.9.9.nupkg" 'unrelated-build'
     # A stale, newer-looking artifact must never win over the version just packed.
-    (Get-Item -LiteralPath "$root/artifacts/RvtMcp.Server.9.9.9.nupkg").LastWriteTimeUtc = [DateTime]::UtcNow.AddHours(1)
+    (Get-Item -LiteralPath "$root/artifacts/TbcRevitMcp.Server.9.9.9.nupkg").LastWriteTimeUtc = [DateTime]::UtcNow.AddHours(1)
     return $root
 }
 function dotnet {
@@ -31,14 +31,14 @@ function dotnet {
     $outIndex = [Array]::IndexOf($args, '--output')
     Assert ($outIndex -ge 0) 'Pack did not supply an isolated output directory'
     if ($state.mode -eq 'success') {
-        Set-Content -LiteralPath (Join-Path $args[$outIndex + 1] 'RvtMcp.Server.1.1.0.nupkg') $state.payload
+        Set-Content -LiteralPath (Join-Path $args[$outIndex + 1] 'TbcRevitMcp.Server.1.1.0.nupkg') $state.payload
     }
     $global:LASTEXITCODE = 0
 }
 function Assert-Checksum([string]$Root) {
-    $package = Join-Path $Root 'artifacts/RvtMcp.Server.1.1.0.nupkg'
+    $package = Join-Path $Root 'artifacts/TbcRevitMcp.Server.1.1.0.nupkg'
     Assert (Test-Path -LiteralPath "$package.sha256") 'NuGet checksum sidecar is missing'
-    $expected = (Get-FileHash -LiteralPath $package -Algorithm SHA256).Hash.ToLowerInvariant() + '  RvtMcp.Server.1.1.0.nupkg'
+    $expected = (Get-FileHash -LiteralPath $package -Algorithm SHA256).Hash.ToLowerInvariant() + '  TbcRevitMcp.Server.1.1.0.nupkg'
     Assert ((Get-Content -LiteralPath "$package.sha256" -Raw).Trim() -ceq $expected) 'Checksum does not match the exact versioned package'
 }
 try {
@@ -47,7 +47,7 @@ try {
         $state.mode='success'; $state.calls=@(); $state.payload='first-build'
         & $packer -RepoRoot $root -ApiKey ''
         Assert-Checksum $root
-        Assert (-not (Test-Path -LiteralPath "$root/artifacts/RvtMcp.Server.9.9.9.nupkg.sha256")) 'Hashed the unrelated artifact'
+        Assert (-not (Test-Path -LiteralPath "$root/artifacts/TbcRevitMcp.Server.9.9.9.nupkg.sha256")) 'Hashed the unrelated artifact'
         Assert ($state.calls.Count -eq 1 -and $state.calls[0][0] -eq 'pack') 'Dry pack invoked something other than pack'
     }
     Test 'Repacking refreshes the package checksum' {
@@ -55,11 +55,11 @@ try {
         $state.mode='success'; $state.payload='first-build'
         & $packer -RepoRoot $root -ApiKey ''
         Assert-Checksum $root
-        $first = Get-Content -LiteralPath "$root/artifacts/RvtMcp.Server.1.1.0.nupkg.sha256" -Raw
+        $first = Get-Content -LiteralPath "$root/artifacts/TbcRevitMcp.Server.1.1.0.nupkg.sha256" -Raw
         $state.payload='second-build'
         & $packer -RepoRoot $root -ApiKey ''
         Assert-Checksum $root
-        Assert ((Get-Content -LiteralPath "$root/artifacts/RvtMcp.Server.1.1.0.nupkg.sha256" -Raw) -ne $first) 'Checksum was not refreshed'
+        Assert ((Get-Content -LiteralPath "$root/artifacts/TbcRevitMcp.Server.1.1.0.nupkg.sha256" -Raw) -ne $first) 'Checksum was not refreshed'
     }
     Test 'Pack failure does not create a misleading checksum' {
         $root = New-PackFixture
@@ -74,8 +74,17 @@ try {
         $state.mode='omit'
         $message = $null
         try { & $packer -RepoRoot $root -ApiKey '' } catch { $message=$_.Exception.Message }
-        Assert ($message -like '*RvtMcp.Server.1.1.0.nupkg*') 'Missing expected package was not rejected'
+        Assert ($message -like '*TbcRevitMcp.Server.1.1.0.nupkg*') 'Missing expected package was not rejected'
         Assert (@(Get-ChildItem -LiteralPath "$root/artifacts" -Filter '*.sha256').Count -eq 0) 'Hashed a stale package'
+    }
+    Test 'An upstream RvtMcp.Server package of the same version is never hashed as ours' {
+        $root = New-PackFixture
+        Set-Content -LiteralPath "$root/artifacts/RvtMcp.Server.1.1.0.nupkg" 'upstream-build'
+        $state.mode='omit'
+        $message = $null
+        try { & $packer -RepoRoot $root -ApiKey '' } catch { $message=$_.Exception.Message }
+        Assert ($message -like '*TbcRevitMcp.Server.1.1.0.nupkg*') 'Upstream-named package was accepted'
+        Assert (@(Get-ChildItem -LiteralPath "$root/artifacts" -Filter '*.sha256').Count -eq 0) 'Hashed the upstream package'
     }
 } finally {
     $global:LASTEXITCODE = $savedExitCode

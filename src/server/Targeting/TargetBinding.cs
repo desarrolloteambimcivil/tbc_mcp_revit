@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
-using Bimwright.Targeting;
+using RvtMcp.Targeting;
 using Newtonsoft.Json.Linq;
 
 namespace RvtMcp.Server

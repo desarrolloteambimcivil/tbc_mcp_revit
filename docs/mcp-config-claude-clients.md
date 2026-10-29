@@ -1,16 +1,16 @@
 # MCP Configuration for Claude Clients (Claude Code CLI, VS Code Extension, Claude Desktop)
 
-> **Audience:** anyone wiring `rvt-mcp.exe` (or any other stdio MCP server) into a Claude client.
+> **Audience:** anyone wiring `tbc-revit-mcp.exe` (or any other stdio MCP server) into a Claude client.
 > **Last verified:** 2026-09-25 against official docs at `code.claude.com/docs/en/mcp` and `support.claude.com`.
 > **Canonical procedure:** [mcp-client-wiring.md](mcp-client-wiring.md) — this file is the deeper per-vendor reference.
 
-This document consolidates the research needed to register and operate the RvtMcp server with the three first-party Claude clients, plus the protocol-level constraints (name length, tool prefix format, Tool Search behavior) that determine whether agents can actually discover your tools.
+This document consolidates the research needed to register and operate the tbc-revit-mcp server with the three first-party Claude clients, plus the protocol-level constraints (name length, tool prefix format, Tool Search behavior) that determine whether agents can actually discover your tools.
 
 ---
 
 ## 1. Three clients, three config files
 
-All three clients speak the same Model Context Protocol over stdio, but store their server registry in different files. **A single `rvt-mcp.exe` binary works for all three** — only the registration entry differs.
+All three clients speak the same Model Context Protocol over stdio, but store their server registry in different files. **A single `tbc-revit-mcp.exe` binary works for all three** — only the registration entry differs.
 
 | Client | Config file (Windows) | Native UI to edit |
 |---|---|---|
@@ -47,27 +47,27 @@ claude mcp add [options] <name> -- <command> [args...]
 
 > ⚠ All options (`--transport`, `--env`, `--scope`, `--header`) **must come before** `<name>`. The `--` separates `<name>` from the command + args passed to the server.
 
-**Examples for RvtMcp:**
+**Examples for tbc-revit-mcp:**
 
 ```bash
 # Local scope (default): only this project — usually NOT what you want
-claude mcp add rvt-mcp -- "%LOCALAPPDATA%\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe"
+claude mcp add tbc-revit-mcp -- "%LOCALAPPDATA%\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe"
 
 # User scope: every project on this machine (recommended)
-claude mcp add rvt-mcp --scope user -- "%LOCALAPPDATA%\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe"
+claude mcp add tbc-revit-mcp --scope user -- "%LOCALAPPDATA%\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe"
 
 # Project scope: write into .mcp.json (commit to repo, team uses it)
-claude mcp add rvt-mcp --scope project -- "%LOCALAPPDATA%\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe"
+claude mcp add tbc-revit-mcp --scope project -- "%LOCALAPPDATA%\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe"
 
 # Pin a specific Revit year (server otherwise auto-detects)
-claude mcp add rvt-mcp-2024 --scope user -- "%LOCALAPPDATA%\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe" --target 2024
+claude mcp add tbc-revit-mcp-2024 --scope user -- "%LOCALAPPDATA%\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe" --target 2024
 ```
 
 **Useful operations:**
 ```bash
 claude mcp list                  # show all configured servers + connection status
-claude mcp get rvt-mcp           # show details + OAuth status for one server
-claude mcp remove rvt-mcp        # remove
+claude mcp get tbc-revit-mcp           # show details + OAuth status for one server
+claude mcp remove tbc-revit-mcp        # remove
 claude mcp reset-project-choices # reset .mcp.json approval prompts
 ```
 
@@ -77,7 +77,7 @@ Source: `code.claude.com/docs/en/mcp` §"Importing from Claude Desktop".
 
 ```bash
 # Add a server by raw JSON snippet (handy when you have a config from someone else)
-claude mcp add-json rvt-mcp '{"type":"stdio","command":"C:/.../rvt-mcp.exe","args":[]}'
+claude mcp add-json tbc-revit-mcp '{"type":"stdio","command":"C:/.../tbc-revit-mcp.exe","args":[]}'
 
 # Import all servers from Claude Desktop's claude_desktop_config.json
 claude mcp add-from-claude-desktop --scope user
@@ -93,7 +93,7 @@ Source: GitHub issue [anthropics/claude-code#48758](https://github.com/anthropic
 - **Max length:** 64 chars (but see §5 for the practical limit driven by tool-name math)
 - **Reserved name:** `workspace` — server is skipped at load with a warning if you use it
 
-For RvtMcp, recommended names: `rvt-mcp` (7 chars) or `revit-mcp` (9 chars). Both leave generous budget for tool names (see §5).
+For tbc-revit-mcp, recommended names: `tbc-revit-mcp` (13 chars) or `revit-mcp` (9 chars). Both leave generous budget for tool names (see §5).
 
 ---
 
@@ -108,11 +108,11 @@ The extension is **a thin UI over the CLI**, not a separate MCP runtime:
 - From the dialog you can: view all configured servers + connection status, enable/disable with a click, reconnect dropped servers, manage OAuth for HTTP/SSE servers.
 - For initial registration, **still use `claude mcp add` in a terminal** — the dialog manages existing servers, it doesn't add new ones.
 
-**Workflow for RvtMcp users on VS Code:**
+**Workflow for tbc-revit-mcp users on VS Code:**
 
 1. Open a terminal in VS Code (`Ctrl+\``).
-2. Run `claude mcp add rvt-mcp --scope user -- "%LOCALAPPDATA%\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe"`.
-3. Open Claude Code chat panel, type `/mcp` — `rvt-mcp` appears with status.
+2. Run `claude mcp add tbc-revit-mcp --scope user -- "%LOCALAPPDATA%\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe"`.
+3. Open Claude Code chat panel, type `/mcp` — `tbc-revit-mcp` appears with status.
 4. Click to enable/disable or reconnect.
 
 > ⚠ **Historical caveat:** versions before ~2.1.69 (early 2026) could not list MCP servers in the extension UI at all. If `/mcp` doesn't show anything, upgrade the extension.
@@ -141,12 +141,12 @@ Source: `support.claude.com/en/articles/10949351` and `modelcontextprotocol.io/d
 ```json
 {
   "mcpServers": {
-    "rvt-mcp": {
+    "tbc-revit-mcp": {
       "type": "stdio",
-      "command": "C:\\Users\\<user>\\AppData\\Local\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe",
+      "command": "C:\\Users\\<user>\\AppData\\Local\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe",
       "args": [],
       "env": {
-        "BIMWRIGHT_READ_ONLY": "0"
+        "TBC_REVIT_MCP_READ_ONLY": "0"
       }
     }
   }
@@ -156,7 +156,7 @@ Source: `support.claude.com/en/articles/10949351` and `modelcontextprotocol.io/d
 Notes:
 - `"type"` defaults to `"stdio"` when `"command"` is set, so it can be omitted — including it is more explicit.
 - On Windows, **use double backslashes** in the path (JSON-escape) or forward slashes.
-- `env` is optional. RvtMcp reads `BIMWRIGHT_*` vars (see project README).
+- `env` is optional. tbc-revit-mcp reads `TBC_REVIT_MCP_*` vars (see project README).
 - To run multiple Revit years simultaneously, add multiple entries each with `args: ["--target", "2024"]` etc. (4-digit calendar years — `R24`-style codes are rejected).
 
 ---
@@ -173,7 +173,7 @@ Claude does **not** see the bare tool name your server exposes. It sees a prefix
 mcp__<server-name>__<tool-name>
 ```
 
-Example: server registered as `rvt-mcp`, server's `revit_create_grid` tool → Claude sees `mcp__rvt-mcp__revit_create_grid`.
+Example: server registered as `tbc-revit-mcp`, server's `revit_create_grid` tool → Claude sees `mcp__tbc-revit-mcp__revit_create_grid`.
 
 Source: `code.claude.com/docs/en/mcp` (search `mcp__` in page) and [anthropics/claude-code#18763](https://github.com/anthropics/claude-code/issues/18763).
 
@@ -187,13 +187,12 @@ The full string `mcp__<server-name>__<tool-name>` must be **≤ 64 characters**.
 
 | Server name | Overhead | Max usable tool-name length |
 |---|---|---|
-| `bimwright-rvt-r22` (17) | 23 | **41** chars |
-| `bimwright-rvt` (13) | 19 | **45** chars |
-| `rvt-mcp` (7) | 13 | **51** chars |
+| `bimwright-rvt-r22` (17, upstream legacy) | 23 | **41** chars |
+| `tbc-revit-mcp` (13) | 19 | **45** chars |
 | `revit-mcp` (9) | 15 | **49** chars |
 | `rvt` (3) | 9 | **55** chars |
 
-For RvtMcp v0.5+ (all tools prefixed with `revit_`): longest tool is `revit_measure_distance_between_elements` (39 chars). Full prefixed name `mcp__rvt-mcp__revit_measure_distance_between_elements` = 53 chars — comfortably under the 64-char ceiling.
+For tbc-revit-mcp v0.5+ (all tools prefixed with `revit_`): longest tool is `revit_measure_distance_between_elements` (39 chars). Full prefixed name `mcp__tbc-revit-mcp__revit_measure_distance_between_elements` = 59 chars — comfortably under the 64-char ceiling.
 
 ### 5.3 Tool Search — the *critical* default behavior
 
@@ -209,13 +208,13 @@ What this changes from the naïve mental model:
   2. **Tool name** (the literal identifier after the `mcp__server__` prefix).
 - Only tools `ToolSearch` selects enter the conversation context with full description + schema.
 
-**Implication for RvtMcp — addressed in v0.5:**
+**Implication for tbc-revit-mcp — addressed in v0.5:**
 
-Pre-v0.5, RvtMcp had this exact failure: 226 tools exposed but Tool Search returned nothing because (a) `instructions` field was empty and (b) tool names like `create_grid`/`capture_view_image` didn't contain "revit". Agents would say "I don't have any Revit tools" despite a healthy connection.
+Pre-v0.5, upstream rvt-mcp had this exact failure: 226 tools exposed but Tool Search returned nothing because (a) `instructions` field was empty and (b) tool names like `create_grid`/`capture_view_image` didn't contain "revit". Agents would say "I don't have any Revit tools" despite a healthy connection.
 
 v0.5 ships both fixes:
 
-1. **Server `instructions` populated** at `src/server/Program.ServerOptions.cs` `ConfigureMcpServerOptions()` — ~2 KB of keyword-dense text leading with "rvt-mcp — Model Context Protocol gateway for Autodesk Revit 2022-2027" followed by every relevant domain term (wall, door, MEP, duct, pipe, structural, IFC, DWG, etc.) and a per-toolset tool-name index.
+1. **Server `instructions` populated** at `src/server/Program.ServerOptions.cs` `ConfigureMcpServerOptions()` — ~2 KB of keyword-dense text leading with "tbc-revit-mcp — Model Context Protocol gateway for Autodesk Revit 2022-2027" followed by every relevant domain term (wall, door, MEP, duct, pipe, structural, IFC, DWG, etc.) and a per-toolset tool-name index.
 2. **All 226 tools prefixed with `revit_`** — `create_grid` → `revit_create_grid`, `analyze_structural_connections` → `revit_analyze_structural_connections`. Semantic search of "revit X" now lands directly on the right tool.
 
 The official doc explicitly recommends:
@@ -228,7 +227,7 @@ To verify discovery is working after install:
 You: list every Revit-related MCP tool you have access to
 ```
 
-On a machine installed via `install.ps1` (which seeds `toolsets=all`), Claude should expose the full 229 tools prefixed `mcp__rvt-mcp__revit_*` (232 with adaptive bake); a bare server without that seeded config exposes 44. If the configured surface is smaller than expected, check Tool Search and the server's `--toolsets` / adaptive-bake settings.
+On a machine installed via `install.ps1` (which seeds `toolsets=all`), Claude should expose the full 229 tools prefixed `mcp__tbc-revit-mcp__revit_*` (232 with adaptive bake); a bare server without that seeded config exposes 44. If the configured surface is smaller than expected, check Tool Search and the server's `--toolsets` / adaptive-bake settings.
 
 ### 5.4 Server `instructions` and tool `description` are truncated at 2 KB each
 
@@ -265,21 +264,21 @@ Source: `code.claude.com/docs/en/mcp` §"MCP output limits and warnings".
 | Per-tool max result size | 25,000 tokens | server sets `_meta.anthropic/maxResultSizeChars` in `tools/list` response (ceiling: 500,000 chars) |
 | Startup timeout for connect | unspecified | `MCP_TIMEOUT=10000` env var (ms) |
 
-Stdio servers like RvtMcp are **not auto-reconnected** if they crash mid-session. Only HTTP/SSE servers get exponential-backoff retry (5 attempts, 1s → 2s → 4s → 8s → 16s).
+Stdio servers like tbc-revit-mcp are **not auto-reconnected** if they crash mid-session. Only HTTP/SSE servers get exponential-backoff retry (5 attempts, 1s → 2s → 4s → 8s → 16s).
 
 ---
 
-## 7. Quick reference card for RvtMcp users
+## 7. Quick reference card for tbc-revit-mcp users
 
 **Install once (Claude Code CLI):**
 ```bash
-claude mcp add rvt-mcp --scope user -- "%LOCALAPPDATA%\\Bimwright\\rvt-mcp\\server\\current\\rvt-mcp.exe"
+claude mcp add tbc-revit-mcp --scope user -- "%LOCALAPPDATA%\\NourRouas\\tbc-revit-mcp\\server\\current\\tbc-revit-mcp.exe"
 claude mcp list                    # verify ✓ Connected
 ```
 
 **Install once (Claude Desktop):**
 1. Open `%APPDATA%\Claude\claude_desktop_config.json` via Settings → Developer → Edit Config.
-2. Add the `rvt-mcp` block under `mcpServers` (see §4.3 for example).
+2. Add the `tbc-revit-mcp` block under `mcpServers` (see §4.3 for example).
 3. Fully quit + relaunch Claude Desktop.
 
 **Install once (VS Code extension):**
@@ -291,12 +290,12 @@ claude mcp list                    # verify ✓ Connected
 ```
 You: list all Revit-related tools you have
 ```
-If Claude lists `mcp__rvt-mcp__*` tools, discovery is working. If it says "I don't have Revit-specific tools," the server `instructions` field is likely missing — see §5.3.
+If Claude lists `mcp__tbc-revit-mcp__*` tools, discovery is working. If it says "I don't have Revit-specific tools," the server `instructions` field is likely missing — see §5.3.
 
 **Debug a stuck connection:**
 - Claude Code CLI/VS Code: `/mcp` panel shows status; click reconnect.
 - Claude Desktop: quit + relaunch (no in-app reconnect).
-- All clients: tail `%LOCALAPPDATA%\Bimwright\rvt-mcp\debug.log` for plugin/server messages.
+- All clients: tail `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\debug.log` for plugin/server messages.
 
 ---
 

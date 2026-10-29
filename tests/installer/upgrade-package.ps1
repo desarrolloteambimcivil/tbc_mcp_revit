@@ -1,16 +1,26 @@
 #Requires -Version 5.1
 # Upgrade a sandboxed installation from a real release package to a new one:
 # real payloads, the real installer control flow and the real server smoke
-# check (rvt-mcp.exe --help). Profile env vars (USERPROFILE, APPDATA,
+# check (tbc-revit-mcp.exe --help). Profile env vars (USERPROFILE, APPDATA,
 # LOCALAPPDATA) are redirected to a sandbox under $Sandbox\profile for the whole
 # run, so a function that ignores its fixture path cannot reach real user data.
+#
+# -OldLayout:
+#   Legacy   - an upstream pre-rename %LOCALAPPDATA%\RvtMcp\ profile (old package
+#              is an upstream rvt-mcp release); the installer moves it to
+#              %LOCALAPPDATA%\NourRouas\tbc-revit-mcp\.
+#   Upstream - an upstream %LOCALAPPDATA%\Bimwright\rvt-mcp\ profile (old package
+#              is an upstream rvt-mcp release); the installer leaves it and the
+#              client's rvt-mcp entry untouched and adds tbc-revit-mcp.
+#   Current  - a tbc-revit-mcp profile (old package is a tbc-revit-mcp
+#              release); upgraded in place and its client entry repointed.
 [CmdletBinding(SupportsShouldProcess=$true)]
 param(
     [Parameter(Mandatory=$true)][string]$OldPackage,
     [Parameter(Mandatory=$true)][string]$NewPackage,
     [Parameter(Mandatory=$true)][string]$Sandbox,
     [Parameter(Mandatory=$true)][string]$ResultPath,
-    [ValidateSet('Legacy','Current')][string]$OldLayout = 'Legacy'
+    [ValidateSet('Legacy','Upstream','Current')][string]$OldLayout = 'Legacy'
 )
 $ErrorActionPreference='Stop'
 $OldPackage=(Resolve-Path -LiteralPath $OldPackage).Path
@@ -48,9 +58,15 @@ function Get-Process { param($Name,$ErrorAction) } # Isolated host has no Revit 
 try {
 $oldManifest=Get-Content (Join-Path $OldPackage 'manifest.json') -Raw | ConvertFrom-Json
 Assert-SetupManifest -Root $OldPackage -Manifest $oldManifest
-# Seed the pre-migration layout, including a retained version and the current
+$oldExeName=Split-Path -Leaf (Find-ServerSourceExe (Join-Path $OldPackage 'server'))
+$newRoot=Join-Path $sandboxLocalAppData 'NourRouas\tbc-revit-mcp'
+# Seed the pre-upgrade layout, including a retained version and the current
 # server used by recent releases. All files are inside the sandbox profile.
-$oldRoot=if ($OldLayout -eq 'Legacy') { Join-Path $sandboxLocalAppData 'RvtMcp' } else { Join-Path $sandboxLocalAppData 'Bimwright/rvt-mcp' }
+$oldRoot=switch ($OldLayout) {
+    'Legacy'   { Join-Path $sandboxLocalAppData 'RvtMcp' }
+    'Upstream' { Join-Path $sandboxLocalAppData 'Bimwright\rvt-mcp' }
+    'Current'  { $newRoot }
+}
 $oldServerFolder=if ($OldLayout -eq 'Legacy') { 'rvt/server' } else { 'server' }
 $oldServer=Join-Path $oldRoot "$oldServerFolder/$($oldManifest.version)"
 New-Item -ItemType Directory -Path (Split-Path -Parent $oldServer) | Out-Null
@@ -69,22 +85,26 @@ foreach ($name in 'bake.db', 'bake.db-wal', 'bake.db-shm') {
 $dataHashes=@(Get-ChildItem -LiteralPath $oldRoot -File -Recurse | Where-Object { $_.FullName -notlike '*\server\*' } | ForEach-Object {
     @{path=$_.FullName.Substring($oldRoot.Length+1);sha256=(Get-FileHash -LiteralPath $_.FullName).Hash}
 })
+# Upstream releases register 'rvt-mcp'; tbc-revit-mcp releases register 'tbc-revit-mcp'.
+$oldEntryKey=if ($OldLayout -eq 'Current') { 'tbc-revit-mcp' } else { 'rvt-mcp' }
+$oldEnv=if ($OldLayout -eq 'Current') { @{TBC_REVIT_MCP_TARGET='2024'} } else { @{BIMWRIGHT_TARGET='2024'} }
 $clientConfig=Join-Path $sandboxUserProfile '.cursor/mcp.json'
 New-Item -ItemType Directory -Path (Split-Path -Parent $clientConfig) | Out-Null
-@{mcpServers=@{'rvt-mcp'=@{command=(Join-Path $oldServer 'rvt-mcp.exe');args=@('--read-only','--toolsets','query');env=@{BIMWRIGHT_TARGET='2024'}};other=@{command='other.exe'}}} |
+@{mcpServers=@{$oldEntryKey=@{command=(Join-Path $oldServer $oldExeName);args=@('--read-only','--toolsets','query');env=$oldEnv};other=@{command='other.exe'}}} |
     ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $clientConfig
 $clientHash=(Get-FileHash -LiteralPath $clientConfig).Hash
+$oldEntryJson=(Get-Content -LiteralPath $clientConfig -Raw | ConvertFrom-Json).mcpServers.$oldEntryKey | ConvertTo-Json -Depth 6 -Compress
 foreach ($year in 2022..2027) {
     $root=Get-AddinsRoot $year
     Expand-Archive -LiteralPath (Join-Path $OldPackage "plugins/RvtMcp.Plugin.R$($year-2000).zip") -DestinationPath "$root/RvtMcp"
     Move-Item -LiteralPath "$root/RvtMcp/RvtMcp.R$($year-2000).addin" -Destination $root
 }
-$oldServerHash=(Get-FileHash (Join-Path $oldServer 'rvt-mcp.exe')).Hash
+$oldServerHash=(Get-FileHash (Join-Path $oldServer $oldExeName)).Hash
 
 $SourceDir=$NewPackage; $pluginSourceDir=Join-Path $NewPackage 'plugins'; $serverSourceDir=Join-Path $NewPackage 'server'
 $manifest=Get-Content (Join-Path $NewPackage 'manifest.json') -Raw | ConvertFrom-Json
 $setupVersion=[string]$manifest.version
-$newRoot=Join-Path $sandboxLocalAppData 'Bimwright\rvt-mcp'
+$newExeName=Split-Path -Leaf (Find-ServerSourceExe $serverSourceDir)
 $ServerInstallRoot=Join-Path $newRoot 'server\current'
 $Years=@(2022..2027); $Client='cursor'; $Uninstall=$false; $WireClient=$null
 & $main
@@ -102,24 +122,32 @@ foreach ($year in $Years) {
     }
     $pluginResults += @{year=$year;filesVerified=$files.Count;passed=$true}
 }
-$relocatedServer=Join-Path $newRoot "server/$($oldManifest.version)/rvt-mcp.exe"
-if ((Get-FileHash -LiteralPath $relocatedServer).Hash -ne $oldServerHash) { throw 'Legacy server version changed' }
+# Legacy is moved into the new root; Upstream stays where it was; Current is in place.
+$dataRoot=if ($OldLayout -eq 'Upstream') { $oldRoot } else { $newRoot }
+$keptServer=Join-Path $dataRoot "server/$($oldManifest.version)/$oldExeName"
+if ((Get-FileHash -LiteralPath $keptServer).Hash -ne $oldServerHash) { throw 'Legacy server version changed' }
 if ($OldLayout -eq 'Legacy' -and (Test-Path -LiteralPath $oldRoot)) { throw 'Old product root survived relocation' }
 foreach ($file in $dataHashes) {
-    if ((Get-FileHash -LiteralPath (Join-Path $newRoot $file.path)).Hash -ne $file.sha256) { throw "Personal data changed: $($file.path)" }
+    if ((Get-FileHash -LiteralPath (Join-Path $dataRoot $file.path)).Hash -ne $file.sha256) { throw "Personal data changed: $($file.path)" }
 }
-if ((Get-FileHash (Join-Path $ServerInstallRoot 'rvt-mcp.exe')).Hash -ne (Get-FileHash (Join-Path $NewPackage 'server/rvt-mcp.exe')).Hash) { throw 'New server mismatch' }
+if ($OldLayout -eq 'Upstream' -and (Test-Path -LiteralPath (Join-Path $newRoot 'baked'))) { throw 'Installer copied upstream data; the runtime owns that copy' }
+$installedExe=Join-Path $ServerInstallRoot $newExeName
+if ((Get-FileHash $installedExe).Hash -ne (Get-FileHash (Join-Path $serverSourceDir $newExeName)).Hash) { throw 'New server mismatch' }
 $client=Get-Content -LiteralPath $clientConfig -Raw | ConvertFrom-Json
-$entry=$client.mcpServers.'rvt-mcp'
-if ([IO.Path]::GetFullPath($entry.command) -ne [IO.Path]::GetFullPath((Join-Path $ServerInstallRoot 'rvt-mcp.exe'))) { throw 'Client was not repointed to current server' }
-if (($entry.args -join ',') -ne '--read-only,--toolsets,query' -or $entry.env.BIMWRIGHT_TARGET -ne '2024') { throw 'Client args/env changed' }
+$entry=$client.mcpServers.'tbc-revit-mcp'
+if (-not $entry -or [IO.Path]::GetFullPath($entry.command) -ne [IO.Path]::GetFullPath($installedExe)) { throw 'Client tbc-revit-mcp entry does not point at the current server' }
+if ($OldLayout -eq 'Current') {
+    if (($entry.args -join ',') -ne '--read-only,--toolsets,query' -or $entry.env.TBC_REVIT_MCP_TARGET -ne '2024') { throw 'Client args/env changed' }
+} elseif (($client.mcpServers.'rvt-mcp' | ConvertTo-Json -Depth 6 -Compress) -ne $oldEntryJson) {
+    throw 'Upstream rvt-mcp client entry changed'
+}
 if ($client.mcpServers.other.command -ne 'other.exe') { throw 'Unrelated client entry changed' }
 if ((Get-FileHash -LiteralPath "$clientConfig.bak").Hash -ne $clientHash) { throw 'Client config backup differs' }
 $report=[ordered]@{testedAtUtc=(Get-Date).ToUniversalTime().ToString('o');fromVersion=$oldManifest.version;toVersion=$manifest.version;
     installerSha256=(Get-FileHash $installer).Hash;oldPackageCommit=$oldManifest.commit;candidateCommit=$manifest.commit;candidateDirty=$manifest.dirty;
     isolation='Real payloads, real installer control flow and real server smoke check (--help); sandbox paths, a fixture Cursor config and simulated closed host; no real deployment or client/native acceptance.';
-    oldLayout=$OldLayout;pluginResults=$pluginResults;serverVerified=$true;legacyServerKept=$true;dataRootRelocated=($OldLayout -eq 'Legacy');customConfigPreserved=$true;personalDataPreserved=$true;
-    preservedFiles=$dataHashes;clientPathRepointed=$true;clientArgsEnvPreserved=$true;clientBackupPreserved=$true;smokeCheck='passed';passed=$true}
+    oldLayout=$OldLayout;pluginResults=$pluginResults;serverVerified=$true;legacyServerKept=$true;dataRootRelocated=($OldLayout -eq 'Legacy');upstreamDataUntouched=($OldLayout -eq 'Upstream');customConfigPreserved=$true;personalDataPreserved=$true;
+    preservedFiles=$dataHashes;clientPathRepointed=($OldLayout -eq 'Current');clientEntryAdded=($OldLayout -ne 'Current');upstreamClientEntryUntouched=($OldLayout -ne 'Current');clientArgsEnvPreserved=$true;clientBackupPreserved=$true;smokeCheck='passed';passed=$true}
 $report | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $ResultPath -Encoding UTF8
 $report | ConvertTo-Json -Depth 10
 } finally {

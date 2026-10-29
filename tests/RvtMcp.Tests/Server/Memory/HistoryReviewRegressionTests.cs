@@ -161,7 +161,7 @@ namespace RvtMcp.Tests
             using (var held = new FileStream(files[1], FileMode.Open, FileAccess.ReadWrite, FileShare.None))
                 Assert.ThrowsAny<IOException>(() => LegacyDataMigration.MigrateOnce(_root));
             LegacyDataMigration.MigrateOnce(_root);
-            var target = Path.Combine(_root, "Bimwright", "rvt-mcp");
+            var target = Path.Combine(_root, "NourRouas", "tbc-revit-mcp");
             Assert.Equal("{\"readOnly\":true}", File.ReadAllText(Path.Combine(target, "rvtmcp.config.json")));
             Assert.Equal(2, Directory.GetFiles(Path.Combine(target, "baked")).Length);
             Assert.True(File.Exists(Path.Combine(source, "rvtmcp.config.json")));
@@ -170,7 +170,7 @@ namespace RvtMcp.Tests
         [Fact]
         public void Migration_conflict_preserves_both_files_and_reports_controlled_startup_failure()
         {
-            var source = Path.Combine(_root, "RvtMcp"); var target = Path.Combine(_root, "Bimwright", "rvt-mcp");
+            var source = Path.Combine(_root, "RvtMcp"); var target = Path.Combine(_root, "NourRouas", "tbc-revit-mcp");
             Directory.CreateDirectory(source); Directory.CreateDirectory(target);
             File.WriteAllText(Path.Combine(source, "rvtmcp.config.json"), "legacy");
             File.WriteAllText(Path.Combine(target, "rvtmcp.config.json"), "current");
@@ -192,7 +192,7 @@ namespace RvtMcp.Tests
             { command.CommandText = "PRAGMA journal_mode=WAL; PRAGMA wal_autocheckpoint=0; CREATE TABLE proof(value TEXT); INSERT INTO proof VALUES('committed in WAL');"; command.ExecuteNonQuery(); }
             Assert.True(new FileInfo(db + "-wal").Length > 0);
             LegacyDataMigration.MigrateOnce(_root);
-            var target = Path.Combine(_root, "Bimwright", "rvt-mcp", "bake.db");
+            var target = Path.Combine(_root, "NourRouas", "tbc-revit-mcp", "bake.db");
             using var reader = new SqliteConnection("Data Source=" + target + ";Mode=ReadOnly;Pooling=False"); reader.Open();
             using var query = reader.CreateCommand(); query.CommandText = "SELECT value FROM proof";
             Assert.Equal("committed in WAL", query.ExecuteScalar());
@@ -213,9 +213,9 @@ namespace RvtMcp.Tests
             var config = Path.Combine(source, "rvtmcp.config.json"); File.WriteAllText(config, "{}");
             using (var held = new FileStream(config, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
                 Assert.ThrowsAny<IOException>(() => LegacyDataMigration.MigrateOnce(_root));
-            Assert.True(File.Exists(Path.Combine(_root, "Bimwright", "rvt-mcp", "bake.db")));
+            Assert.True(File.Exists(Path.Combine(_root, "NourRouas", "tbc-revit-mcp", "bake.db")));
             LegacyDataMigration.MigrateOnce(_root);
-            Assert.True(File.Exists(Path.Combine(_root, "Bimwright", "rvt-mcp", ".migrated-from-rvtmcp-v2")));
+            Assert.True(File.Exists(Path.Combine(_root, "NourRouas", "tbc-revit-mcp", ".migrated-from-rvtmcp-v2")));
         }
 
         public void Dispose() { if (Directory.Exists(_root)) Directory.Delete(_root, true); }

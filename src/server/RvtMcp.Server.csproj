@@ -13,17 +13,17 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <PackAsTool>true</PackAsTool>
-    <ToolCommandName>rvt-mcp</ToolCommandName>
-    <PackageId>RvtMcp.Server</PackageId>
+    <ToolCommandName>tbc-revit-mcp</ToolCommandName>
+    <PackageId>TbcRevitMcp.Server</PackageId>
     <Version>1.2.1</Version>
-    <Authors>Khoa Le</Authors>
-    <Description>MCP gateway for Autodesk Revit 2022-2027 — expose the Revit API as AI-callable tools with progressive disclosure (toolset gating), a Transaction-safe batch_execute, and a ToolBaker self-evolution engine. Pair with the Revit plugin distributed on GitHub Releases.</Description>
-    <PackageProjectUrl>https://github.com/bimwright/rvt-mcp</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/bimwright/rvt-mcp</RepositoryUrl>
+    <Authors>Nour Rouas, Khoa Le</Authors>
+    <Description>MCP gateway for Autodesk Revit 2022-2027 — expose the Revit API as AI-callable tools with progressive disclosure (toolset gating), a Transaction-safe batch_execute, and a ToolBaker self-evolution engine. Pair with the Revit plugin distributed on GitHub Releases. Fork of bimwright/rvt-mcp maintained by Nour Rouas.</Description>
+    <PackageProjectUrl>https://github.com/nour-rouas/tbc-revit-mcp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nour-rouas/tbc-revit-mcp</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageTags>mcp;revit;bim;ai</PackageTags>
-    <Copyright>Copyright 2026 Khoa Le</Copyright>
+    <Copyright>Copyright 2026 Khoa Le (original rvt-mcp); modifications Copyright 2026 Nour Rouas</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
@@ -51,6 +51,7 @@
     <Compile Include="..\shared\ToolBaker\BakedToolRecord.cs" Link="Shared\ToolBaker\BakedToolRecord.cs" />
     <Compile Include="..\shared\ToolBaker\BakedToolRuntimeSource.cs" Link="Shared\ToolBaker\BakedToolRuntimeSource.cs" />
     <Compile Include="..\shared\Infrastructure\LegacyDataMigration.cs" Link="Shared\Infrastructure\LegacyDataMigration.cs" />
+    <Compile Include="..\shared\Infrastructure\ProductIdentity.cs" Link="Shared\Infrastructure\ProductIdentity.cs" />
     <Compile Include="..\shared\Infrastructure\ToolReadPolicy.cs" Link="Shared\Infrastructure\ToolReadPolicy.cs" />
     <Compile Include="..\shared\Infrastructure\RuntimeIdentity.cs" Link="Shared\Infrastructure\RuntimeIdentity.cs" />
     <Compile Include="..\shared\Survey\SurveyContract.cs" Link="Shared\Survey\SurveyContract.cs" />

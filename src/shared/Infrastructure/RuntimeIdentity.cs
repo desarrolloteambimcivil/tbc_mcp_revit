@@ -40,7 +40,7 @@ public static class RuntimeIdentity
         return new JObject
         {
             ["schema_version"] = 1,
-            ["product_id"] = "rvt-mcp",
+            ["product_id"] = "tbc-revit-mcp",
             ["component"] = component,
             ["host_year"] = hostYear,
             ["process_id"] = process.Id,

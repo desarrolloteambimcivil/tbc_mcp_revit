@@ -71,7 +71,7 @@ namespace RvtMcp.Plugin.Views.Toast
         }
 
         /// <summary>
-        /// Card title naming this instance (e.g. "rvt-mcp 2027"). Read when each
+        /// Card title naming this instance (e.g. "tbc-revit-mcp 2027"). Read when each
         /// card is created, so a late or changed value applies to the next card.
         /// </summary>
         public void SetInstanceIdentity(string identity)

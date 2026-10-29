@@ -8,7 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Bimwright.Targeting;
+using RvtMcp.Targeting;
 using RvtMcp.Plugin; // RvtMcpConfig, ChangeHistoryRequest
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -107,7 +107,7 @@ namespace RvtMcp.Server
                     var accept = listener.AcceptTcpClientAsync();
                     var client = new TcpClient();
                     client.Connect("127.0.0.1", port);
-                    var conn = NewConn(client, new Bimwright.Targeting.TargetDescriptor
+                    var conn = NewConn(client, new RvtMcp.Targeting.TargetDescriptor
                     {
                         TargetId = "warmup",
                         HostYear = 2024,
@@ -193,7 +193,7 @@ namespace RvtMcp.Server
                 // may be adopted.
                 if (current.Generation != 1)
                 {
-                    if (!RevitTargetBinding.Binding.CanSend(0, Array.Empty<Bimwright.Targeting.TargetCandidate>(), out var failure))
+                    if (!RevitTargetBinding.Binding.CanSend(0, Array.Empty<RvtMcp.Targeting.TargetCandidate>(), out var failure))
                         throw new TargetException(failure);
                     return false;
                 }
@@ -292,7 +292,7 @@ namespace RvtMcp.Server
         /// under one <c>_connectLock</c>, so no call captured under the new generation can reach
         /// the old instance's still-open connection (§6.6, §6.8).
         /// </summary>
-        internal static SwitchResult SwitchBinding(TargetSelector selector, IReadOnlyList<Bimwright.Targeting.TargetCandidate> live,
+        internal static SwitchResult SwitchBinding(TargetSelector selector, IReadOnlyList<RvtMcp.Targeting.TargetCandidate> live,
             out BindingSnapshot before, bool rebind = false, string expectedDocumentId = null)
         {
             lock (_connectLock)
@@ -342,7 +342,7 @@ namespace RvtMcp.Server
 
         /// <summary>§6.4 connect: busy vs no-listener distinction, handshake precondition.</summary>
         private static Conn ConnectAndHandshake(TargetDescriptor desc, long effectiveGeneration,
-            IReadOnlyList<Bimwright.Targeting.TargetCandidate> live)
+            IReadOnlyList<RvtMcp.Targeting.TargetCandidate> live)
         {
             var binding = RevitTargetBinding.Binding;
             var descriptor = desc;
@@ -621,7 +621,7 @@ namespace RvtMcp.Server
                     callCtx?.Cancellation.ThrowIfCancellationRequested();
                     lock (_connectLock)
                     {
-                        if (!binding.CanSend(effectiveGeneration, Array.Empty<Bimwright.Targeting.TargetCandidate>(), out var sendFailure))
+                        if (!binding.CanSend(effectiveGeneration, Array.Empty<RvtMcp.Targeting.TargetCandidate>(), out var sendFailure))
                             throw new TargetException(sendFailure);
                         if (_conn == conn && conn.Generation == effectiveGeneration && conn.Closed == 0)
                         {

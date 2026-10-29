@@ -10,10 +10,7 @@ namespace RvtMcp.Plugin
     public static class PathAllowlist
     {
         public static string CapturesDirectory =>
-            Path.GetFullPath(Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Bimwright", "rvt-mcp",
-                "captures"));
+            Path.GetFullPath(Path.Combine(ProductIdentity.DataRoot(), "captures"));
 
         public static string TempDirectory => Path.GetFullPath(Path.GetTempPath());
 

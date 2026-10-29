@@ -7,8 +7,8 @@ Adaptive bake turns repeated local Revit workflows into personal tools only afte
 Set the master flag before starting the MCP server:
 
 ```powershell
-$env:BIMWRIGHT_ENABLE_ADAPTIVE_BAKE = "1"
-rvt-mcp
+$env:TBC_REVIT_MCP_ENABLE_ADAPTIVE_BAKE = "1"
+tbc-revit-mcp
 ```
 
 Or set JSON config:
@@ -19,9 +19,9 @@ Or set JSON config:
 }
 ```
 
-Config path: `%LOCALAPPDATA%\Bimwright\rvt-mcp\rvtmcp.config.json`.
+Config path: `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\rvtmcp.config.json`.
 
-`BIMWRIGHT_ENABLE_ADAPTIVE_BAKE=1` takes effect at the next MCP server start. If you change the flag while a Claude Code session is active, restart the MCP connection with disconnect -> reconnect via `/mcp` so `list_bake_suggestions`, `accept_bake_suggestion`, and `dismiss_bake_suggestion` appear.
+`TBC_REVIT_MCP_ENABLE_ADAPTIVE_BAKE=1` takes effect at the next MCP server start. If you change the flag while a Claude Code session is active, restart the MCP connection with disconnect -> reconnect via `/mcp` so `list_bake_suggestions`, `accept_bake_suggestion`, and `dismiss_bake_suggestion` appear.
 
 `send_code_to_revit` is part of the default ToolBaker surface and does not require adaptive bake. Adaptive bake only adds `list_bake_suggestions`, `accept_bake_suggestion`, `dismiss_bake_suggestion`, and local usage analysis for suggestions.
 
@@ -32,7 +32,7 @@ By default, adaptive bake does not keep raw `send_code_to_revit` code bodies for
 Set this only if you want send-code clusters to be eligible for suggestion generation:
 
 ```powershell
-$env:BIMWRIGHT_CACHE_SEND_CODE_BODIES = "1"
+$env:TBC_REVIT_MCP_CACHE_SEND_CODE_BODIES = "1"
 ```
 
 Or set JSON config:
@@ -58,39 +58,39 @@ Enable this by setting JSON config fields:
 ```
 Or via CLI:
 ```powershell
-rvt-mcp --persist-send-code-bodies
-rvt-mcp --persist-send-code-bodies-for 4h
+tbc-revit-mcp --persist-send-code-bodies
+tbc-revit-mcp --persist-send-code-bodies-for 4h
 ```
 
 **Key Policies:**
 - **Default Privacy:** No journal writes occur unless `persistSendCodeBodies` is `true` AND `persistSendCodeBodiesUntil` is a valid UTC date in the future.
 - **TTL bounds (v1.2.1 source):** Min 1 hour, default 4 hours, max 14 days. Settings presets are 1h, 4h, 8h, 12h, 24h, 2d, 7d and 14d. The CLI/Env clamps values automatically.
-- **Journal file:** written to `%LOCALAPPDATA%\Bimwright\rvt-mcp\send-code-journal.jsonl`.
+- **Journal file:** written to `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\send-code-journal.jsonl`.
 - **Rotation:** rotates at ~5MB.
 - **Retention:** deleted automatically 7 days after the persist window expires or is disabled.
 - **Redaction:** `BakeRedactor.RedactForBake` (redacts local paths, UNC paths, and sensitive tokens) is applied to the persisted code.
 
 ## Local Storage
 
-All adaptive-bake storage is local to the current Windows user under `%LOCALAPPDATA%\Bimwright\rvt-mcp\`.
+All adaptive-bake storage is local to the current Windows user under `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\`.
 
 Key files:
 
-- `%LOCALAPPDATA%\Bimwright\rvt-mcp\usage.jsonl` - append-only local usage events.
-- `%LOCALAPPDATA%\Bimwright\rvt-mcp\bake.db` - SQLite suggestions and accepted-tool registry.
-- `%LOCALAPPDATA%\Bimwright\rvt-mcp\bake-audit.jsonl` - local suggestion and lifecycle audit events.
+- `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\usage.jsonl` - append-only local usage events.
+- `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\bake.db` - SQLite suggestions and accepted-tool registry.
+- `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\bake-audit.jsonl` - local suggestion and lifecycle audit events.
 
 The server is the only writer for `bake.db`. The Revit plugin opens `bake.db` read-only, loads accepted tools into memory, and owns the runtime/ribbon surface.
 
 ## What Gets Logged
 
-When adaptive bake is enabled, Bimwright can log local usage signals such as:
+When adaptive bake is enabled, tbc-revit-mcp can log local usage signals such as:
 
 - tool name and source type (`send_code`, preset, macro).
 - normalized argument shape and hashes.
 - success/failure result.
 - `send_code_to_revit` body hash and code length.
-- redacted cluster material when `BIMWRIGHT_CACHE_SEND_CODE_BODIES=1`.
+- redacted cluster material when `TBC_REVIT_MCP_CACHE_SEND_CODE_BODIES=1`.
 
 It should not log raw file paths, URLs, tokens, project names, or raw send-code bodies into long-lived usage and journal records. Sensitive literals are redacted or replaced with hashes before persistence.
 
@@ -100,7 +100,7 @@ Repeated patterns become suggestions. The suggestion lifecycle is user-controlle
 
 - **Accept** - compile/apply the suggestion and add it to the accepted-tool registry after the plugin succeeds.
 - **Snooze 30d** - hide the suggestion temporarily.
-- **Never** - keep the suggestion dismissed. For send-code patterns, Bimwright can create a local GitHub issue draft URL for a roadmap gap signal; it does not submit anything automatically.
+- **Never** - keep the suggestion dismissed. For send-code patterns, tbc-revit-mcp can create a local GitHub issue draft URL for a roadmap gap signal; it does not submit anything automatically.
 
 Agent surface:
 
@@ -132,7 +132,7 @@ Accepted tools can also appear as Revit ribbon buttons when the accepted suggest
 
 ## Archive Behavior
 
-Accepted tools have lifecycle metadata. When a tool is archived, Bimwright keeps registry history but removes it from the active ribbon/runtime path. `run_baked_tool` returns archived-state guidance instead of executing it, and `list_baked_tools` remains the place to inspect active tools and replacements.
+Accepted tools have lifecycle metadata. When a tool is archived, tbc-revit-mcp keeps registry history but removes it from the active ribbon/runtime path. `run_baked_tool` returns archived-state guidance instead of executing it, and `list_baked_tools` remains the place to inspect active tools and replacements.
 
 Archive is for tools that should not stay on the working ribbon but should remain auditable. Prefer archiving over deleting local history.
 

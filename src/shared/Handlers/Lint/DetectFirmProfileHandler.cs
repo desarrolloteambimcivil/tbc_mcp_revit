@@ -97,7 +97,7 @@ namespace RvtMcp.Plugin.Handlers
 
             var localApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             if (!string.IsNullOrEmpty(localApp))
-                yield return Path.Combine(localApp, "Bimwright", "rvt-mcp", "firm-profiles");
+                yield return Path.Combine(ProductIdentity.DataRoot(localApp), "firm-profiles");
         }
     }
 }

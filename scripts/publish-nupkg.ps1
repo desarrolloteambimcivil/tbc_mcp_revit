@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-  Pack RvtMcp.Server as a .NET global tool with a SHA-256 sidecar, optionally push to nuget.org.
+  Pack TbcRevitMcp.Server (command tbc-revit-mcp) as a .NET global tool with a SHA-256 sidecar, optionally push to nuget.org.
 
 .DESCRIPTION
   Does not read or store the API key in the repo. Pass it via -ApiKey or $env:NUGET_API_KEY.
@@ -28,12 +28,15 @@ $csproj = Join-Path $RepoRoot 'src\server\RvtMcp.Server.csproj'
 $versionNode = $project.SelectSingleNode('/Project/PropertyGroup/Version')
 if (-not $versionNode -or [string]::IsNullOrWhiteSpace($versionNode.InnerText)) { throw 'Server csproj has no package Version.' }
 $version = $versionNode.InnerText.Trim()
+# The package file is named after PackageId, not the RvtMcp.Server assembly.
+$packageIdNode = $project.SelectSingleNode('/Project/PropertyGroup/PackageId')
+$packageId = if ($packageIdNode -and -not [string]::IsNullOrWhiteSpace($packageIdNode.InnerText)) { $packageIdNode.InnerText.Trim() } else { 'TbcRevitMcp.Server' }
 Write-Host "Packing $csproj"
 & dotnet pack $csproj -c Release --output $outDir
 if ($LASTEXITCODE -ne 0) { throw "dotnet pack failed: $LASTEXITCODE" }
 
 # Leftover artifacts may have newer timestamps; never hash or push a different version.
-$packagePath = Join-Path $outDir ("RvtMcp.Server.{0}.nupkg" -f $version)
+$packagePath = Join-Path $outDir ("{0}.{1}.nupkg" -f $packageId, $version)
 if (-not (Test-Path -LiteralPath $packagePath -PathType Leaf)) { throw "Expected package not found: $packagePath" }
 $nupkg = Get-Item -LiteralPath $packagePath
 $hash = (Get-FileHash -LiteralPath $nupkg.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -53,4 +56,4 @@ if ([string]::IsNullOrWhiteSpace($ApiKey)) {
 Write-Host "Pushing to nuget.org..."
 & dotnet nuget push $nupkg.FullName --api-key $ApiKey --source 'https://api.nuget.org/v3/index.json' --skip-duplicate
 if ($LASTEXITCODE -ne 0) { throw "dotnet nuget push failed: $LASTEXITCODE" }
-Write-Host 'Push accepted. Package page: https://www.nuget.org/packages/RvtMcp.Server'
+Write-Host "Push accepted. Package page: https://www.nuget.org/packages/$packageId"

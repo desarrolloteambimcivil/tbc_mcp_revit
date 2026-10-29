@@ -84,7 +84,7 @@ namespace RvtMcp.Plugin.Update
     }
 
     /// <summary>Persisted result of the last update check (one small JSON file
-    /// next to the add-in's other state in %LOCALAPPDATA%\Bimwright\rvt-mcp).</summary>
+    /// next to the add-in's other state in %LOCALAPPDATA%\NourRouas\tbc-revit-mcp).</summary>
     public sealed class UpdateCheckState
     {
         [JsonProperty("lastCheckedUtc")] public DateTime? LastCheckedUtc { get; set; }
@@ -93,7 +93,7 @@ namespace RvtMcp.Plugin.Update
         [JsonProperty("skippedVersion")] public string SkippedVersion { get; set; }
 
         public static string DefaultPath =>
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Bimwright", "rvt-mcp", "update-check.json");
+            Path.Combine(ProductIdentity.DataRoot(), "update-check.json");
 
         public static UpdateCheckState Load(string path = null)
         {
@@ -137,15 +137,15 @@ namespace RvtMcp.Plugin.Update
     /// </summary>
     public static class UpdateChecker
     {
-        public const string LatestReleaseApiUrl = "https://api.github.com/repos/bimwright/rvt-mcp/releases/latest";
-        public const string ReleasesLatestUrl = "https://github.com/bimwright/rvt-mcp/releases/latest";
-        public const string DisableEnvVar = "BIMWRIGHT_DISABLE_UPDATE_CHECK";
+        public const string LatestReleaseApiUrl = "https://api.github.com/repos/nour-rouas/tbc-revit-mcp/releases/latest";
+        public const string ReleasesLatestUrl = "https://github.com/nour-rouas/tbc-revit-mcp/releases/latest";
+        public const string DisableEnvVar = "TBC_REVIT_MCP_DISABLE_UPDATE_CHECK";
         public static readonly TimeSpan CheckInterval = TimeSpan.FromHours(24);
         public static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(5);
 
         public static bool IsDisabledByEnvironment()
         {
-            var v = Environment.GetEnvironmentVariable(DisableEnvVar);
+            var v = ProductIdentity.GetEnv(DisableEnvVar);
             return v == "1" || string.Equals(v, "true", StringComparison.OrdinalIgnoreCase);
         }
 
@@ -172,7 +172,7 @@ namespace RvtMcp.Plugin.Update
                 var tag = o.Value<string>("tag_name");
                 if (!SemanticVersion.TryParse(tag, out var v) || v.IsPrerelease) return null;
                 var url = o.Value<string>("html_url");
-                if (string.IsNullOrWhiteSpace(url) || !url.StartsWith("https://github.com/bimwright/rvt-mcp/", StringComparison.Ordinal))
+                if (string.IsNullOrWhiteSpace(url) || !url.StartsWith("https://github.com/nour-rouas/tbc-revit-mcp/", StringComparison.Ordinal))
                     url = ReleasesLatestUrl;
                 return Tuple.Create(tag, url);
             }
@@ -248,7 +248,7 @@ namespace RvtMcp.Plugin.Update
             using (var http = new HttpClient { Timeout = RequestTimeout })
             using (var request = new HttpRequestMessage(HttpMethod.Get, LatestReleaseApiUrl))
             {
-                request.Headers.UserAgent.ParseAdd("rvt-mcp-update-check");
+                request.Headers.UserAgent.ParseAdd("tbc-revit-mcp-update-check");
                 request.Headers.Accept.ParseAdd("application/vnd.github+json");
                 using (var response = await http.SendAsync(request, token).ConfigureAwait(false))
                 {
@@ -267,7 +267,7 @@ namespace RvtMcp.Plugin.Update
         {
             if (info == null) return string.Empty;
             var sb = new StringBuilder();
-            sb.AppendLine("Please help me update rvt-mcp (the Revit MCP server and add-in by bimwright).");
+            sb.AppendLine("Please help me update tbc-revit-mcp (the Revit MCP server and add-in by Nour Rouas).");
             sb.AppendLine("Installed version: " + info.CurrentVersion);
             sb.AppendLine("Latest version: " + info.LatestVersion);
             sb.AppendLine("Release page: " + info.ReleaseUrl);
@@ -284,7 +284,7 @@ namespace RvtMcp.Plugin.Update
         /// <summary>One-line notice for MCP clients (instructions / status results).</summary>
         public static string ForAgent(UpdateInfo info) =>
             info == null ? null :
-            "rvt-mcp " + info.LatestVersion + " is available (running " + info.CurrentVersion + "). Tell the user and offer to guide the update: " + info.ReleaseUrl;
+            "tbc-revit-mcp " + info.LatestVersion + " is available (running " + info.CurrentVersion + "). Tell the user and offer to guide the update: " + info.ReleaseUrl;
 
         /// <summary>
         /// Prepends <paramref name="notice"/> to the server instructions and keeps the

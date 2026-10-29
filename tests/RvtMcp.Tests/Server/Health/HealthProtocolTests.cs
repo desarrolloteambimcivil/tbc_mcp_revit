@@ -74,7 +74,7 @@ public sealed class HealthProtocolTests
                 Assert.False(health.Value<bool>("ok"));
                 Assert.False(health.Value<bool>("host_connected"));
                 Assert.StartsWith("NO_TARGET:", health.Value<string>("error"));
-                Assert.Equal("rvt-mcp", health["setup_gateway"].Value<string>("product_id"));
+                Assert.Equal("tbc-revit-mcp", health["setup_gateway"].Value<string>("product_id"));
                 Assert.Equal("not_checked", health["update"].Value<string>("status"));
                 Assert.Null(health["mcp"].Value<string>("plugin_version"));
                 Assert.Equal("check_only", health["update_guidance"].Value<string>("mode"));

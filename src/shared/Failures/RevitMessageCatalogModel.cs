@@ -67,7 +67,7 @@ namespace RvtMcp.Failures
 
         public static string CachePath(int revitYear)
         {
-            var root = RootOverride ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Bimwright", "rvt-mcp");
+            var root = RootOverride ?? RvtMcp.Plugin.ProductIdentity.DataRoot();
             return Path.Combine(root, "catalog", "revit-" + revitYear + ".json");
         }
 

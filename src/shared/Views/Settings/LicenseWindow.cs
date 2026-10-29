@@ -11,7 +11,7 @@ namespace RvtMcp.Plugin.Views.Settings
     {
         public LicenseWindow(AboutInfo about, Window owner = null)
         {
-            Title = SettingsText.Text("settings.license.title", "rvt-mcp · License");
+            Title = SettingsText.Text("settings.license.title", "tbc-revit-mcp · License");
             // Opens at its minimum width; the license text wraps, so it only needs 10 % more room.
             MinWidth = 520;
             Width = MinWidth;
@@ -32,7 +32,7 @@ namespace RvtMcp.Plugin.Views.Settings
             ScrollBarFadeBehavior.SetIsEnabled(this, true);
 
             var body = new DockPanel { Margin = new Thickness(16, 14, 16, 14) };
-            var heading = new TextBlock { Text = SettingsText.Text("settings.license.summary", "rvt-mcp is distributed under the Apache License 2.0."), TextWrapping = TextWrapping.Wrap };
+            var heading = new TextBlock { Text = SettingsText.Text("settings.license.summary", "tbc-revit-mcp is distributed under the Apache License 2.0."), TextWrapping = TextWrapping.Wrap };
             DockPanel.SetDock(heading, Dock.Top);
             body.Children.Add(heading);
             var disclaimer = new TextBlock { Text = SettingsText.Text("settings.license.disclaimer", "This explanation does not replace the official license text."), TextWrapping = TextWrapping.Wrap, FontSize = 12, Foreground = SettingsStyles.Secondary, Margin = new Thickness(0, 2, 0, 12) };
