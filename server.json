@@ -5,10 +5,10 @@
   "description": "MCP gateway for Autodesk Revit 2022-2027 by Nour Rouas (fork of bimwright/rvt-mcp) - toolset gating, Transaction-safe batches, API lookup and type-structure tools.",
   "version": "1.2.1",
   "repository": {
-    "url": "https://github.com/desarrolloteambimcivil/tbc-revit-mcp",
+    "url": "https://github.com/desarrolloteambimcivil/tbc_mcp_revit",
     "source": "github"
   },
-  "homepage": "https://github.com/desarrolloteambimcivil/tbc-revit-mcp",
+  "homepage": "https://github.com/desarrolloteambimcivil/tbc_mcp_revit",
   "license": "Apache-2.0",
   "packages": [
     {

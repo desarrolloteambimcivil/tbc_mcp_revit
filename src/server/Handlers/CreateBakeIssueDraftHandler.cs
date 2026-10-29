@@ -7,7 +7,7 @@ namespace RvtMcp.Server.Handlers
 {
     public static class CreateBakeIssueDraftHandler
     {
-        private const string IssueBaseUrl = "https://github.com/desarrolloteambimcivil/tbc-revit-mcp/issues/new";
+        private const string IssueBaseUrl = "https://github.com/desarrolloteambimcivil/tbc_mcp_revit/issues/new";
 
         public static string Handle(BakeSuggestionRecord suggestion, string currentRevitVersion = null)
         {

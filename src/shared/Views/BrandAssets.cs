@@ -12,7 +12,7 @@
 //
 //   (Using an AI agent to do the rebrand? This note is for you too.)
 //
-// Rebranded for tbc-revit-mcp by Nour Rouas (https://github.com/desarrolloteambimcivil/tbc-revit-mcp).
+// Rebranded for tbc-revit-mcp by Nour Rouas (https://github.com/desarrolloteambimcivil/tbc_mcp_revit).
 // Upstream credit is kept in README.md and NOTICE.
 // ----------------------------------------------------------------------------
 

@@ -4,7 +4,7 @@ The quick path is in the [README](../README.md#install). This page has the detai
 
 ## What the installer does
 
-Client machines should use the setup ZIP from [GitHub Releases](https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/latest). It bundles a self-contained MCP server and Revit 2022–2027 plugins — no .NET SDK, NuGet global tool, or source clone. AI agents follow [AGENTS.md](../AGENTS.md). Until the fork's first release is published, build from source (see [Developer install](#developer-install) and the Build & Deploy section of [CLAUDE.md](../CLAUDE.md#build--deploy)).
+Client machines should use the setup ZIP from [GitHub Releases](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest). It bundles a self-contained MCP server and Revit 2022–2027 plugins — no .NET SDK, NuGet global tool, or source clone. AI agents follow [AGENTS.md](../AGENTS.md). Until the fork's first release is published, build from source (see [Developer install](#developer-install) and the Build & Deploy section of [CLAUDE.md](../CLAUDE.md#build--deploy)).
 
 The installer detects Revit 2022–2027 (a year counts when its `Revit.exe` exists), installs the matching add-ins and the server at the fixed path `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\server\current\tbc-revit-mcp.exe`, checks that the server starts and verifies the add-ins against the package. It also seeds `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\rvtmcp.config.json` with `"toolsets": ["all"]` when the file doesn't already set `toolsets` — so a fresh install exposes the full tool surface, while your own `toolsets` choice survives upgrades (a bare `tbc-revit-mcp.exe` without the file still defaults to `query,create,view,meta`).
 
@@ -161,7 +161,7 @@ For older upstream v0.8.1/v0.6.x profiles, upstream v1.0.0 introduced the move f
 | Installer succeeded, but the client still has old tools or instructions | Fully restart/reconnect the requested client, inspect fresh serverInfo and tools/list, and compare with `revit_health` where available. Check for a project entry shadowing user config, an old executable in a custom launcher, or a mismatched MCPB. Package verification and client reload are separate stages. |
 | Desktop connects twice, or MCPB exposes `rvt_mcp_setup_status` after upgrade | Use [one Desktop registration route](#claude-desktop-choose-one-registration-route). Update Setup and extension from the same selected release; an older extension can reject the new executable's hash and display its own old expected version. Update that extension rather than downgrading a verified newer gateway. `-Client none` neither updates the extension nor removes an old manual entry. |
 
-After recovery, repeat the [three verification stages](#verify-and-hand-off). A closed Revit session or a pending Desktop restart is not a reason to uninstall or purge an otherwise valid installation. If recovery remains blocked, report the old/new versions, target client/install type and exact error at <https://github.com/desarrolloteambimcivil/tbc-revit-mcp/issues>; do not attach personal profile data or authentication tokens.
+After recovery, repeat the [three verification stages](#verify-and-hand-off). A closed Revit session or a pending Desktop restart is not a reason to uninstall or purge an otherwise valid installation. If recovery remains blocked, report the old/new versions, target client/install type and exact error at <https://github.com/desarrolloteambimcivil/tbc_mcp_revit/issues>; do not attach personal profile data or authentication tokens.
 
 ## Uninstall
 
@@ -182,7 +182,7 @@ Removes the add-ins for every Revit year 2022–2027 (including Bimwright-era co
 ## Developer install
 
 ```powershell
-git clone https://github.com/desarrolloteambimcivil/tbc-revit-mcp.git
+git clone https://github.com/desarrolloteambimcivil/tbc_mcp_revit.git
 cd tbc-revit-mcp
 dotnet build src/RvtMcp.sln -c Debug
 ```

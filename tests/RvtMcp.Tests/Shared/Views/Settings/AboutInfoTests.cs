@@ -9,7 +9,7 @@ namespace RvtMcp.Tests
         public void CommitVersionUsesExactCommitReference()
         {
             Assert.Equal(
-                "https://github.com/desarrolloteambimcivil/tbc-revit-mcp/blob/abc1234/LICENSE",
+                "https://github.com/desarrolloteambimcivil/tbc_mcp_revit/blob/abc1234/LICENSE",
                 AboutInfoProvider.CreateLicenseSourceUrl("0.6.4+abc1234"));
         }
 
@@ -17,7 +17,7 @@ namespace RvtMcp.Tests
         public void ReleaseVersionUsesVersionTagReference()
         {
             Assert.Equal(
-                "https://github.com/desarrolloteambimcivil/tbc-revit-mcp/blob/v0.6.4/LICENSE",
+                "https://github.com/desarrolloteambimcivil/tbc_mcp_revit/blob/v0.6.4/LICENSE",
                 AboutInfoProvider.CreateLicenseSourceUrl("0.6.4"));
         }
 

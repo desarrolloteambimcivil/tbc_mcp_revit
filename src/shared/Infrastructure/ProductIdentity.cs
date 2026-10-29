@@ -13,7 +13,7 @@ namespace RvtMcp.Plugin
         public const string Name = "tbc-revit-mcp";
         public const string Author = "Nour Rouas";
         public const string AuthorLine = "Nour Rouas — BIM developer/modeller at TeamBIMCivil";
-        public const string GitHubRepository = "desarrolloteambimcivil/tbc-revit-mcp";
+        public const string GitHubRepository = "desarrolloteambimcivil/tbc_mcp_revit";
         public const string RepositoryUrl = "https://github.com/" + GitHubRepository;
 
         public const string VendorFolder = "NourRouas";

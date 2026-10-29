@@ -137,8 +137,8 @@ namespace RvtMcp.Plugin.Update
     /// </summary>
     public static class UpdateChecker
     {
-        public const string LatestReleaseApiUrl = "https://api.github.com/repos/desarrolloteambimcivil/tbc-revit-mcp/releases/latest";
-        public const string ReleasesLatestUrl = "https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/latest";
+        public const string LatestReleaseApiUrl = "https://api.github.com/repos/desarrolloteambimcivil/tbc_mcp_revit/releases/latest";
+        public const string ReleasesLatestUrl = "https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest";
         public const string DisableEnvVar = "TBC_REVIT_MCP_DISABLE_UPDATE_CHECK";
         public static readonly TimeSpan CheckInterval = TimeSpan.FromHours(24);
         public static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(5);
@@ -172,7 +172,7 @@ namespace RvtMcp.Plugin.Update
                 var tag = o.Value<string>("tag_name");
                 if (!SemanticVersion.TryParse(tag, out var v) || v.IsPrerelease) return null;
                 var url = o.Value<string>("html_url");
-                if (string.IsNullOrWhiteSpace(url) || !url.StartsWith("https://github.com/desarrolloteambimcivil/tbc-revit-mcp/", StringComparison.Ordinal))
+                if (string.IsNullOrWhiteSpace(url) || !url.StartsWith("https://github.com/desarrolloteambimcivil/tbc_mcp_revit/", StringComparison.Ordinal))
                     url = ReleasesLatestUrl;
                 return Tuple.Create(tag, url);
             }

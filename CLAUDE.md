@@ -1,6 +1,6 @@
 ﻿# tbc-revit-mcp
 
-Open-source (Apache-2.0) MCP gateway that lets Claude Code (and any MCP-capable client) drive Autodesk Revit 2022–2027. Fork of [bimwright/rvt-mcp](https://github.com/bimwright/rvt-mcp) maintained by Nour Rouas (`desarrolloteambimcivil/tbc-revit-mcp`); see `NOTICE`. Product name, author, data folder and env-var prefix live in `src/shared/Infrastructure/ProductIdentity.cs`. Env vars use the `TBC_REVIT_MCP_` prefix; the legacy `BIMWRIGHT_` names are still read when the new name is not set, and data migrates on first start from `%LOCALAPPDATA%\Bimwright\rvt-mcp\` (and the older `%LOCALAPPDATA%\RvtMcp\`), leaving the old folder in place.
+Open-source (Apache-2.0) MCP gateway that lets Claude Code (and any MCP-capable client) drive Autodesk Revit 2022–2027. Fork of [bimwright/rvt-mcp](https://github.com/bimwright/rvt-mcp) maintained by Nour Rouas (`desarrolloteambimcivil/tbc_mcp_revit`); see `NOTICE`. Product name, author, data folder and env-var prefix live in `src/shared/Infrastructure/ProductIdentity.cs`. Env vars use the `TBC_REVIT_MCP_` prefix; the legacy `BIMWRIGHT_` names are still read when the new name is not set, and data migrates on first start from `%LOCALAPPDATA%\Bimwright\rvt-mcp\` (and the older `%LOCALAPPDATA%\RvtMcp\`), leaving the old folder in place.
 
 ## Architecture
 

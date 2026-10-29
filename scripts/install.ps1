@@ -262,7 +262,7 @@ function Get-AgentsGuidePath([string]$ScriptRoot) {
             if (Test-Path -LiteralPath $candidate -PathType Leaf) { return $candidate }
         }
     }
-    return 'https://github.com/desarrolloteambimcivil/tbc-revit-mcp/blob/master/AGENTS.md'
+    return 'https://github.com/desarrolloteambimcivil/tbc_mcp_revit/blob/master/AGENTS.md'
 }
 
 # Every backup is beside its target. Never delete a caller-supplied directory

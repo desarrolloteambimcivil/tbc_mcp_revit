@@ -13,15 +13,15 @@
 </p>
 
 <p align="center">
-  <a href="https://desarrolloteambimcivil.github.io/tbc-revit-mcp/"><b>Trang web: desarrolloteambimcivil.github.io/tbc-revit-mcp</b></a>
+  <a href="https://desarrolloteambimcivil.github.io/tbc_mcp_revit/"><b>Trang web: desarrolloteambimcivil.github.io/tbc_mcp_revit</b></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/actions/workflows/build.yml/badge.svg" alt="build" /></a>
+  <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
   <a href="#tools"><img src="https://img.shields.io/badge/MCP-242%20tools-6C47FF" alt="MCP tools" /></a>
-  <a href="https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc-revit-mcp" alt="latest release" /></a>
+  <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc_mcp_revit" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
 
@@ -43,7 +43,7 @@ Agent có **bộ tool typed** cho việc Revit thường gặp, escape hatch C# 
 
 ## Cài đặt
 
-**Tải về:** Setup ZIP và Claude Desktop MCPB từ [bản phát hành mới nhất](https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/latest). Cho đến khi bản fork có release đầu tiên, hãy build từ mã nguồn (xem [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy).
+**Tải về:** Setup ZIP và Claude Desktop MCPB từ [bản phát hành mới nhất](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest). Cho đến khi bản fork có release đầu tiên, hãy build từ mã nguồn (xem [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy).
 
 **Để AI agent cài cho client bạn muốn sử dụng.** Dùng agent có thể chạy PowerShell và sửa file trên máy Windows này (Claude Code, Codex, Cursor, …), không phải phiên chat thiếu công cụ thao tác máy. Agent thực hiện cài đặt có thể khác client bạn dùng để làm việc với Revit. Agent làm theo [AGENTS.md](AGENTS.md), xem trước thay đổi và hỏi trước khi áp dụng; bạn vẫn có thể cần thao tác UI hoặc khởi động lại ứng dụng.
 
@@ -51,7 +51,7 @@ Với **Claude Desktop**, dán:
 
 ```text
 Hãy cài tbc-revit-mcp để tôi sử dụng trong Claude Desktop trên máy Windows này.
-Đọc https://github.com/desarrolloteambimcivil/tbc-revit-mcp/blob/master/AGENTS.md trước.
+Đọc https://github.com/desarrolloteambimcivil/tbc_mcp_revit/blob/master/AGENTS.md trước.
 Chỉ cấu hình Claude Desktop, không cấu hình client khác. Kiểm tra cài đặt hiện có,
 xem trước thay đổi và xin xác nhận trước khi ghi. Nếu cần tôi thao tác UI
 hoặc restart ứng dụng, hãy nói rõ.
@@ -62,9 +62,9 @@ Với client khác, thay **Claude Desktop** bằng tên client đó. **Claude Co
 **Hoặc tự chạy installer (Claude Desktop, config trực tiếp).** Đóng Revit và thoát hẳn Claude Desktop (kể cả tiến trình ở khay hệ thống), rồi trong PowerShell:
 
 ```powershell
-$tag = (Invoke-RestMethod https://api.github.com/repos/desarrolloteambimcivil/tbc-revit-mcp/releases/latest).tag_name
+$tag = (Invoke-RestMethod https://api.github.com/repos/desarrolloteambimcivil/tbc_mcp_revit/releases/latest).tag_name
 $dir = "$env:TEMP\TbcRevitMcp.Setup-$tag-win-x64"
-Invoke-WebRequest "https://github.com/desarrolloteambimcivil/tbc-revit-mcp/releases/download/$tag/TbcRevitMcp.Setup-$tag-win-x64.zip" -OutFile "$dir.zip"
+Invoke-WebRequest "https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/download/$tag/TbcRevitMcp.Setup-$tag-win-x64.zip" -OutFile "$dir.zip"
 Expand-Archive "$dir.zip" -DestinationPath $dir -Force
 powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -WhatIf -Client claude-desktop
 # Đọc bản xem trước rồi mới áp dụng:
