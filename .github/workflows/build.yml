@@ -181,6 +181,23 @@ jobs:
             build/client-setup/TbcRevitMcp.Setup-*-win-x64.zip.sha256
           retention-days: 14
 
+      - name: Build Windows installer (Inno Setup)
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+          $version = (Get-Content server.json -Raw | ConvertFrom-Json).version
+          powershell -NoProfile -ExecutionPolicy Bypass -File installer/build.ps1 -SetupZip "build/client-setup/TbcRevitMcp.Setup-v$version-win-x64.zip"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: tbc-revit-mcp-installer
+          path: |
+            installer/output/TbcRevitMcp_Setup_*.exe
+            installer/output/TbcRevitMcp_Setup_*.exe.sha256
+          retention-days: 14
+
   tests:
     name: tests-xunit
     runs-on: windows-latest

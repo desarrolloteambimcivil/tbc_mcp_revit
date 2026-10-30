@@ -81,3 +81,7 @@ publish/
 
 # Local AI review sessions (prompt + output dumps)
 runs/
+
+# Inno Setup installer build output
+installer/payload/
+installer/output/
