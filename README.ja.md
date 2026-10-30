@@ -43,7 +43,7 @@
 
 ## インストール
 
-**ダウンロード：** Windows インストーラー `TbcRevitMcp_Setup_<version>.exe`（推奨：ウィザード、AI クライアントの選択、「インストールされているアプリ」からのアンインストール、管理者権限不要）、またはスクリプト／エージェントによるインストール用の `TbcRevitMcp.Setup-<version>-win-x64.zip` とその `.sha256` は[最新リリース](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest)（v1.3.1）から入手できます。Claude Desktop 拡張機能（MCPB）はまだ公開されていません。Desktop には Setup ZIP と `-Client claude-desktop` でインストールしてください。ソースからのビルドは [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy を参照。
+**ダウンロード：** Windows インストーラー `TbcRevitMcp_Setup_<version>.exe`（推奨：ウィザード、AI クライアントの選択、「インストールされているアプリ」からのアンインストール、管理者権限不要）、またはスクリプト／エージェントによるインストール用の `TbcRevitMcp.Setup-<version>-win-x64.zip` とその `.sha256` は[最新リリース](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest)（v1.3.2）から入手できます。Claude Desktop 拡張機能（MCPB）はまだ公開されていません。Desktop には Setup ZIP と `-Client claude-desktop` でインストールしてください。ソースからのビルドは [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy を参照。
 
 **使用したいクライアントへのインストールを AI エージェントに依頼できます。** この Windows マシンで PowerShell の実行とローカルファイルの編集ができるエージェント（Claude Code、Codex、Cursor など）が必要です。ローカルツールのない通常のチャットでは実行できません。インストールするエージェントと、Revit ツールを使うクライアントは別でも構いません。[AGENTS.md](AGENTS.md) に従って変更をプレビューし、適用前に確認します。UI 操作やアプリの再起動はユーザーに依頼する場合があります。
 
