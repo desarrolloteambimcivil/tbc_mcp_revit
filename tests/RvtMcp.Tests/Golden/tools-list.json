@@ -1551,7 +1551,7 @@
     },
     {
       "name": "revit_create_family",
-      "description_hash": "sha256:cc24b3b8a0817538b9954163c3375679f49b7da1e86b70bd9d0d87b275d2f16f",
+      "description_hash": "sha256:c9ad795825159c7d816338078feb7ddd69c29f6522febda0e76fafa9d1b664bf",
       "inputSchema": {
         "properties": {
           "spec_json": {

@@ -69,7 +69,7 @@ namespace RvtMcp.Server
             "types?: [{name, values: {param: value}}] (length mm, angle deg, area m2, volume m3, material by name, yesno true/false), " +
             "solids: [{shape: extrusion|revolution, profile: [[u,v],...] | rect: {x,y,width,depth} | circle: {x,y,radius}, plane?: XY|XZ|YZ, offset_mm?, start_mm, end_mm, end_param? (length parameter driving the extrusion end), " +
             "material? (name: reused, copied from the project or created) | material_param?, void?: true cuts the solids it touches}] (revolution: profile [[radius,z],...] about the Z axis, start_angle_deg, end_angle_deg), " +
-            "save_path? (default %LOCALAPPDATA%\\NourRouas\\tbc-revit-mcp\\families\\<name>.rfa), overwrite?: false, load_into_project?: true}. " +
+            "save_path? (default %LOCALAPPDATA%\\NourRouas\\tbc-revit-mcp\\families\\<name>.rfa), overwrite?: false (replacing an existing .rfa is a file overwrite the user must allow in Revit; prefer a new name), load_into_project?: true}. " +
             "Example: {\"name\":\"Pedestal\",\"template\":\"Metric Generic Model\",\"parameters\":[{\"name\":\"Alto\",\"type\":\"length\"}],\"types\":[{\"name\":\"900\",\"values\":{\"Alto\":900}}],\"solids\":[{\"shape\":\"extrusion\",\"rect\":{\"x\":-200,\"y\":-200,\"width\":400,\"depth\":400},\"start_mm\":0,\"end_mm\":900,\"end_param\":\"Alto\"}]}. " +
             "The spec is validated before Revit is touched; place instances afterwards with revit_create_point_based_element.")]
         public static async Task<string> CreateFamily(string spec_json, int timeout_seconds = 300)

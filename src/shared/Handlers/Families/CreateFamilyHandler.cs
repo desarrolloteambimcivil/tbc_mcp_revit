@@ -111,24 +111,41 @@ namespace RvtMcp.Plugin.Handlers
                             solids.Add(new { index = s.Index, shape = s.Shape, @void = s.Void, elementId = RevitCompat.GetId(form.Id) });
                         }
 
-                        // In a regular (non-conceptual) family, voids cut through a geometry combination;
-                        // SolidSolidCutUtils only works in projects and conceptual/adaptive families.
+                        // In a regular (non-conceptual) family, a void cuts through a geometry combination;
+                        // SolidSolidCutUtils only works in projects and conceptual/adaptive families. One
+                        // combination per solid keeps each solid's own material, and a void that touches several
+                        // solids is copied, because an element can belong to only one combination.
                         if (spec.Solids.Any(s => s.Void))
                         {
                             familyDoc.Regenerate();
-                            var members = new CombinableElementArray();
-                            foreach (var form in created) members.Append(form);
-                            try
+                            var voidUsed = new HashSet<int>();
+                            for (var s = 0; s < created.Count; s++)
                             {
-                                var combination = familyDoc.CombineElements(members);
-                                cuts.Add(new
+                                if (spec.Solids[s].Void) continue;
+                                var box = created[s].get_BoundingBox(null);
+                                var members = new CombinableElementArray();
+                                members.Append(created[s]);
+                                var voids = new List<int>();
+                                for (var v = 0; v < created.Count; v++)
                                 {
-                                    combinationId = RevitCompat.GetId(combination.Id),
-                                    voidIndexes = spec.Solids.Where(s => s.Void).Select(s => s.Index).ToList(),
-                                    solidIndexes = spec.Solids.Where(s => !s.Void).Select(s => s.Index).ToList()
-                                });
+                                    if (!spec.Solids[v].Void) continue;
+                                    var voidBox = created[v].get_BoundingBox(null);
+                                    if (box == null || voidBox == null || !Overlaps(box, voidBox)) continue;
+                                    var cutter = voidUsed.Add(v) ? created[v]
+                                        : (GenericForm)familyDoc.GetElement(ElementTransformUtils.CopyElement(familyDoc, created[v].Id, XYZ.Zero).First());
+                                    members.Append(cutter);
+                                    voids.Add(v);
+                                }
+                                if (voids.Count == 0) continue;
+                                try
+                                {
+                                    var combination = familyDoc.CombineElements(members);
+                                    cuts.Add(new { solidIndex = s, voidIndexes = voids, combinationId = RevitCompat.GetId(combination.Id) });
+                                }
+                                catch (Exception ex) { warnings.Add("Solid " + s + " could not be cut by voids " + string.Join(", ", voids) + ": " + ex.Message); }
                             }
-                            catch (Exception ex) { warnings.Add("Voids could not be combined with the solids, so they do not cut: " + ex.Message); }
+                            foreach (var v in spec.Solids.Where(x => x.Void).Select(x => x.Index).Where(v => !voidUsed.Contains(v)))
+                                warnings.Add("Void " + v + " does not touch any solid, so it cuts nothing.");
                         }
 
                         var typeSpecs = spec.Types.Count > 0 ? spec.Types : new List<FamilySpec.TypeSpec> { new FamilySpec.TypeSpec { Name = familyName } };
@@ -306,6 +323,9 @@ namespace RvtMcp.Plugin.Handlers
             return doc.FamilyCreate.NewRevolution(!s.Void, Loop("XZ", 0, s), Sketch(doc, "XZ", 0), axis,
                 s.StartAngleDeg * Math.PI / 180, s.EndAngleDeg * Math.PI / 180);
         }
+
+        private static bool Overlaps(BoundingBoxXYZ a, BoundingBoxXYZ b)
+            => a.Min.X <= b.Max.X && b.Min.X <= a.Max.X && a.Min.Y <= b.Max.Y && b.Min.Y <= a.Max.Y && a.Min.Z <= b.Max.Z && b.Min.Z <= a.Max.Z;
 
         /// <summary>Family material by name: reuse it, copy it from the project, or create it.</summary>
         private static ElementId ResolveMaterial(Document familyDoc, Document project, string name, List<object> report)
