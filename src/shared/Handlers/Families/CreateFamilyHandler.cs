@@ -82,7 +82,7 @@ namespace RvtMcp.Plugin.Handlers
                         }
 
                         var manager = familyDoc.FamilyManager;
-                        if (manager.Types.Size == 0 && spec.Types.Count == 0) manager.NewType(familyName);
+                        if (manager.Types.Size == 0) manager.NewType(spec.Types.Count > 0 ? spec.Types[0].Name : familyName);
                         var parameters = new Dictionary<string, FamilyParameter>(StringComparer.OrdinalIgnoreCase);
                         foreach (var p in spec.Parameters)
                         {
@@ -111,7 +111,32 @@ namespace RvtMcp.Plugin.Handlers
                             solids.Add(new { index = s.Index, shape = s.Shape, @void = s.Void, elementId = RevitCompat.GetId(form.Id) });
                         }
 
-                        // In a regular (non-conceptual) family, a void cuts through a geometry combination;
+                        var typeSpecs = spec.Types.Count > 0 ? spec.Types : new List<FamilySpec.TypeSpec> { new FamilySpec.TypeSpec { Name = familyName } };
+                        var declared = spec.Parameters.ToDictionary(p => p.Name, StringComparer.OrdinalIgnoreCase);
+                        foreach (var t in typeSpecs)
+                        {
+                            var familyType = manager.Types.Cast<FamilyType>().FirstOrDefault(x => string.Equals(x.Name, t.Name, StringComparison.OrdinalIgnoreCase));
+                            if (familyType != null) manager.CurrentType = familyType;
+                            else manager.CurrentType = manager.NewType(t.Name);
+                            foreach (var value in t.Values)
+                            {
+                                var fp = parameters.TryGetValue(value.Key, out var known) ? known : manager.get_Parameter(value.Key);
+                                if (fp == null) { warnings.Add("Type '" + t.Name + "': parameter '" + value.Key + "' does not exist; value skipped."); continue; }
+                                if (declared.TryGetValue(value.Key, out var decl) && !string.IsNullOrEmpty(decl.Formula))
+                                { warnings.Add("Type '" + t.Name + "': '" + value.Key + "' is driven by a formula; value skipped."); continue; }
+                                var error = SetValue(manager, fp, value.Value, MaterialId);
+                                if (error != null) throw new InvalidOperationException("Type '" + t.Name + "', parameter '" + value.Key + "': " + error);
+                            }
+                        }
+
+                        foreach (var p in spec.Parameters.Where(p => !string.IsNullOrEmpty(p.Formula)))
+                        {
+                            try { manager.SetFormula(parameters[p.Name], p.Formula); }
+                            catch (Exception ex) { throw new InvalidOperationException("Formula of '" + p.Name + "' was rejected (" + p.Formula + "): " + ex.Message); }
+                        }
+
+                        // Cut after the types exist: until a type sets its values, parameter-driven solids can have
+                        // zero size and no bounds. In a regular (non-conceptual) family, a void cuts through a geometry combination;
                         // SolidSolidCutUtils only works in projects and conceptual/adaptive families. One
                         // combination per solid keeps each solid's own material, and a void that touches several
                         // solids is copied, because an element can belong to only one combination.
@@ -146,30 +171,6 @@ namespace RvtMcp.Plugin.Handlers
                             }
                             foreach (var v in spec.Solids.Where(x => x.Void).Select(x => x.Index).Where(v => !voidUsed.Contains(v)))
                                 warnings.Add("Void " + v + " does not touch any solid, so it cuts nothing.");
-                        }
-
-                        var typeSpecs = spec.Types.Count > 0 ? spec.Types : new List<FamilySpec.TypeSpec> { new FamilySpec.TypeSpec { Name = familyName } };
-                        var declared = spec.Parameters.ToDictionary(p => p.Name, StringComparer.OrdinalIgnoreCase);
-                        foreach (var t in typeSpecs)
-                        {
-                            var familyType = manager.Types.Cast<FamilyType>().FirstOrDefault(x => string.Equals(x.Name, t.Name, StringComparison.OrdinalIgnoreCase));
-                            if (familyType != null) manager.CurrentType = familyType;
-                            else manager.CurrentType = manager.NewType(t.Name);
-                            foreach (var value in t.Values)
-                            {
-                                var fp = parameters.TryGetValue(value.Key, out var known) ? known : manager.get_Parameter(value.Key);
-                                if (fp == null) { warnings.Add("Type '" + t.Name + "': parameter '" + value.Key + "' does not exist; value skipped."); continue; }
-                                if (declared.TryGetValue(value.Key, out var decl) && !string.IsNullOrEmpty(decl.Formula))
-                                { warnings.Add("Type '" + t.Name + "': '" + value.Key + "' is driven by a formula; value skipped."); continue; }
-                                var error = SetValue(manager, fp, value.Value, MaterialId);
-                                if (error != null) throw new InvalidOperationException("Type '" + t.Name + "', parameter '" + value.Key + "': " + error);
-                            }
-                        }
-
-                        foreach (var p in spec.Parameters.Where(p => !string.IsNullOrEmpty(p.Formula)))
-                        {
-                            try { manager.SetFormula(parameters[p.Name], p.Formula); }
-                            catch (Exception ex) { throw new InvalidOperationException("Formula of '" + p.Name + "' was rejected (" + p.Formula + "): " + ex.Message); }
                         }
 
                         if (tx.Commit() != TransactionStatus.Committed)
