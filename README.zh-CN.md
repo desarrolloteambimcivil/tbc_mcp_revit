@@ -43,7 +43,7 @@ Agent 可以使用覆盖常见 Revit 工作的 **typed 工具面**、应对其�
 
 ## 安装
 
-**下载：** 从[最新发布版](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest)（v1.3.0）获取 Windows 安装程序 `TbcRevitMcp_Setup_<version>.exe`（推荐：向导、选择 AI 客户端、可在“已安装的应用”中卸载、无需管理员权限），或用于脚本/agent 安装的 `TbcRevitMcp.Setup-<version>-win-x64.zip` 及其 `.sha256`。Claude Desktop 扩展（MCPB）尚未发布；Desktop 请使用 Setup ZIP 加 `-Client claude-desktop` 安装。从源码构建见 [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy。
+**下载：** 从[最新发布版](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest)（v1.3.1）获取 Windows 安装程序 `TbcRevitMcp_Setup_<version>.exe`（推荐：向导、选择 AI 客户端、可在“已安装的应用”中卸载、无需管理员权限），或用于脚本/agent 安装的 `TbcRevitMcp.Setup-<version>-win-x64.zip` 及其 `.sha256`。Claude Desktop 扩展（MCPB）尚未发布；Desktop 请使用 Setup ZIP 加 `-Client claude-desktop` 安装。从源码构建见 [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy。
 
 **让 AI agent 为指定客户端安装。** 使用能在这台 Windows 电脑上运行 PowerShell、编辑本地文件的 agent（Claude Code、Codex、Cursor 等），而非没有本地工具的普通聊天。执行安装的 agent 可以与之后使用 Revit 工具的客户端不同。agent 按照 [AGENTS.md](AGENTS.md) 预览更改并在应用前征求同意；你仍可能需要操作界面或重启应用。
 

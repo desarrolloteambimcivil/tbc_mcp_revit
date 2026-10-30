@@ -15,7 +15,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>tbc-revit-mcp</ToolCommandName>
     <PackageId>TbcRevitMcp.Server</PackageId>
-    <Version>1.3.0</Version>
+    <Version>1.3.1</Version>
     <Authors>Nour Rouas, Khoa Le</Authors>
     <Description>MCP gateway for Autodesk Revit 2022-2027 — expose the Revit API as AI-callable tools with progressive disclosure (toolset gating), a Transaction-safe batch_execute, and a ToolBaker self-evolution engine. Pair with the Revit plugin distributed on GitHub Releases. Fork of bimwright/rvt-mcp maintained by Nour Rouas.</Description>
     <PackageProjectUrl>https://github.com/desarrolloteambimcivil/tbc_mcp_revit</PackageProjectUrl>

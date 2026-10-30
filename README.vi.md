@@ -43,7 +43,7 @@ Agent có **bộ tool typed** cho việc Revit thường gặp, escape hatch C# 
 
 ## Cài đặt
 
-**Tải về:** trình cài đặt Windows `TbcRevitMcp_Setup_<version>.exe` (khuyên dùng: wizard, chọn AI client, gỡ cài đặt trong Installed apps, không cần quyền admin) hoặc, cho cài đặt bằng script/agent, `TbcRevitMcp.Setup-<version>-win-x64.zip` và file `.sha256`, từ [bản phát hành mới nhất](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest) (v1.3.0). Extension Claude Desktop (MCPB) chưa được phát hành; với Desktop hãy cài bằng Setup ZIP và `-Client claude-desktop`. Build từ mã nguồn: xem [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy.
+**Tải về:** trình cài đặt Windows `TbcRevitMcp_Setup_<version>.exe` (khuyên dùng: wizard, chọn AI client, gỡ cài đặt trong Installed apps, không cần quyền admin) hoặc, cho cài đặt bằng script/agent, `TbcRevitMcp.Setup-<version>-win-x64.zip` và file `.sha256`, từ [bản phát hành mới nhất](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest) (v1.3.1). Extension Claude Desktop (MCPB) chưa được phát hành; với Desktop hãy cài bằng Setup ZIP và `-Client claude-desktop`. Build từ mã nguồn: xem [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy.
 
 **Để AI agent cài cho client bạn muốn sử dụng.** Dùng agent có thể chạy PowerShell và sửa file trên máy Windows này (Claude Code, Codex, Cursor, …), không phải phiên chat thiếu công cụ thao tác máy. Agent thực hiện cài đặt có thể khác client bạn dùng để làm việc với Revit. Agent làm theo [AGENTS.md](AGENTS.md), xem trước thay đổi và hỏi trước khi áp dụng; bạn vẫn có thể cần thao tác UI hoặc khởi động lại ứng dụng.
 

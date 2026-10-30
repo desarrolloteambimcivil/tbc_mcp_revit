@@ -4,6 +4,7 @@
 
 | Version | Date | Available as |
 |---|---|---|
+| v1.3.1 | 2026-10-30 | [GitHub Release](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/tag/v1.3.1) — family authoring (`revit_create_family`), Windows installer |
 | v1.3.0 | 2026-10-30 | [GitHub Release](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/tag/v1.3.0) — first tbc-revit-mcp release; earlier rows are upstream rvt-mcp releases |
 | v1.2.0 | 2026-10-19 | [GitHub Release](https://github.com/bimwright/rvt-mcp/releases/tag/v1.2.0); [NuGet `RvtMcp.Server` 1.2.0](https://www.nuget.org/packages/RvtMcp.Server/1.2.0); [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.bimwright%2Frvt-mcp/versions/1.2.0) |
 | v1.1.0 | 2026-10-07 | [GitHub Release](https://github.com/bimwright/rvt-mcp/releases/tag/v1.1.0) |
@@ -26,7 +27,7 @@
 
 Install only the [latest GitHub Release](https://github.com/bimwright/rvt-mcp/releases/latest). v0.1.0–v0.5.0 are kept as git tags for history; any GitHub Releases for them are no longer published, and the legacy NuGet package `Bimwright.Rvt.Server` (0.1–0.3) is obsolete.
 
-## Unreleased
+## v1.3.1 — 2026-10-30
 
 ### Family authoring
 
