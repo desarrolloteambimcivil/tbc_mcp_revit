@@ -15,9 +15,11 @@ namespace RvtMcp.Tests
         private static readonly string[] FamiliesToolsInClass =
         {
             "revit_audit_families",
+            "revit_create_family",
             "revit_duplicate_family_type",
             "revit_export_family_to_path",
             "revit_get_family_instances",
+            "revit_list_family_templates",
             "revit_list_family_types_in_family",
             "revit_list_loaded_families",
             "revit_load_family_from_path",
@@ -37,6 +39,36 @@ namespace RvtMcp.Tests
                 .ToArray();
 
             Assert.Equal(FamiliesToolsInClass, declared);
+        }
+
+        [Fact]
+        public async Task Create_family_sends_the_parsed_spec_with_its_timeout()
+        {
+            var sent = await Capture.Send(() => FamiliesTools.CreateFamily("{\"name\":\"Pedestal\",\"template\":\"Metric Generic Model\"}", 120));
+
+            Assert.Equal("create_family", sent.Command);
+            Assert.Equal("Pedestal", sent.Json()["spec"]!["name"]!.Value<string>());
+            Assert.Equal(120, sent.TimeoutSeconds);
+        }
+
+        [Fact]
+        public async Task Create_family_rejects_malformed_json_without_calling_revit()
+        {
+            var called = false;
+            await Capture.WithSendOverride(
+                (command, parameters, timeout) => { called = true; return Task.FromResult(new JObject()); },
+                async () => Assert.StartsWith("Error:", await FamiliesTools.CreateFamily("{not json")));
+            Assert.False(called);
+        }
+
+        [Fact]
+        public async Task List_family_templates_sends_query()
+        {
+            var sent = await Capture.Send(() => FamiliesTools.ListFamilyTemplates("generic", 20));
+
+            Assert.Equal("list_family_templates", sent.Command);
+            Assert.Equal("generic", sent.Json().Value<string>("query"));
+            Assert.Equal(20, sent.Json().Value<int>("max_results"));
         }
 
         [Fact]

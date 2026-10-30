@@ -18,7 +18,7 @@
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
-  <a href="#tools"><img src="https://img.shields.io/badge/MCP-242%20tools-6C47FF" alt="MCP tools" /></a>
+  <a href="#tools"><img src="https://img.shields.io/badge/MCP-244%20tools-6C47FF" alt="MCP tools" /></a>
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc_mcp_revit" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
@@ -35,7 +35,7 @@
 
 `tbc-revit-mcp` is a **local** bridge between an MCP client and a running Revit session. A .NET 8 server talks MCP over stdio; a thin add-in per Revit year (2022–2027) runs inside Revit and is reached over localhost TCP (≤2024) or a named pipe (≥2025). Nothing leaves the machine, it is C# end to end, and lengths are millimetres at the tool boundary. Details: [ARCHITECTURE.md](ARCHITECTURE.md).
 
-Agents get a **typed tool surface** for common Revit work, a C# escape hatch for everything else, and an **optional** way to turn repeated patterns into personal tools (ToolBaker): start from a shared runtime and grow *your* tools on top. Family Editor authoring is out of scope for now.
+Agents get a **typed tool surface** for common Revit work, a C# escape hatch for everything else, and an **optional** way to turn repeated patterns into personal tools (ToolBaker): start from a shared runtime and grow *your* tools on top. Loadable families can be built from a JSON spec with `revit_create_family` (parameters, extrusions, revolutions, voids, types), without opening the Family Editor.
 
 ---
 
@@ -96,10 +96,10 @@ Counts below match this source tree; other builds can expose a different catalog
 
 | Mode | Tools | Notes |
 |------|------:|-------|
-| Fresh install | **242** | `install.ps1` seeds `"toolsets": ["all"]` in `rvtmcp.config.json` |
+| Fresh install | **244** | `install.ps1` seeds `"toolsets": ["all"]` in `rvtmcp.config.json` |
 | Bare `tbc-revit-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
-| `--toolsets all` | **242** | Full catalog |
-| `all` + adaptive bake | **245** | Adds 3 suggestion-lifecycle tools |
+| `--toolsets all` | **244** | Full catalog |
+| `all` + adaptive bake | **247** | Adds 3 suggestion-lifecycle tools |
 
 Counts exclude your personal baked tools. The installer writes the seeded default only when `rvtmcp.config.json` doesn't already set `toolsets` — your own list survives upgrades, and removing the key (or setting your own CSV) returns a bare server to the 53-tool surface. Read-only filters individual tools by `ReadOnly=true`, including reads inside mixed toolsets. Tools that can write files are excluded even when their default output is inline.
 
@@ -308,6 +308,7 @@ MCP annotations describe each tool's document/file effects. Transient selection,
       "mcp__tbc-revit-mcp__revit_list_available_targets",
       "mcp__tbc-revit-mcp__revit_list_baked_tools",
       "mcp__tbc-revit-mcp__revit_list_export_settings",
+      "mcp__tbc-revit-mcp__revit_list_family_templates",
       "mcp__tbc-revit-mcp__revit_list_family_types_in_family",
       "mcp__tbc-revit-mcp__revit_list_groups",
       "mcp__tbc-revit-mcp__revit_list_keynotes",

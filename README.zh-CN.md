@@ -20,7 +20,7 @@
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
-  <a href="#tools"><img src="https://img.shields.io/badge/MCP-242%20tools-6C47FF" alt="MCP tools" /></a>
+  <a href="#tools"><img src="https://img.shields.io/badge/MCP-244%20tools-6C47FF" alt="MCP tools" /></a>
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc_mcp_revit" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
@@ -37,7 +37,7 @@
 
 `tbc-revit-mcp` 是 MCP 客户端与正在运行的 Revit 会话之间的**本地**桥。.NET 8 server 通过 stdio 提供 MCP；每个 Revit 年份（2022–2027）一个瘦 add-in 在 Revit 内运行，经 localhost TCP（≤2024）或 named pipe（≥2025）连接。数据不出本机，全部为 C#，工具边界的长度单位为 mm。细节：[ARCHITECTURE.md](ARCHITECTURE.md)。
 
-Agent 可以使用覆盖常见 Revit 工作的 **typed 工具面**、应对其余情况的 C# escape hatch，以及把重复模式变成个人工具的**可选**路径（ToolBaker）：从共享运行时出发，在其上长出*你的*工具。Family Editor 创作暂不在范围内。
+Agent 可以使用覆盖常见 Revit 工作的 **typed 工具面**、应对其余情况的 C# escape hatch，以及把重复模式变成个人工具的**可选**路径（ToolBaker）：从共享运行时出发，在其上长出*你的*工具。可用 `revit_create_family` 根据 JSON 规格创建可载入族（参数、拉伸、旋转、空心、类型），无需打开族编辑器。
 
 ---
 
@@ -98,10 +98,10 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-deskt
 
 | 模式 | Tools | 说明 |
 |------|------:|------|
-| 全新安装 | **242** | `install.ps1` 在 `rvtmcp.config.json` 中写入 `"toolsets": ["all"]` |
+| 全新安装 | **244** | `install.ps1` 在 `rvtmcp.config.json` 中写入 `"toolsets": ["all"]` |
 | 裸 `tbc-revit-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
-| `--toolsets all` | **242** | 完整目录 |
-| `all` + adaptive bake | **245** | 再加 3 个 suggestion 生命周期工具 |
+| `--toolsets all` | **244** | 完整目录 |
+| `all` + adaptive bake | **247** | 再加 3 个 suggestion 生命周期工具 |
 
 数量不含个人 baked 工具。只有当 `rvtmcp.config.json` 尚未设置 `toolsets` 时安装器才会写入默认值——你的自定义列表在升级时保留；删除该键（或设置自己的 CSV）则裸服务器回到 53 个工具。Read-only 按 `ReadOnly=true` 逐个筛选工具，因此混合 toolset 中的读取工具仍可用。即使默认 output 是 inline，能写文件的工具也会被排除。
 
@@ -305,6 +305,7 @@ Annotations 描述每个工具对文档和文件的影响。临时 selection、a
       "mcp__tbc-revit-mcp__revit_list_available_targets",
       "mcp__tbc-revit-mcp__revit_list_baked_tools",
       "mcp__tbc-revit-mcp__revit_list_export_settings",
+      "mcp__tbc-revit-mcp__revit_list_family_templates",
       "mcp__tbc-revit-mcp__revit_list_family_types_in_family",
       "mcp__tbc-revit-mcp__revit_list_groups",
       "mcp__tbc-revit-mcp__revit_list_keynotes",

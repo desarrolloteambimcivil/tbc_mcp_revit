@@ -237,5 +237,7 @@
   "revit_get_railing_structure": "Read railing type balusters, posts, non-continuous rails, top rail and handrails (mm).",
   "revit_set_railing_structure": "Edit a railing type's baluster/post references, offsets, spacing and family, and its non-continuous rails.",
   "revit_get_compound_structure": "Read layer function, width, material and core/shell of wall, floor, roof and ceiling types.",
-  "revit_set_compound_layers": "Edit layer width, material and function, or delete layers, of one wall/floor/roof/ceiling type."
+  "revit_set_compound_layers": "Edit layer width, material and function, or delete layers, of one wall/floor/roof/ceiling type.",
+  "revit_list_family_templates": "List family templates (.rft) in Revit's template folder, filtered by name.",
+  "revit_create_family": "Create a loadable family from a JSON spec (parameters, extrusions, revolutions, types), save the .rfa and load it into the project."
 }

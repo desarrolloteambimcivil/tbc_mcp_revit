@@ -26,6 +26,14 @@
 
 Install only the [latest GitHub Release](https://github.com/bimwright/rvt-mcp/releases/latest). v0.1.0–v0.5.0 are kept as git tags for history; any GitHub Releases for them are no longer published, and the legacy NuGet package `Bimwright.Rvt.Server` (0.1–0.3) is obsolete.
 
+## Unreleased
+
+### Family authoring
+
+- **`revit_create_family`** (`families`): builds a loadable family from a JSON spec without the Family Editor — template, category, parameters (length, number, integer, yes/no, text, material, angle, area, volume; type or instance; group; formula), extrusions (polygon, rectangle or circle on the XY, XZ or YZ plane) and revolutions, voids that cut the solids they touch, length parameters driving extrusion ends, material parameters, materials reused from the template, copied from the project or created, and types with values. The spec is validated before Revit is touched; the .rfa is saved (by default under `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\families\`) and loaded into the active project. The family document is always closed without being kept open.
+- **`revit_list_family_templates`** (`families`, read-only): lists the `.rft` templates in Revit's template folder with case- and accent-insensitive filtering, so specs can name templates in the installed language.
+- Development source counts: `--toolsets all` **244**, adaptive bake **247**, and bare defaults **53**.
+
 ## v1.3.0 — 2026-10-30
 
 First release of tbc-revit-mcp.

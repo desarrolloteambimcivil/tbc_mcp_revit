@@ -1,6 +1,6 @@
 {
   "generated_by": "ToolsListSnapshotTests",
-  "tool_count": 245,
+  "tool_count": 247,
   "tools": [
     {
       "name": "revit_accept_bake_suggestion",
@@ -1574,6 +1574,32 @@
           "endX",
           "endY",
           "endZ"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      }
+    },
+    {
+      "name": "revit_create_family",
+      "description_hash": "sha256:cc24b3b8a0817538b9954163c3375679f49b7da1e86b70bd9d0d87b275d2f16f",
+      "inputSchema": {
+        "properties": {
+          "spec_json": {
+            "description": "",
+            "type": "String"
+          },
+          "timeout_seconds": {
+            "description": "",
+            "type": "Int32"
+          }
+        },
+        "required": [
+          "spec_json"
         ],
         "type": "object"
       },
@@ -5309,6 +5335,30 @@
           "startIndex": {
             "description": "",
             "type": "Int32"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "revit_list_family_templates",
+      "description_hash": "sha256:663d8bae259ea34eb4774b67c740bd9d9c72dba0025a984201b99d73b34d9775",
+      "inputSchema": {
+        "properties": {
+          "max_results": {
+            "description": "",
+            "type": "Int32"
+          },
+          "query": {
+            "description": "",
+            "type": "String"
           }
         },
         "required": [],

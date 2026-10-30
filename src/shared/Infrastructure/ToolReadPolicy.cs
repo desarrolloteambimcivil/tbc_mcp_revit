@@ -81,6 +81,7 @@ namespace RvtMcp.Plugin
             "list_available_targets",
             "list_baked_tools",
             "list_export_settings",
+            "list_family_templates",
             "list_family_types_in_family",
             "list_groups",
             "list_keynotes",

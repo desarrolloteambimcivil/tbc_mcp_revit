@@ -95,6 +95,8 @@ namespace RvtMcp.Plugin
             Register(new Handlers.GetFamilyInstancesHandler());
             Register(new Handlers.ListFamilyTypesInFamilyHandler());
             Register(new Handlers.ExportFamilyToPathHandler());
+            Register(new Handlers.ListFamilyTemplatesHandler());
+            Register(new Handlers.CreateFamilyHandler());
             // Phase 14: MEP Systems
             Register(new Handlers.CreateDuctHandler());
             Register(new Handlers.CreatePipeHandler());

@@ -57,5 +57,28 @@ namespace RvtMcp.Server
             " May overwrite existing output files. Revit Undo cannot restore them; back up the destination first.")]
         public static async Task<string> ExportFamilyToPath(string outputPath, string familyId = "", string familyName = "", bool overwriteExisting = false)
             => await ToolGateway.CallAsync("export_family_to_path", new { family_id = familyId, family_name = familyName, output_path = outputPath, overwrite_existing = overwriteExisting });
+
+        [McpServerTool(Name = "revit_list_family_templates", ReadOnly = true, Destructive = false, Idempotent = true, OpenWorld = false), System.ComponentModel.Description("List family templates (.rft) in Revit's family template folder (names follow the installed Revit language). Filter with query (case- and accent-insensitive substring); max_results 1-500. Use a returned name or path as the template of revit_create_family.")]
+        public static async Task<string> ListFamilyTemplates(string query = "", int max_results = 50)
+            => await ToolGateway.CallAsync("list_family_templates", new { query, max_results });
+
+        [McpServerTool(Name = "revit_create_family", ReadOnly = false, Destructive = false, Idempotent = false, OpenWorld = false), System.ComponentModel.Description(
+            "Create a loadable family from a JSON spec, save it as .rfa and load it into the active project; remove it from the project with Revit Undo, the .rfa file stays. All lengths in mm. " +
+            "spec_json: {name, template (name from revit_list_family_templates, or absolute .rft), category? (e.g. OST_LightingFixtures), " +
+            "parameters?: [{name, type: length|number|integer|yesno|text|material|angle|area|volume, instance?: false, group?: dimensions|constraints|materials|data|text|identity|graphics, formula?}], " +
+            "types?: [{name, values: {param: value}}] (length mm, angle deg, area m2, volume m3, material by name, yesno true/false), " +
+            "solids: [{shape: extrusion|revolution, profile: [[u,v],...] | rect: {x,y,width,depth} | circle: {x,y,radius}, plane?: XY|XZ|YZ, offset_mm?, start_mm, end_mm, end_param? (length parameter driving the extrusion end), " +
+            "material? (name: reused, copied from the project or created) | material_param?, void?: true cuts the solids it touches}] (revolution: profile [[radius,z],...] about the Z axis, start_angle_deg, end_angle_deg), " +
+            "save_path? (default %LOCALAPPDATA%\\NourRouas\\tbc-revit-mcp\\families\\<name>.rfa), overwrite?: false, load_into_project?: true}. " +
+            "Example: {\"name\":\"Pedestal\",\"template\":\"Metric Generic Model\",\"parameters\":[{\"name\":\"Alto\",\"type\":\"length\"}],\"types\":[{\"name\":\"900\",\"values\":{\"Alto\":900}}],\"solids\":[{\"shape\":\"extrusion\",\"rect\":{\"x\":-200,\"y\":-200,\"width\":400,\"depth\":400},\"start_mm\":0,\"end_mm\":900,\"end_param\":\"Alto\"}]}. " +
+            "The spec is validated before Revit is touched; place instances afterwards with revit_create_point_based_element.")]
+        public static async Task<string> CreateFamily(string spec_json, int timeout_seconds = 300)
+        {
+            var timeoutError = ToolGateway.ValidateTimeoutSeconds(timeout_seconds);
+            if (timeoutError != null) return timeoutError;
+
+            // Any JSON passes through; the plug-in's FamilySpec reports what is wrong with it.
+            return await ToolGateway.CallWithParamsAsync("create_family", () => new { spec = JToken.Parse(spec_json) }, timeout_seconds);
+        }
     }
 }

@@ -20,7 +20,7 @@
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
-  <a href="#tools"><img src="https://img.shields.io/badge/MCP-242%20tools-6C47FF" alt="MCP tools" /></a>
+  <a href="#tools"><img src="https://img.shields.io/badge/MCP-244%20tools-6C47FF" alt="MCP tools" /></a>
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc_mcp_revit" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
@@ -37,7 +37,7 @@
 
 `tbc-revit-mcp` là cầu nối **local** giữa MCP client và một session Revit đang chạy. Server .NET 8 nói MCP qua stdio; mỗi năm Revit (2022–2027) có một add-in mỏng chạy trong Revit, kết nối qua localhost TCP (≤2024) hoặc named pipe (≥2025). Mọi thứ nằm trên máy, toàn bộ bằng C#, độ dài ở biên tool tính bằng mm. Chi tiết: [ARCHITECTURE.md](ARCHITECTURE.md).
 
-Agent có **bộ tool typed** cho việc Revit thường gặp, escape hatch C# cho phần còn lại, và đường **tùy chọn** biến pattern lặp lại thành tool cá nhân (ToolBaker): bắt đầu từ một runtime chung rồi phát triển tool *của bạn* phía trên. Family Editor authoring hiện nằm ngoài phạm vi.
+Agent có **bộ tool typed** cho việc Revit thường gặp, escape hatch C# cho phần còn lại, và đường **tùy chọn** biến pattern lặp lại thành tool cá nhân (ToolBaker): bắt đầu từ một runtime chung rồi phát triển tool *của bạn* phía trên. Có thể tạo loadable family từ JSON spec bằng `revit_create_family` (parameter, extrusion, revolution, void, type) mà không cần mở Family Editor.
 
 ---
 
@@ -99,10 +99,10 @@ Các số dưới đây khớp với mã nguồn hiện tại; các bản build 
 
 | Mode | Tools | Ghi chú |
 |------|------:|---------|
-| Fresh install | **242** | `install.ps1` seeds `"toolsets": ["all"]` trong `rvtmcp.config.json` |
+| Fresh install | **244** | `install.ps1` seeds `"toolsets": ["all"]` trong `rvtmcp.config.json` |
 | Bare `tbc-revit-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
-| `--toolsets all` | **242** | Full catalog |
-| `all` + adaptive bake | **245** | Thêm 3 tool vòng đời suggestion |
+| `--toolsets all` | **244** | Full catalog |
+| `all` + adaptive bake | **247** | Thêm 3 tool vòng đời suggestion |
 
 Số lượng chưa tính baked tool cá nhân. Installer chỉ seed khi `rvtmcp.config.json` chưa có `toolsets` — list của bạn sống sót qua upgrade; bỏ key (hoặc đặt CSV riêng) thì bare server về mặt 53 tool. Read-only lọc từng tool theo `ReadOnly=true`, nên vẫn giữ công cụ đọc trong nhóm hỗn hợp. Tool có thể ghi file sẽ bị loại, kể cả khi output mặc định là inline.
 
@@ -306,6 +306,7 @@ Annotations mô tả tác động lên document/file của từng tool. Đổi s
       "mcp__tbc-revit-mcp__revit_list_available_targets",
       "mcp__tbc-revit-mcp__revit_list_baked_tools",
       "mcp__tbc-revit-mcp__revit_list_export_settings",
+      "mcp__tbc-revit-mcp__revit_list_family_templates",
       "mcp__tbc-revit-mcp__revit_list_family_types_in_family",
       "mcp__tbc-revit-mcp__revit_list_groups",
       "mcp__tbc-revit-mcp__revit_list_keynotes",

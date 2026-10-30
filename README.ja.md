@@ -20,7 +20,7 @@
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
-  <a href="#tools"><img src="https://img.shields.io/badge/MCP-242%20tools-6C47FF" alt="MCP tools" /></a>
+  <a href="#tools"><img src="https://img.shields.io/badge/MCP-244%20tools-6C47FF" alt="MCP tools" /></a>
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc_mcp_revit" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
@@ -37,7 +37,7 @@
 
 `tbc-revit-mcp` は MCP クライアントと起動中の Revit セッションをつなぐ**ローカル**ブリッジです。.NET 8 のサーバが stdio で MCP を話し、Revit の年ごと（2022–2027）の薄いアドインが Revit 内で動作します。両者は localhost TCP（≤2024）または named pipe（≥2025）で接続します。すべてマシン内で完結し、全体が C# で、ツール境界の長さは mm です。詳細は [ARCHITECTURE.md](ARCHITECTURE.md)。
 
-エージェントには、よくある Revit 作業のための **typed ツール面**、それ以外のための C# の逃げ道、繰り返すパターンを個人ツールにする**任意**の仕組み（ToolBaker）があります。共有ランタイムから始めて、*自分の*ツールを育ててください。Family Editor でのオーサリングは当面対象外です。
+エージェントには、よくある Revit 作業のための **typed ツール面**、それ以外のための C# の逃げ道、繰り返すパターンを個人ツールにする**任意**の仕組み（ToolBaker）があります。共有ランタイムから始めて、*自分の*ツールを育ててください。`revit_create_family` で JSON 仕様からロード可能ファミリ（パラメータ、押し出し、回転、ボイド、タイプ）を Family Editor を開かずに作成できます。
 
 ---
 
@@ -99,10 +99,10 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-deskt
 
 | モード | Tools | 注記 |
 |--------|------:|------|
-| 新規インストール | **242** | `install.ps1` が `rvtmcp.config.json` に `"toolsets": ["all"]` をシード |
+| 新規インストール | **244** | `install.ps1` が `rvtmcp.config.json` に `"toolsets": ["all"]` をシード |
 | 素の `tbc-revit-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
-| `--toolsets all` | **242** | フルカタログ |
-| `all` + adaptive bake | **245** | 提案ライフサイクル 3 ツールを追加 |
+| `--toolsets all` | **244** | フルカタログ |
+| `all` + adaptive bake | **247** | 提案ライフサイクル 3 ツールを追加 |
 
 件数に個人 baked ツールは含みません。インストーラーがシードするのは `rvtmcp.config.json` に `toolsets` が未設定の場合のみ——独自リストはアップグレード後も残り、キー削除（または独自 CSV）で素のサーバーは 53 ツールに戻ります。Read-only は `ReadOnly=true` のツールだけを残すため、混在 toolset 内の読み取りツールも使えます。既定の出力が inline でも、ファイルを書けるツールは除外されます。
 
@@ -306,6 +306,7 @@ Annotations は各ツールのドキュメントとファイルへの影響を�
       "mcp__tbc-revit-mcp__revit_list_available_targets",
       "mcp__tbc-revit-mcp__revit_list_baked_tools",
       "mcp__tbc-revit-mcp__revit_list_export_settings",
+      "mcp__tbc-revit-mcp__revit_list_family_templates",
       "mcp__tbc-revit-mcp__revit_list_family_types_in_family",
       "mcp__tbc-revit-mcp__revit_list_groups",
       "mcp__tbc-revit-mcp__revit_list_keynotes",

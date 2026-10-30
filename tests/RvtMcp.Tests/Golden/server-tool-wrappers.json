@@ -901,6 +901,28 @@
       "result": "Error: golden probe failure"
     }
   },
+  "revit_create_family": {
+    "success": {
+      "calls": [
+        {
+          "command": "create_family",
+          "params": "{\"spec\":[1]}",
+          "timeout": 300
+        }
+      ],
+      "result": "{\r\n  \"golden_probe\": true,\r\n  \"items\": [\r\n    1,\r\n    2\r\n  ]\r\n}"
+    },
+    "failure": {
+      "calls": [
+        {
+          "command": "create_family",
+          "params": "{\"spec\":[1]}",
+          "timeout": 300
+        }
+      ],
+      "result": "Error: golden probe failure"
+    }
+  },
   "revit_create_filled_region": {
     "success": {
       "calls": [
@@ -3161,6 +3183,28 @@
         {
           "command": "list_export_settings",
           "params": "{\"kind_filter\":\"all\",\"start_index\":0,\"max_results\":50}",
+          "timeout": null
+        }
+      ],
+      "result": "Error: golden probe failure"
+    }
+  },
+  "revit_list_family_templates": {
+    "success": {
+      "calls": [
+        {
+          "command": "list_family_templates",
+          "params": "{\"query\":\"\",\"max_results\":50}",
+          "timeout": null
+        }
+      ],
+      "result": "{\r\n  \"golden_probe\": true,\r\n  \"items\": [\r\n    1,\r\n    2\r\n  ]\r\n}"
+    },
+    "failure": {
+      "calls": [
+        {
+          "command": "list_family_templates",
+          "params": "{\"query\":\"\",\"max_results\":50}",
           "timeout": null
         }
       ],
