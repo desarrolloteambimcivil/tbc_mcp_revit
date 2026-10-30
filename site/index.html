@@ -299,25 +299,26 @@
   <div class="wrap">
     <h2><span lang="en">Get started</span><span lang="es">Empezar</span></h2>
     <p class="section-lead">
-      <span lang="en">Windows with Revit 2022–2027. Close Revit and your AI client, then run the installer from the release package.</span>
-      <span lang="es">Windows con Revit 2022–2027. Cierra Revit y tu cliente de IA y ejecuta el instalador del paquete publicado.</span>
+      <span lang="en">Windows with Revit 2022–2027. One installer for every Revit year you have; no administrator rights needed.</span>
+      <span lang="es">Windows con Revit 2022–2027. Un único instalador para todas tus versiones de Revit, sin permisos de administrador.</span>
     </p>
     <div class="install">
       <div>
-        <div class="code" lang="en"><button class="copy" type="button" data-copy>Copy</button><span class="c"># 1. Download TbcRevitMcp.Setup-&lt;version&gt;-win-x64.zip and unzip it</span>
-<span class="c"># 2. Preview, then install for Claude Code</span>
-powershell -ExecutionPolicy Bypass -File .\install.ps1 -WhatIf -Client claude
-powershell -ExecutionPolicy Bypass -File .\install.ps1 -Client claude
-<span class="c"># 3. In Revit: Add-Ins → RvtMcp, then ask your agent</span></div>
-        <div class="code" lang="es"><button class="copy" type="button" data-copy>Copiar</button><span class="c"># 1. Descarga TbcRevitMcp.Setup-&lt;versión&gt;-win-x64.zip y descomprímelo</span>
-<span class="c"># 2. Previsualiza e instala para Claude Code</span>
-powershell -ExecutionPolicy Bypass -File .\install.ps1 -WhatIf -Client claude
-powershell -ExecutionPolicy Bypass -File .\install.ps1 -Client claude
-<span class="c"># 3. En Revit: Complementos → RvtMcp, y pregunta a tu agente</span></div>
-        <p class="note" style="margin-top:14px">
-          <span lang="en">Download the <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest">latest release</a> (v1.3.0) and check the ZIP against its <code>.sha256</code> file. Use <code>-Client claude-desktop</code>, <code>cursor</code> or <code>codex</code> for other clients.</span>
-          <span lang="es">Descarga la <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest">última versión</a> (v1.3.0) y comprueba el ZIP con su archivo <code>.sha256</code>. Usa <code>-Client claude-desktop</code>, <code>cursor</code> o <code>codex</code> para otros clientes.</span>
-        </p>
+        <ol class="steps">
+          <li><b><span lang="en">Download the installer</span><span lang="es">Descarga el instalador</span></b>
+            <span lang="en"><code>TbcRevitMcp_Setup_1.3.0.exe</code> from the <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest">latest release</a>.</span><span lang="es"><code>TbcRevitMcp_Setup_1.3.0.exe</code> desde la <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest">última versión</a>.</span></li>
+          <li><b><span lang="en">Close Revit and your AI assistant, then run it</span><span lang="es">Cierra Revit y tu asistente de IA y ejecútalo</span></b>
+            <span lang="en">Pick the assistants to connect — Claude Code, Claude Desktop, Cursor or Codex. Data from rvt-mcp is migrated automatically.</span><span lang="es">Elige los asistentes que quieres conectar: Claude Code, Claude Desktop, Cursor o Codex. Los datos de rvt-mcp se migran solos.</span></li>
+          <li><b><span lang="en">Open Revit and ask</span><span lang="es">Abre Revit y pregunta</span></b>
+            <span lang="en">If MCP does not start by itself, click Add-Ins → RvtMcp. Then restart your assistant.</span><span lang="es">Si MCP no arranca solo, pulsa Complementos → RvtMcp. Después reinicia tu asistente.</span></li>
+        </ol>
+        <a class="btn btn-primary" style="margin-top:16px" href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><span lang="en">Download v1.3.0</span><span lang="es">Descargar v1.3.0</span></a>
+        <details class="note" style="margin-top:16px">
+          <summary><span lang="en">Scripted install (ZIP + PowerShell)</span><span lang="es">Instalación por script (ZIP + PowerShell)</span></summary>
+          <div class="code" style="margin-top:10px">powershell -ExecutionPolicy Bypass -File .\install.ps1 -WhatIf -Client claude
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -Client claude</div>
+          <p style="margin:10px 0 0"><span lang="en">Unzip <code>TbcRevitMcp.Setup-&lt;version&gt;-win-x64.zip</code> first and check it against its <code>.sha256</code>. Use <code>-Client claude-desktop</code>, <code>cursor</code> or <code>codex</code> for other clients.</span><span lang="es">Descomprime antes <code>TbcRevitMcp.Setup-&lt;versión&gt;-win-x64.zip</code> y compruébalo con su <code>.sha256</code>. Usa <code>-Client claude-desktop</code>, <code>cursor</code> o <code>codex</code> para otros clientes.</span></p>
+        </details>
       </div>
       <div class="card">
         <h3><span lang="en">Then just ask</span><span lang="es">Y después, pide</span></h3>

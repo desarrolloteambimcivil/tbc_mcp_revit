@@ -41,7 +41,7 @@ Agents get a **typed tool surface** for common Revit work, a C# escape hatch for
 
 ## Install
 
-**Downloads:** `TbcRevitMcp.Setup-<version>-win-x64.zip` and its `.sha256` from the [latest release](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest) (v1.3.0). A Claude Desktop extension (MCPB) is not published yet; install for Desktop with the Setup ZIP and `-Client claude-desktop`. To build from source, see [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy.
+**Downloads:** the Windows installer `TbcRevitMcp_Setup_<version>.exe` (recommended: wizard, AI client choice, uninstaller in Installed apps, no admin rights) or, for scripted and agent-driven installs, `TbcRevitMcp.Setup-<version>-win-x64.zip` and its `.sha256`, from the [latest release](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest) (v1.3.0). A Claude Desktop extension (MCPB) is not published yet; install for Desktop with the Setup ZIP and `-Client claude-desktop`. To build from source, see [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy.
 
 **Let an AI agent install it for your target client.** Use an agent that can run PowerShell and edit local files on this Windows machine (Claude Code, Codex, Cursor, …), not a chat session without local tools. The agent installing it can be different from the client where you will use Revit tools. It follows [AGENTS.md](AGENTS.md), previews changes and asks before applying them; you may still need to approve a UI step or restart an app.
 
