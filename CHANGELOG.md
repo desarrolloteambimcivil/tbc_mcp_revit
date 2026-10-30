@@ -27,6 +27,15 @@
 
 Install only the [latest GitHub Release](https://github.com/bimwright/rvt-mcp/releases/latest). v0.1.0–v0.5.0 are kept as git tags for history; any GitHub Releases for them are no longer published, and the legacy NuGet package `Bimwright.Rvt.Server` (0.1–0.3) is obsolete.
 
+## Unreleased
+
+### CAD links: map drawing coordinates into the model
+
+- **`revit_map_cad_link_points`** (`links`, read-only): maps points given in a CAD link's own drawing coordinates — as AutoCAD or Civil 3D report them, e.g. through tbc-acad-mcp — into Revit internal and shared coordinates (mm). DWG units are chosen with `dwg_units`; a z value is taken as a shared elevation, so invert and rim levels read from drawing texts can be placed directly.
+- With `calibration_json`, curves read from the DWG (layer, endpoints, optional length) are matched against the link geometry in Revit; a consensus over the curves and a least-squares fit return the scale, rotation, largest endpoint error and difference from shared coordinates. Repeated curves with the same layer and length elsewhere do not distort the fit. Without calibration, the drawing is assumed to be in the host's shared coordinates and the result says it is unverified.
+- The link transform alone is not used: Revit re-bases far-away CAD geometry inside the link, so a link drawn in UTM can report an origin hundreds of kilometres away while sitting in the right place.
+- Development source counts: `--toolsets all` **245**, adaptive bake **248**, and bare defaults **53**.
+
 ## v1.3.1 — 2026-10-30
 
 ### Family authoring

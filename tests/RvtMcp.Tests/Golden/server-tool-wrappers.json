@@ -3761,6 +3761,28 @@
       "result": "Error: golden probe failure"
     }
   },
+  "revit_map_cad_link_points": {
+    "success": {
+      "calls": [
+        {
+          "command": "map_cad_link_points",
+          "params": "{\"link_instance_id\":1,\"points\":[1],\"calibration\":null,\"dwg_units\":\"m\",\"tolerance_mm\":5.0}",
+          "timeout": null
+        }
+      ],
+      "result": "{\r\n  \"golden_probe\": true,\r\n  \"items\": [\r\n    1,\r\n    2\r\n  ]\r\n}"
+    },
+    "failure": {
+      "calls": [
+        {
+          "command": "map_cad_link_points",
+          "params": "{\"link_instance_id\":1,\"points\":[1],\"calibration\":null,\"dwg_units\":\"m\",\"tolerance_mm\":5.0}",
+          "timeout": null
+        }
+      ],
+      "result": "Error: golden probe failure"
+    }
+  },
   "revit_measure_distance_between_elements": {
     "success": {
       "calls": [

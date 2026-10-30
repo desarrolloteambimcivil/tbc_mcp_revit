@@ -1,6 +1,6 @@
 {
   "generated_by": "ToolsListSnapshotTests",
-  "tool_count": 244,
+  "tool_count": 245,
   "tools": [
     {
       "name": "revit_acquire_coordinates_from_link",
@@ -6017,6 +6017,45 @@
         },
         "required": [
           "code"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "revit_map_cad_link_points",
+      "description_hash": "sha256:9d5ab6bf7dacf1d21ed17049ad61630311096561a66de9e3c615a21876d70221",
+      "inputSchema": {
+        "properties": {
+          "calibration_json": {
+            "description": "",
+            "type": "String"
+          },
+          "dwg_units": {
+            "description": "",
+            "type": "String"
+          },
+          "linkInstanceId": {
+            "description": "",
+            "type": "Int64"
+          },
+          "points_json": {
+            "description": "",
+            "type": "String"
+          },
+          "tolerance_mm": {
+            "description": "",
+            "type": "Double"
+          }
+        },
+        "required": [
+          "linkInstanceId",
+          "points_json"
         ],
         "type": "object"
       },

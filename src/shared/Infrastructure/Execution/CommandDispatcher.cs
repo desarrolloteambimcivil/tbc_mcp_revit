@@ -221,6 +221,7 @@ namespace RvtMcp.Plugin
             Register(new Handlers.GetLinkElementsHandler());
             Register(new Handlers.GetProjectCoordinateSystemHandler());
             Register(new Handlers.GetLinkCoordinateSystemHandler());
+            Register(new Handlers.MapCadLinkPointsHandler());
             Register(new Handlers.AcquireCoordinatesFromLinkHandler());
             Register(new Handlers.PublishCoordinatesToLinkHandler());
             Register(new Handlers.SetProjectBasePointHandler());

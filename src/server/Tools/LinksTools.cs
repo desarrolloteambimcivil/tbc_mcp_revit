@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using ModelContextProtocol.Server;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace RvtMcp.Server
 {
@@ -54,6 +55,23 @@ namespace RvtMcp.Server
         [McpServerTool(Name = "revit_get_link_coordinate_system", ReadOnly = true, Destructive = false, Idempotent = true, OpenWorld = false), System.ComponentModel.Description("Inspect a Revit or CAD link's instance and total transforms and map its origins into host internal/shared coordinates. For a loaded Revit link, also returns its Internal Origin, Project Base Point, Survey Point, and all linked Project Locations with ids. Use the returned Project Location id as linkedProjectLocationId for revit_publish_coordinates_to_link.")]
         public static async Task<string> GetLinkCoordinateSystem(long linkInstanceId)
             => await ToolGateway.CallAsync("get_link_coordinate_system", new { link_instance_id = linkInstanceId });
+
+        [McpServerTool(Name = "revit_map_cad_link_points", ReadOnly = true, Destructive = false, Idempotent = true, OpenWorld = false), System.ComponentModel.Description(
+            "Map points given in a CAD link's own drawing coordinates (as AutoCAD/Civil 3D report them, e.g. from dwg_query_entities) into Revit internal and shared coordinates, in mm. " +
+            "points_json: [[x,y], [x,y,z], {x,y,z}...] (1-2000), in dwg_units (m|cm|mm|ft|in, default m); z is taken as a shared elevation (e.g. invert levels read from texts). " +
+            "Without calibration the drawing is assumed to be in the host's shared coordinates (unverified). " +
+            "calibration_json (recommended): DWG curves read in AutoCAD, [{layer, start:[x,y], end:[x,y], length?}] in DWG units, e.g. pipe polylines; they are matched by layer, length and endpoints against the link geometry in Revit, " +
+            "and the fitted scale, rotation, largest error (residual_max_mm) and difference from shared coordinates are returned. " +
+            "Do not use the link transform alone: Revit re-bases far-away CAD geometry inside the link. Find linkInstanceId with revit_list_linked_cad.")]
+        public static async Task<string> MapCadLinkPoints(long linkInstanceId, string points_json, string calibration_json = null, string dwg_units = "m", double tolerance_mm = 5)
+            => await ToolGateway.CallWithParamsAsync("map_cad_link_points", () => new
+            {
+                link_instance_id = linkInstanceId,
+                points = JToken.Parse(points_json),
+                calibration = string.IsNullOrWhiteSpace(calibration_json) ? null : JToken.Parse(calibration_json),
+                dwg_units,
+                tolerance_mm
+            });
 
         [McpServerTool(Name = "revit_acquire_coordinates_from_link", ReadOnly = false, Destructive = true, Idempotent = false, OpenWorld = false), System.ComponentModel.Description("Replace host shared coordinates; restore them with Revit Undo. Acquire shared coordinates from a Revit link or linked CAD instance into the host project. Requires confirm=true and modifies the host shared-coordinate system.")]
         public static async Task<string> AcquireCoordinatesFromLink(long linkInstanceId, bool confirm = false)

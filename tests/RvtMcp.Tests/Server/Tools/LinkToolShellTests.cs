@@ -22,6 +22,7 @@ namespace RvtMcp.Tests
             "revit_link_revit_model",
             "revit_list_linked_cad",
             "revit_list_linked_models",
+            "revit_map_cad_link_points",
             "revit_publish_coordinates_to_link",
             "revit_reload_link",
             "revit_set_project_base_point",
@@ -147,6 +148,29 @@ namespace RvtMcp.Tests
 
             Assert.Equal("get_link_coordinate_system", sent.Command);
             Assert.Equal(42, sent.Json().Value<long>("link_instance_id"));
+        }
+
+        [Fact]
+        public async Task Map_cad_link_points_sends_parsed_points_and_calibration()
+        {
+            var sent = await Capture.Send(() => LinksTools.MapCadLinkPoints(42, "[[472883.85, 4379942.52, 9.61]]",
+                "[{\"layer\":\"200\",\"start\":[472883.8462,4379942.5175],\"end\":[472860.2088,4379975.3831]}]", "m", 2));
+
+            Assert.Equal("map_cad_link_points", sent.Command);
+            var json = sent.Json();
+            Assert.Equal(42, json.Value<long>("link_instance_id"));
+            Assert.Equal(9.61, json["points"][0][2].Value<double>());
+            Assert.Equal("200", json["calibration"][0].Value<string>("layer"));
+            Assert.Equal("m", json.Value<string>("dwg_units"));
+            Assert.Equal(2, json.Value<double>("tolerance_mm"));
+        }
+
+        [Fact]
+        public async Task Map_cad_link_points_reports_malformed_json_without_calling_revit()
+        {
+            var result = await LinksTools.MapCadLinkPoints(42, "[[1,2]");
+
+            Assert.StartsWith("Error:", result);
         }
 
         [Fact]
