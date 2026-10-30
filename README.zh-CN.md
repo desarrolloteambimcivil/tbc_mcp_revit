@@ -43,7 +43,7 @@ Agent 可以使用覆盖常见 Revit 工作的 **typed 工具面**、应对其�
 
 ## 安装
 
-**下载：** 从[最新发布版](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest)获取 Setup ZIP 和 Claude Desktop MCPB。在本 fork 发布首个版本之前，请从源码构建（见 [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy）。
+**下载：** 从[最新发布版](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest)（v1.3.0）获取 `TbcRevitMcp.Setup-<version>-win-x64.zip` 及其 `.sha256`。Claude Desktop 扩展（MCPB）尚未发布；Desktop 请使用 Setup ZIP 加 `-Client claude-desktop` 安装。从源码构建见 [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy。
 
 **让 AI agent 为指定客户端安装。** 使用能在这台 Windows 电脑上运行 PowerShell、编辑本地文件的 agent（Claude Code、Codex、Cursor 等），而非没有本地工具的普通聊天。执行安装的 agent 可以与之后使用 Revit 工具的客户端不同。agent 按照 [AGENTS.md](AGENTS.md) 预览更改并在应用前征求同意；你仍可能需要操作界面或重启应用。
 
@@ -78,7 +78,7 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-deskt
 
 **从上游 rvt-mcp 迁移：** 本 fork 把数据保存在 `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\`。首次启动时，数据会自动从上游的 `%LOCALAPPDATA%\Bimwright\rvt-mcp\`（以及上游 v0.8.1/v0.6.x 使用的更早的 `%LOCALAPPDATA%\RvtMcp\`）迁移到新文件夹；旧文件夹会原样保留作为备份。请先关闭 Revit 和所有 MCP 客户端，因为仍在运行的旧 server 会锁定该文件夹。可在 PowerShell 中用 `Test-Path "$env:LOCALAPPDATA\RvtMcp"` 检查。如果安装程序因 `Both … exist` 或 `Could not move …` 而停止，它会撤销已移动的内容：保留存有你的设置和 ToolBaker 数据的文件夹，**把另一个重命名（例如 `RvtMcp.bak`）而不是删除**，关闭正在使用它的客户端，然后重新运行安装程序。
 
-**Claude Desktop 扩展（MCPB，可选）：** agent 辅助安装默认采用上面的直接配置。如需扩展/设置界面，用 `-Client none` 运行 Setup，再通过 Desktop 扩展界面安装 `.mcpb`。**只选一种方式，不要同时注册。** `-Client none` 不会删除已有的手动注册。使用与 Setup 同一选定 release 的 bundle；扩展不安装 gateway/插件，且要求该 release 的确切 server build。签名状态请查看 release notes。参见 [MCPB 安装与设置](docs/install.md#claude-desktop-mcpb)。
+**Claude Desktop 扩展（MCPB，可选）：** tbc-revit-mcp 尚未发布该扩展；以下步骤适用于包含它的发布版。 agent 辅助安装默认采用上面的直接配置。如需扩展/设置界面，用 `-Client none` 运行 Setup，再通过 Desktop 扩展界面安装 `.mcpb`。**只选一种方式，不要同时注册。** `-Client none` 不会删除已有的手动注册。使用与 Setup 同一选定 release 的 bundle；扩展不安装 gateway/插件，且要求该 release 的确切 server build。签名状态请查看 release notes。参见 [MCPB 安装与设置](docs/install.md#claude-desktop-mcpb)。
 
 ---
 

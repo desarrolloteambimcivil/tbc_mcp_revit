@@ -43,7 +43,7 @@ Agent có **bộ tool typed** cho việc Revit thường gặp, escape hatch C# 
 
 ## Cài đặt
 
-**Tải về:** Setup ZIP và Claude Desktop MCPB từ [bản phát hành mới nhất](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest). Cho đến khi bản fork có release đầu tiên, hãy build từ mã nguồn (xem [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy).
+**Tải về:** `TbcRevitMcp.Setup-<version>-win-x64.zip` và file `.sha256` từ [bản phát hành mới nhất](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest) (v1.3.0). Extension Claude Desktop (MCPB) chưa được phát hành; với Desktop hãy cài bằng Setup ZIP và `-Client claude-desktop`. Build từ mã nguồn: xem [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy.
 
 **Để AI agent cài cho client bạn muốn sử dụng.** Dùng agent có thể chạy PowerShell và sửa file trên máy Windows này (Claude Code, Codex, Cursor, …), không phải phiên chat thiếu công cụ thao tác máy. Agent thực hiện cài đặt có thể khác client bạn dùng để làm việc với Revit. Agent làm theo [AGENTS.md](AGENTS.md), xem trước thay đổi và hỏi trước khi áp dụng; bạn vẫn có thể cần thao tác UI hoặc khởi động lại ứng dụng.
 
@@ -79,7 +79,7 @@ Lệnh này cài add-in cho mọi bản Revit 2022–2027 phát hiện được 
 
 **Chuyển từ upstream rvt-mcp:** bản fork này lưu dữ liệu trong `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\`. Ở lần khởi động đầu tiên, dữ liệu được tự động chuyển từ `%LOCALAPPDATA%\Bimwright\rvt-mcp\` của upstream (và `%LOCALAPPDATA%\RvtMcp\` cũ hơn của upstream v0.8.1/v0.6.x) sang folder mới; folder cũ được giữ nguyên làm bản backup. Hãy đóng Revit và mọi MCP client trước, vì server cũ đang chạy sẽ khóa folder. Kiểm tra trong PowerShell bằng `Test-Path "$env:LOCALAPPDATA\RvtMcp"`. Nếu installer dừng với thông báo `Both … exist` hoặc `Could not move …`, nó đã hoàn tác phần đã di chuyển: giữ folder đang chứa cài đặt và dữ liệu ToolBaker của bạn, **đổi tên folder còn lại (ví dụ thành `RvtMcp.bak`) thay vì xóa**, đóng các client đang dùng nó rồi chạy lại installer.
 
-**Extension Claude Desktop (MCPB, tùy chọn):** config trực tiếp ở trên là đường mặc định khi agent cài hộ. Nếu muốn UI extension/settings, chạy Setup với `-Client none`, rồi cài `.mcpb` qua UI extension của Desktop. **Chọn một đường, không làm cả hai.** `-Client none` không xóa registration thủ công đã có. Dùng bundle từ cùng release đã chọn với Setup; extension không cài gateway/add-in và yêu cầu đúng server build của release đó. Kiểm tra release notes về trạng thái ký. Xem [cài MCPB và các setting](docs/install.md#claude-desktop-mcpb).
+**Extension Claude Desktop (MCPB, tùy chọn):** Chưa phát hành cho tbc-revit-mcp; các bước dưới đây áp dụng khi release có kèm file này. config trực tiếp ở trên là đường mặc định khi agent cài hộ. Nếu muốn UI extension/settings, chạy Setup với `-Client none`, rồi cài `.mcpb` qua UI extension của Desktop. **Chọn một đường, không làm cả hai.** `-Client none` không xóa registration thủ công đã có. Dùng bundle từ cùng release đã chọn với Setup; extension không cài gateway/add-in và yêu cầu đúng server build của release đó. Kiểm tra release notes về trạng thái ký. Xem [cài MCPB và các setting](docs/install.md#claude-desktop-mcpb).
 
 ---
 

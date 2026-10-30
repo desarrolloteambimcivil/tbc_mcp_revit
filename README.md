@@ -41,7 +41,7 @@ Agents get a **typed tool surface** for common Revit work, a C# escape hatch for
 
 ## Install
 
-**Downloads:** Setup ZIP and Claude Desktop MCPB from the [latest release](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest). Until the fork's first release is published, build from source (see [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy).
+**Downloads:** `TbcRevitMcp.Setup-<version>-win-x64.zip` and its `.sha256` from the [latest release](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest) (v1.3.0). A Claude Desktop extension (MCPB) is not published yet; install for Desktop with the Setup ZIP and `-Client claude-desktop`. To build from source, see [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy.
 
 **Let an AI agent install it for your target client.** Use an agent that can run PowerShell and edit local files on this Windows machine (Claude Code, Codex, Cursor, …), not a chat session without local tools. The agent installing it can be different from the client where you will use Revit tools. It follows [AGENTS.md](AGENTS.md), previews changes and asks before applying them; you may still need to approve a UI step or restart an app.
 
@@ -76,7 +76,7 @@ This installs the add-in for every detected Revit 2022–2027 and registers `tbc
 
 **Coming from upstream rvt-mcp:** this fork keeps its data in `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\`. On first start, data migrates automatically from upstream's `%LOCALAPPDATA%\Bimwright\rvt-mcp\` (and the older `%LOCALAPPDATA%\RvtMcp\` used by upstream v0.8.1/v0.6.x) into the new folder; the old folder is left in place as a backup. Close Revit and every MCP client first, because a running old server locks the folder. Check in PowerShell with `Test-Path "$env:LOCALAPPDATA\RvtMcp"`. If the installer stops with `Both … exist` or `Could not move …`, it has undone what it moved: keep the folder that holds your settings and ToolBaker data, **rename the other one (for example to `RvtMcp.bak`) instead of deleting it**, close the clients that were using it, and run the installer again.
 
-**Claude Desktop extension (MCPB, optional):** direct config above is the default for agent-assisted installs. If you want the extension/settings UI, use Setup with `-Client none`, then install the `.mcpb` through Desktop's extension UI. **Choose one route, not both.** `-Client none` does not remove an existing manual registration. Use the bundle from the same selected release as Setup; it does not install the gateway/add-ins and requires that release's exact server build. Check the release notes for its signing status. See [MCPB installation and settings](docs/install.md#claude-desktop-mcpb).
+**Claude Desktop extension (MCPB, optional):** Not published for tbc-revit-mcp yet; the steps below apply once a release includes it. direct config above is the default for agent-assisted installs. If you want the extension/settings UI, use Setup with `-Client none`, then install the `.mcpb` through Desktop's extension UI. **Choose one route, not both.** `-Client none` does not remove an existing manual registration. Use the bundle from the same selected release as Setup; it does not install the gateway/add-ins and requires that release's exact server build. Check the release notes for its signing status. See [MCPB installation and settings](docs/install.md#claude-desktop-mcpb).
 
 ---
 

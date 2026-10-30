@@ -43,7 +43,7 @@
 
 ## インストール
 
-**ダウンロード：** Setup ZIP と Claude Desktop MCPB は[最新リリース](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest)から入手できます。フォークの最初のリリースが公開されるまでは、ソースからビルドしてください（[CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy を参照）。
+**ダウンロード：** `TbcRevitMcp.Setup-<version>-win-x64.zip` とその `.sha256` は[最新リリース](https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest)（v1.3.0）から入手できます。Claude Desktop 拡張機能（MCPB）はまだ公開されていません。Desktop には Setup ZIP と `-Client claude-desktop` でインストールしてください。ソースからのビルドは [CLAUDE.md](CLAUDE.md#build--deploy) → Build & Deploy を参照。
 
 **使用したいクライアントへのインストールを AI エージェントに依頼できます。** この Windows マシンで PowerShell の実行とローカルファイルの編集ができるエージェント（Claude Code、Codex、Cursor など）が必要です。ローカルツールのない通常のチャットでは実行できません。インストールするエージェントと、Revit ツールを使うクライアントは別でも構いません。[AGENTS.md](AGENTS.md) に従って変更をプレビューし、適用前に確認します。UI 操作やアプリの再起動はユーザーに依頼する場合があります。
 
@@ -79,7 +79,7 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-deskt
 
 **上流の rvt-mcp からの移行：** このフォークはデータを `%LOCALAPPDATA%\NourRouas\tbc-revit-mcp\` に保存します。初回起動時に、上流の `%LOCALAPPDATA%\Bimwright\rvt-mcp\`（および上流 v0.8.1/v0.6.x が使っていたさらに古い `%LOCALAPPDATA%\RvtMcp\`）から新しいフォルダーへデータが自動的に移行されます。旧フォルダーはバックアップとしてそのまま残ります。先に Revit とすべての MCP クライアントを閉じてください。実行中の旧サーバーがフォルダーをロックするためです。PowerShell で `Test-Path "$env:LOCALAPPDATA\RvtMcp"` を実行すると存在を確認できます。インストーラが `Both … exist` または `Could not move …` で停止した場合、移動した分は元に戻されています。設定と ToolBaker データがあるフォルダーを残し、もう一方は削除せず **名前を変更**（例：`RvtMcp.bak`）し、そのフォルダーを使っていたクライアントを閉じてから、インストーラを再実行してください。
 
-**Claude Desktop 拡張（MCPB、任意）：** エージェントによるインストールでは上の直接設定を既定とします。拡張/設定 UI を使いたい場合は `-Client none` で Setup を実行し、Desktop の拡張 UI から `.mcpb` をインストールします。**どちらか一方だけを使ってください。** `-Client none` は既存の手動登録を削除しません。Setup と同じ選択済み release の bundle を使用してください。拡張は gateway/アドインをインストールせず、その release の正確な server build を必要とします。署名の状態は release notes で確認してください。[MCPB のインストールと設定](docs/install.md#claude-desktop-mcpb)を参照してください。
+**Claude Desktop 拡張（MCPB、任意）：** tbc-revit-mcp ではまだ公開されていません。以下はリリースに含まれた時点の手順です。 エージェントによるインストールでは上の直接設定を既定とします。拡張/設定 UI を使いたい場合は `-Client none` で Setup を実行し、Desktop の拡張 UI から `.mcpb` をインストールします。**どちらか一方だけを使ってください。** `-Client none` は既存の手動登録を削除しません。Setup と同じ選択済み release の bundle を使用してください。拡張は gateway/アドインをインストールせず、その release の正確な server build を必要とします。署名の状態は release notes で確認してください。[MCPB のインストールと設定](docs/install.md#claude-desktop-mcpb)を参照してください。
 
 ---
 
