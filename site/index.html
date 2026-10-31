@@ -60,7 +60,7 @@
         <span lang="en">tbc-revit-mcp connects Claude, or any MCP client, to the model you have open. It reads DWG drawings, rebuilds as-built networks, joins pipes, finds clashes and fixes families. Everything runs on your machine, and every change is a transaction you can undo.</span>
       </p>
       <div class="ctas">
-        <a class="btn btn-primary" href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><span lang="es">Descargar la última versión</span><span lang="en">Download the latest release</span></a>
+        <a class="btn btn-primary" href="https://github.com/desarrolloteambimcivil/tbc_mcp_setup/releases/latest"><span lang="es">Descargar TBC-MCP</span><span lang="en">Download TBC-MCP</span></a>
         <a class="btn btn-secondary" href="#casos"><span lang="es">Ver casos resueltos</span><span lang="en">See solved cases</span></a>
       </div>
     </div>
@@ -306,8 +306,8 @@
   <div class="wrap">
     <h2><span lang="es">Cómo funciona</span><span lang="en">How it works</span></h2>
     <p class="section-lead">
-      <span lang="es">Dos programas pequeños en tu equipo. El agente habla MCP con un servidor local y el servidor con un complemento dentro de Revit, que ejecuta cada petición en el hilo de Revit. Para AutoCAD y Civil 3D, tbc-acad-mcp hace lo mismo.</span>
-      <span lang="en">Two small programs on your machine. The agent talks MCP to a local server, and the server to an add-in inside Revit that runs each request on Revit's own thread. For AutoCAD and Civil 3D, tbc-acad-mcp does the same.</span>
+      <span lang="es">Dos programas pequeños en tu equipo. El agente habla MCP con un servidor local y el servidor con un complemento dentro de Revit, que ejecuta cada petición en el hilo de Revit. Para AutoCAD y Civil 3D, <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_autocad">tbc-acad-mcp</a> hace lo mismo, y el agente usa los dos en la misma conversación.</span>
+      <span lang="en">Two small programs on your machine. The agent talks MCP to a local server, and the server to an add-in inside Revit that runs each request on Revit's own thread. For AutoCAD and Civil 3D, <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_autocad">tbc-acad-mcp</a> does the same, and the agent uses both in the same conversation.</span>
     </p>
     <svg class="arch" viewBox="0 0 1000 250" role="img" aria-labelledby="arch-title">
       <title id="arch-title">Claude o cualquier cliente MCP, al servidor local, al complemento de Revit o de AutoCAD, al modelo o al plano</title>
@@ -341,18 +341,33 @@
     <div>
       <h2><span lang="es">Instalar</span><span lang="en">Install</span></h2>
       <p class="section-lead">
-        <span lang="es">Windows con Revit 2022–2027. Un instalador para todas tus versiones de Revit, sin permisos de administrador.</span>
-        <span lang="en">Windows with Revit 2022–2027. One installer for every Revit year you have, no administrator rights needed.</span>
+        <span lang="es">Windows con Revit 2022–2027, AutoCAD o Civil 3D 2022–2027. Sin permisos de administrador.</span>
+        <span lang="en">Windows with Revit 2022–2027, AutoCAD or Civil 3D 2022–2027. No administrator rights needed.</span>
       </p>
+      <div class="pick">
+        <div class="pick-card pick-main">
+          <p class="pick-tag"><span lang="es">Recomendado</span><span lang="en">Recommended</span></p>
+          <h3>TBC-MCP <span class="pick-sub">Revit + AutoCAD / Civil 3D</span></h3>
+          <p><span lang="es">Un instalador para los dos: detecta qué programas tienes y marca solo esos. Instala tbc-revit-mcp y tbc-acad-mcp y los conecta a tus asistentes.</span><span lang="en">One installer for both: it detects which programs you have and ticks only those. It installs tbc-revit-mcp and tbc-acad-mcp and connects them to your assistants.</span></p>
+          <p class="pick-file"><code>TbcMcp_Setup_&lt;<span lang="es">versión</span><span lang="en">version</span>&gt;.exe</code></p>
+          <a class="btn btn-primary" href="https://github.com/desarrolloteambimcivil/tbc_mcp_setup/releases/latest"><span lang="es">Descargar TBC-MCP</span><span lang="en">Download TBC-MCP</span></a>
+        </div>
+        <div class="pick-card">
+          <p class="pick-tag"><span lang="es">Solo Revit</span><span lang="en">Revit only</span></p>
+          <h3>tbc-revit-mcp</h3>
+          <p><span lang="es">Si no usas AutoCAD ni Civil 3D. Si más adelante instalas TBC-MCP, sustituye a este instalador y conserva tus datos.</span><span lang="en">If you do not use AutoCAD or Civil 3D. If you install TBC-MCP later, it replaces this installer and keeps your data.</span></p>
+          <p class="pick-file"><code>TbcRevitMcp_Setup_&lt;<span lang="es">versión</span><span lang="en">version</span>&gt;.exe</code></p>
+          <a class="btn btn-secondary" href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><span lang="es">Descargar tbc-revit-mcp</span><span lang="en">Download tbc-revit-mcp</span></a>
+        </div>
+      </div>
       <ol class="steps">
-        <li><b><span lang="es">Descarga el instalador</span><span lang="en">Download the installer</span></b>
-          <span lang="es"><code>TbcRevitMcp_Setup_&lt;versión&gt;.exe</code> de la <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest">última versión publicada</a>.</span><span lang="en"><code>TbcRevitMcp_Setup_&lt;version&gt;.exe</code> from the <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest">latest release</a>.</span></li>
-        <li><b><span lang="es">Cierra Revit y tu asistente, y ejecútalo</span><span lang="en">Close Revit and your assistant, then run it</span></b>
+        <li><b><span lang="es">Cierra Revit, AutoCAD y tus asistentes</span><span lang="en">Close Revit, AutoCAD and your assistants</span></b>
+          <span lang="es">También Claude Desktop desde la bandeja del sistema: al cerrarse reescribe su configuración.</span><span lang="en">Also Claude Desktop from the system tray: it rewrites its configuration when it quits.</span></li>
+        <li><b><span lang="es">Ejecuta el instalador</span><span lang="en">Run the installer</span></b>
           <span lang="es">Elige qué asistentes conectar: Claude Code, Claude Desktop, Cursor o Codex.</span><span lang="en">Choose the assistants to connect: Claude Code, Claude Desktop, Cursor or Codex.</span></li>
-        <li><b><span lang="es">Abre Revit y pregunta</span><span lang="en">Open Revit and ask</span></b>
-          <span lang="es">Si MCP no arranca solo, pulsa Complementos → RvtMcp y reinicia tu asistente.</span><span lang="en">If MCP does not start by itself, click Add-Ins → RvtMcp and restart your assistant.</span></li>
+        <li><b><span lang="es">Abre Revit o AutoCAD y pregunta</span><span lang="en">Open Revit or AutoCAD and ask</span></b>
+          <span lang="es">Si en Revit MCP no arranca solo, pulsa Complementos → RvtMcp y reinicia tu asistente.</span><span lang="en">If MCP does not start by itself in Revit, click Add-Ins → RvtMcp and restart your assistant.</span></li>
       </ol>
-      <a class="btn btn-primary" href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><span lang="es">Descargar la última versión</span><span lang="en">Download the latest release</span></a>
       <details class="note">
         <summary><span lang="es">Instalación por script (ZIP + PowerShell)</span><span lang="en">Scripted install (ZIP + PowerShell)</span></summary>
         <pre class="code">powershell -ExecutionPolicy Bypass -File .\install.ps1 -WhatIf -Client claude
@@ -400,6 +415,8 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1 -Client claude</pre>
     <img src="assets/teambimcivil_logo_h.png" alt="TeamBIMCivil" width="862" height="180">
     <nav>
       <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit">GitHub</a>
+      <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_autocad">tbc-acad-mcp</a>
+      <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_setup"><span lang="es">Instalador TBC-MCP</span><span lang="en">TBC-MCP installer</span></a>
       <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/blob/master/CHANGELOG.md">Changelog</a>
       <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/blob/master/LICENSE"><span lang="es">Licencia</span><span lang="en">License</span></a>
       <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/blob/master/SECURITY.md"><span lang="es">Seguridad</span><span lang="en">Security</span></a>

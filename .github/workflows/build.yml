@@ -1,10 +1,13 @@
 name: build
 
 on:
+  # The marketing site has its own workflow (pages.yml); a site-only change needs no build.
   push:
     branches: [master]
+    paths-ignore: ['site/**']
   pull_request:
     branches: [master]
+    paths-ignore: ['site/**']
   workflow_dispatch:
 
 jobs:
