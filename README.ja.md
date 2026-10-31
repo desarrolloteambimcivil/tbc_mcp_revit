@@ -20,7 +20,7 @@
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
-  <a href="#tools"><img src="https://img.shields.io/badge/MCP-245%20tools-6C47FF" alt="MCP tools" /></a>
+  <a href="#tools"><img src="https://img.shields.io/badge/MCP-246%20tools-6C47FF" alt="MCP tools" /></a>
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc_mcp_revit" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
@@ -99,10 +99,10 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-deskt
 
 | モード | Tools | 注記 |
 |--------|------:|------|
-| 新規インストール | **245** | `install.ps1` が `rvtmcp.config.json` に `"toolsets": ["all"]` をシード |
+| 新規インストール | **246** | `install.ps1` が `rvtmcp.config.json` に `"toolsets": ["all"]` をシード |
 | 素の `tbc-revit-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
-| `--toolsets all` | **245** | フルカタログ |
-| `all` + adaptive bake | **248** | 提案ライフサイクル 3 ツールを追加 |
+| `--toolsets all` | **246** | フルカタログ |
+| `all` + adaptive bake | **249** | 提案ライフサイクル 3 ツールを追加 |
 
 件数に個人 baked ツールは含みません。インストーラーがシードするのは `rvtmcp.config.json` に `toolsets` が未設定の場合のみ——独自リストはアップグレード後も残り、キー削除（または独自 CSV）で素のサーバーは 53 ツールに戻ります。Read-only は `ReadOnly=true` のツールだけを残すため、混在 toolset 内の読み取りツールも使えます。既定の出力が inline でも、ファイルを書けるツールは除外されます。
 
@@ -167,7 +167,7 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-deskt
 
 ### プロンプト
 
-サーバーには 7 つの MCP プロンプトがあります。クライアントのプロンプトメニュー（Claude Code: `/mcp__tbc-revit-mcp__revit_<name>`）から選ぶと、エージェントは手持ちのツールでスクリプトに沿って進めます。
+サーバーには 9 つの MCP プロンプトがあります。クライアントのプロンプトメニュー（Claude Code: `/mcp__tbc-revit-mcp__revit_<name>`）から選ぶと、エージェントは手持ちのツールでスクリプトに沿って進めます。
 
 - `revit_getting_started` — 開いているモデルの把握（読み取り専用、既定の設定で動作）。
 - `revit_drawing_layout` — `request` を指定：1 枚のシートのビューポートを整列します。まずシート座標の実位置を読み取り（`revit_get_viewport_geometry`）、整列方法を合意し、ドライラン計画を示し（`revit_align_viewports`）、確認後にのみ移動して、結果を再取得します。`query,sheets,view,meta` が必要です。読み取り専用モードでは報告と提案のみです。
@@ -175,6 +175,8 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-deskt
 - `revit_model_audit` — モデルの健全性監査：警告、ファミリ、ドライランの purge 候補（`workflows,families,lint,meta` が必要）。
 - `revit_pre_issue_check` — 発行前に対象シートを確認します（`sheets,view,annotation,lint,meta` が必要）。シート番号/ID、明示的な番号/名前フィルター、または `all` を指定します。名前付きシートセットにはメンバーシートが必要です。サンプリングされたモデル警告や不完全な確認は、シート単位の合格ではなく **NOT VERIFIED** と報告されます。
 - `revit_pipe_network` — `request` を指定：配管ネットワークを連続させます。構造物のない場所で接する管端には継手を入れ、マンホール・桝・雨水桝の中の管端は開いたままにします。計画を示し、確認後にのみ継手を作成し、開いた管端を再確認します。`mep,meta` が必要で、読み取り専用モードでは計画まで行います。[ネットワークの連続性](docs/placement-and-mep-contracts.md#network-continuity)を参照してください。
+- `revit_asbuilt_network` — `request` を指定：配管ネットワークを竣工 DWG に合わせます。図面をゾーンごとに読み（画像、プレーンテキスト、引出線、流れの矢印）、`revit_map_cad_link_points` で座標を変換し、図面とモデルを比較します。欠けたレベルや矛盾の扱いをあなたと合意してから、名前付きトランザクションで再構築し、ネットワークを接続して検証します。`mep,links,meta` が必要で、tbc-acad-mcp が接続されていれば併用します。読み取り専用モードでは比較まで行います。
+- `revit_parametric_family` — `request` を指定：すべてのタイプとインスタンス値で正しく動くファミリを作成・改善します。ファミリを読み、設計を合意し、形状を参照面に拘束し、細かいパターンはネストされたファミリに入れます。全タイプでフレックスし、配置済みインスタンスの値を保ったままロードして確認します。`families,meta` と `send_code` が必要です。
 - `revit_stairs` — `send_code` による階段作成のガイド（確認後にのみ書き込み）。トランザクション/失敗/後片付けのテンプレートを含み、ソースチェックアウトは不要です。
 
 プロンプトに必要な toolset が有効でない場合は、追加すべき `--toolsets` の行をそのまま答えます。中途半端な構成で何かが実行されることはありません。足りないツールが許す限り read-only の保護は維持され、書き込み可能な toolset を必要とするプロンプトは、設定を黙って変えずに矛盾を説明します。プロンプトはエージェントへの指示であり、サーバーが強制するワークフローのロックではありません。

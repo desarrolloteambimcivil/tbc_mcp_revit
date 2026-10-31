@@ -44,11 +44,21 @@ Connection verification accepts a direct connection or two distinct physical por
 A modelled pipe network should be continuous, so Revit reads it as one system and analysis, schedules and disconnect checks are meaningful. Agents apply this by default when they create or rebuild pipes; the `revit_pipe_network` prompt runs the check on an existing network.
 
 - **Structures are junctions.** A pipe end inside a manhole, chamber, gully, channel, tank or separator stays open. Do not add a fitting there and do not report it as a defect.
-- **Pipes that meet without a structure get a fitting** through `revit_create_mep_fitting`: 2 pipes → elbow (union when collinear), 3 → tee, 4 → cross, and a transition between diameters. Short connections from gutters, gullies or downpipes count as pipes.
+- **Pipes that meet without a structure get a fitting**: 2 pipes → elbow (union when collinear), 3 → tee, 4 → cross, and a transition between diameters. Short connections from gutters, gullies or downpipes count as pipes. `revit_connect_pipe_network` does this for a whole system or a list of pipes. Run it with `dryRun=true` (the default) to see the plan, then with `dryRun=false`. `revit_create_mep_fitting` handles a single junction by connector IDs.
 - **Create segments that meet.** Consecutive segments of one drawn line end at the same point, plan position and level included, so the fitting needs no pipe movement. Add the fittings in the same task.
 - **Drawings are evidence.** Do not move, trim or re-slope pipes to make a fitting fit. Small deflections of a few degrees may refuse an elbow; report them.
 - **Keep filters working.** When view filters select a network by an instance value such as Comments (`revit_list_view_filters`), give new fittings the same value as the pipes they join.
-- **Check the result.** `revit_find_mep_disconnects` lists open ends before and after. The remaining ones should all be inside structures or listed as unresolved.
+- **Check the result.** `revit_connect_pipe_network` reports open ends before and after; `revit_find_mep_disconnects` lists them for any domain. The remaining ones should all be inside structures or listed as unresolved.
+
+`revit_connect_pipe_network` treats as structures the family instances in Generic Models, Plumbing Equipment (Revit 2024+), Plumbing Fixtures, Mechanical Equipment and Specialty Equipment. A group of ends counts as inside a structure when its centre falls in the structure's bounding box grown by `structureMarginMm`. The bounding box of a rotated family is axis-aligned and can be larger than the family. Unresolved reasons:
+
+| Reason | Meaning |
+|---|---|
+| `open_end` | A lone end, not inside a structure. |
+| `diameter_change_at_bend` | Two ends of different diameters that also change direction. |
+| `system_type_mismatch` | Ends from different piping system types. |
+| `no_straight_run_for_tee` / `no_straight_runs_for_cross` | No pair of ends continues within 5°. |
+| `too_many_ends` | More than four ends meet. |
 
 ## Interpret MEP membership and connector counts
 

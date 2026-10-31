@@ -23,6 +23,8 @@ namespace RvtMcp.Server.Prompts
         // would render a body whose first step isn't exposed.
         private static readonly string[] StairsSets = { "meta" };
         private static readonly string[] PipeNetworkSets = { "mep", "meta" };
+        private static readonly string[] AsBuiltNetworkSets = { "mep", "links", "meta" };
+        private static readonly string[] ParametricFamilySets = { "families", "meta" };
 
         [McpServerPrompt(Name = "revit_getting_started"),
          Description("Read-only orientation for the connected Revit: current target, active view, model statistics. Safe first command.")]
@@ -105,10 +107,46 @@ namespace RvtMcp.Server.Prompts
                 args: new Dictionary<string, string>
                 {
                     ["mode"] = ServerState.Config?.ReadOnlyOrDefault == true
-                        ? "READ-ONLY: report open ends and propose fittings only. Do not call revit_create_mep_fitting."
+                        ? "READ-ONLY: write tools are hidden. Report open ends with revit_find_mep_disconnects and propose fittings only."
                         : "Use only exposed tools. Fittings need confirmation of the plan below.",
                     ["request"] = string.IsNullOrWhiteSpace(request)
                         ? "Not specified. Ask me which system, area or elements to check before reading or writing anything."
+                        : request
+                });
+        }
+
+        [McpServerPrompt(Name = "revit_asbuilt_network"),
+         Description("Bring a piped network in line with an as-built DWG: read the drawing zone by zone, compare, agree the rules, then rebuild, connect and verify. Read-only sessions stop at the comparison.")]
+        public static string AsBuiltNetwork(
+            [Description("The network (system or filter value) and the drawing to use")] string request)
+        {
+            return PromptBody.Render(
+                PromptBody.Load("asbuilt_network"), AsBuiltNetworkSets, requiresSendCode: false,
+                args: new Dictionary<string, string>
+                {
+                    ["mode"] = ServerState.Config?.ReadOnlyOrDefault == true
+                        ? "READ-ONLY: read, map and compare only. Write tools are hidden; stop at the comparison and the proposed rules."
+                        : "Use only exposed tools. Writes need confirmation of the agreed rules and plan.",
+                    ["request"] = string.IsNullOrWhiteSpace(request)
+                        ? "Not specified. Ask me which network and which drawing before reading or writing anything."
+                        : request
+                });
+        }
+
+        [McpServerPrompt(Name = "revit_parametric_family"),
+         Description("Create or improve a family that stays right for every type and instance value: read it, agree the design, build with constraints, flex, load keeping instance values, verify. Uses send_code.")]
+        public static string ParametricFamily(
+            [Description("The family to create or improve and what should change")] string request)
+        {
+            return PromptBody.Render(
+                PromptBody.Load("parametric_family"), ParametricFamilySets, requiresSendCode: true,
+                args: new Dictionary<string, string>
+                {
+                    ["mode"] = ServerState.Config?.ReadOnlyOrDefault == true
+                        ? "READ-ONLY: read the family and propose a design only."
+                        : "Use only exposed tools. Writes need confirmation of the design.",
+                    ["request"] = string.IsNullOrWhiteSpace(request)
+                        ? "Not specified. Ask me which family and what should change before reading or writing anything."
                         : request
                 });
         }

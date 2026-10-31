@@ -20,7 +20,7 @@
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
-  <a href="#tools"><img src="https://img.shields.io/badge/MCP-245%20tools-6C47FF" alt="MCP tools" /></a>
+  <a href="#tools"><img src="https://img.shields.io/badge/MCP-246%20tools-6C47FF" alt="MCP tools" /></a>
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc_mcp_revit" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
@@ -99,10 +99,10 @@ Các số dưới đây khớp với mã nguồn hiện tại; các bản build 
 
 | Mode | Tools | Ghi chú |
 |------|------:|---------|
-| Fresh install | **245** | `install.ps1` seeds `"toolsets": ["all"]` trong `rvtmcp.config.json` |
+| Fresh install | **246** | `install.ps1` seeds `"toolsets": ["all"]` trong `rvtmcp.config.json` |
 | Bare `tbc-revit-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
-| `--toolsets all` | **245** | Full catalog |
-| `all` + adaptive bake | **248** | Thêm 3 tool vòng đời suggestion |
+| `--toolsets all` | **246** | Full catalog |
+| `all` + adaptive bake | **249** | Thêm 3 tool vòng đời suggestion |
 
 Số lượng chưa tính baked tool cá nhân. Installer chỉ seed khi `rvtmcp.config.json` chưa có `toolsets` — list của bạn sống sót qua upgrade; bỏ key (hoặc đặt CSV riêng) thì bare server về mặt 53 tool. Read-only lọc từng tool theo `ReadOnly=true`, nên vẫn giữ công cụ đọc trong nhóm hỗn hợp. Tool có thể ghi file sẽ bị loại, kể cả khi output mặc định là inline.
 
@@ -167,7 +167,7 @@ Toast **bật mặc định** và có thể tắt. Trong **Settings → Toast**,
 
 ### Prompt
 
-Server có bảy MCP prompt — chọn `/mcp__tbc-revit-mcp__revit_<name>` (Claude Code) hoặc menu prompt (Claude Desktop); agent làm theo kịch bản bằng các tool sẵn có:
+Server có chín MCP prompt — chọn `/mcp__tbc-revit-mcp__revit_<name>` (Claude Code) hoặc menu prompt (Claude Desktop); agent làm theo kịch bản bằng các tool sẵn có:
 
 - `revit_getting_started` — làm quen với model đang mở (chỉ đọc, chạy được với cấu hình mặc định).
 - `revit_drawing_layout` — truyền `request`: sắp xếp viewport của một sheet. Đọc vị trí thật trong không gian sheet trước (`revit_get_viewport_geometry`), thống nhất cách căn với bạn, hiện kế hoạch chạy thử (`revit_align_viewports`), chỉ di chuyển sau khi bạn xác nhận, rồi đọc lại. Cần `query,sheets,view,meta`. Chế độ read-only chỉ báo cáo và đề xuất.
@@ -175,6 +175,8 @@ Server có bảy MCP prompt — chọn `/mcp__tbc-revit-mcp__revit_<name>` (Clau
 - `revit_model_audit` — kiểm tra sức khỏe model: cảnh báo, family, ứng viên purge ở chế độ chạy thử (cần `workflows,families,lint,meta`).
 - `revit_pre_issue_check` — kiểm tra các sheet đã xác định trước khi phát hành (cần `sheets,view,annotation,lint,meta`). Truyền số/ID sheet, bộ lọc số/tên rõ ràng, hoặc `all`; sheet set có tên cần các sheet thành viên. Cảnh báo model chỉ lấy mẫu và kiểm tra chưa đầy đủ được báo là **NOT VERIFIED**, không phải đạt ở mức sheet.
 - `revit_pipe_network` — truyền `request`: làm cho mạng ống liên tục. Các đầu ống gặp nhau ở chỗ không có công trình thì được thêm phụ kiện; đầu ống nằm trong hố ga, hố thu hay giếng thăm thì để hở. Trình bày kế hoạch, chỉ tạo phụ kiện sau khi bạn xác nhận, rồi kiểm tra lại các đầu ống hở. Cần `mep,meta`; chế độ read-only dừng ở bước kế hoạch. Xem [tính liên tục của mạng](docs/placement-and-mep-contracts.md#network-continuity).
+- `revit_asbuilt_network` — truyền `request`: đưa một mạng ống về đúng bản vẽ hoàn công DWG. Đọc bản vẽ theo từng vùng (ảnh, văn bản thuần, đường dẫn chú thích, mũi tên dòng chảy), chuyển tọa độ bằng `revit_map_cad_link_points` và so sánh bản vẽ với mô hình. Sau khi thống nhất với bạn cách xử lý cao độ thiếu và mâu thuẫn, dựng lại bằng các transaction có tên, nối mạng và kiểm tra. Cần `mep,links,meta`; dùng cùng tbc-acad-mcp khi có kết nối. Chế độ read-only dừng ở bước so sánh.
+- `revit_parametric_family` — truyền `request`: tạo hoặc cải thiện một family đúng với mọi type và mọi giá trị instance. Đọc family, thống nhất thiết kế với bạn, ràng buộc hình khối vào reference plane và đặt chi tiết phức tạp trong family lồng. Flex mọi type, nạp lại family mà giữ nguyên giá trị của các instance đã đặt và kiểm tra chúng. Cần `families,meta` và `send_code`.
 - `revit_stairs` — tạo thang có hướng dẫn qua `send_code` (chỉ ghi sau khi bạn xác nhận). Gồm mẫu transaction/xử lý lỗi/dọn dẹp; không cần source checkout.
 
 Nếu toolset mà prompt cần chưa bật, prompt trả lời đúng dòng `--toolsets` cần thêm — không có gì chạy khi cấu hình dở dang. Bảo vệ read-only vẫn bật khi các tool còn thiếu cho phép; prompt cần toolset có quyền ghi sẽ giải thích xung đột thay vì âm thầm đổi cấu hình. Prompt là hướng dẫn cho agent, không phải khóa quy trình do server cưỡng chế.

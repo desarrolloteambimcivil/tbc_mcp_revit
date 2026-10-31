@@ -725,6 +725,28 @@
       "result": "Error: golden probe failure"
     }
   },
+  "revit_connect_pipe_network": {
+    "success": {
+      "calls": [
+        {
+          "command": "connect_pipe_network",
+          "params": "{\"system_name\":null,\"element_ids\":null,\"tolerance_mm\":5.0,\"structure_margin_mm\":100.0,\"copy_comments\":true,\"dry_run\":true,\"limit\":200}",
+          "timeout": null
+        }
+      ],
+      "result": "{\r\n  \"golden_probe\": true,\r\n  \"items\": [\r\n    1,\r\n    2\r\n  ]\r\n}"
+    },
+    "failure": {
+      "calls": [
+        {
+          "command": "connect_pipe_network",
+          "params": "{\"system_name\":null,\"element_ids\":null,\"tolerance_mm\":5.0,\"structure_margin_mm\":100.0,\"copy_comments\":true,\"dry_run\":true,\"limit\":200}",
+          "timeout": null
+        }
+      ],
+      "result": "Error: golden probe failure"
+    }
+  },
   "revit_create_air_terminal": {
     "success": {
       "calls": [

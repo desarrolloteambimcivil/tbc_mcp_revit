@@ -20,7 +20,7 @@
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
-  <a href="#tools"><img src="https://img.shields.io/badge/MCP-245%20tools-6C47FF" alt="MCP tools" /></a>
+  <a href="#tools"><img src="https://img.shields.io/badge/MCP-246%20tools-6C47FF" alt="MCP tools" /></a>
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc_mcp_revit" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
@@ -98,10 +98,10 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-deskt
 
 | 模式 | Tools | 说明 |
 |------|------:|------|
-| 全新安装 | **245** | `install.ps1` 在 `rvtmcp.config.json` 中写入 `"toolsets": ["all"]` |
+| 全新安装 | **246** | `install.ps1` 在 `rvtmcp.config.json` 中写入 `"toolsets": ["all"]` |
 | 裸 `tbc-revit-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
-| `--toolsets all` | **245** | 完整目录 |
-| `all` + adaptive bake | **248** | 再加 3 个 suggestion 生命周期工具 |
+| `--toolsets all` | **246** | 完整目录 |
+| `all` + adaptive bake | **249** | 再加 3 个 suggestion 生命周期工具 |
 
 数量不含个人 baked 工具。只有当 `rvtmcp.config.json` 尚未设置 `toolsets` 时安装器才会写入默认值——你的自定义列表在升级时保留；删除该键（或设置自己的 CSV）则裸服务器回到 53 个工具。Read-only 按 `ReadOnly=true` 逐个筛选工具，因此混合 toolset 中的读取工具仍可用。即使默认 output 是 inline，能写文件的工具也会被排除。
 
@@ -166,7 +166,7 @@ Toast **默认开启**，可以关闭。在 **Settings → Toast** 中可选择�
 
 ### 提示
 
-服务器提供七个 MCP 提示。在客户端提示菜单（Claude Code：`/mcp__tbc-revit-mcp__revit_<name>`）中选择，代理会用现有工具按脚本执行：
+服务器提供九个 MCP 提示。在客户端提示菜单（Claude Code：`/mcp__tbc-revit-mcp__revit_<name>`）中选择，代理会用现有工具按脚本执行：
 
 - `revit_getting_started` — 了解已打开的模型（只读，使用默认配置即可）。
 - `revit_drawing_layout` — 通过 `request` 指定：排列一张图纸上的视口。先读取图纸空间的真实位置（`revit_get_viewport_geometry`），与你确认对齐方式，给出试运行计划（`revit_align_viewports`），确认后才移动，再读取结果。需要 `query,sheets,view,meta`。只读模式下仅报告和建议。
@@ -174,6 +174,8 @@ Toast **默认开启**，可以关闭。在 **Settings → Toast** 中可选择�
 - `revit_model_audit` — 模型健康审计：警告、族、试运行的 purge 候选（需要 `workflows,families,lint,meta`）。
 - `revit_pre_issue_check` — 发布前检查已确定的图纸（需要 `sheets,view,annotation,lint,meta`）。提供图纸编号/ID、明确的编号/名称过滤，或 `all`；命名图纸集需要其成员图纸。抽样的模型警告和不完整的检查会报告为 **NOT VERIFIED**，而不是图纸级通过。
 - `revit_pipe_network` — 通过 `request` 指定：使管网连续。在没有构筑物的位置相接的管端加装管件；位于检查井、集水井或雨水口内的管端保持开口。先给出方案，确认后才创建管件，然后再次检查开口管端。需要 `mep,meta`；只读模式止于方案。参见[管网连续性](docs/placement-and-mep-contracts.md#network-continuity)。
+- `revit_asbuilt_network` — 通过 `request` 指定：使管网与竣工 DWG 一致。按区域读取图纸（图像、纯文本、引线、流向箭头），用 `revit_map_cad_link_points` 转换坐标，比较图纸与模型。与你商定缺失标高和冲突的处理规则后，用命名事务重建、连接管网并核验。需要 `mep,links,meta`；连接 tbc-acad-mcp 时一并使用。只读模式止于比较。
+- `revit_parametric_family` — 通过 `request` 指定：创建或改进族，使其对每个类型和实例值都正确。先读取族并与你商定设计，把形体约束到参照平面，把细部图案放在嵌套族中。对所有类型进行参数测试，载入时保留已放置实例的值并逐一核对。需要 `families,meta` 和 `send_code`。
 - `revit_stairs` — 通过 `send_code` 引导创建楼梯（仅在你确认后写入）。包含事务/失败/清理模板，无需源码检出。
 
 如果提示所需的 toolset 未启用，它会给出需要添加的确切 `--toolsets` 行——不会以半配置状态运行。缺失的工具允许时，只读保护保持开启；需要可写 toolset 的提示会说明冲突，而不是悄悄更改配置。提示是给代理的指令，不是 server 强制执行的工作流锁。

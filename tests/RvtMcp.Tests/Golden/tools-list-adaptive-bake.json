@@ -1,6 +1,6 @@
 {
   "generated_by": "ToolsListSnapshotTests",
-  "tool_count": 248,
+  "tool_count": 249,
   "tools": [
     {
       "name": "revit_accept_bake_suggestion",
@@ -1163,6 +1163,50 @@
       }
     },
     {
+      "name": "revit_connect_pipe_network",
+      "description_hash": "sha256:6bee078760c29159944fd3653941e232881ff1ec337ca83eb9c36c617906aca4",
+      "inputSchema": {
+        "properties": {
+          "copyComments": {
+            "description": "",
+            "type": "Boolean"
+          },
+          "dryRun": {
+            "description": "",
+            "type": "Boolean"
+          },
+          "elementIds": {
+            "description": "",
+            "type": "Int64[]"
+          },
+          "limit": {
+            "description": "",
+            "type": "Int32"
+          },
+          "structureMarginMm": {
+            "description": "",
+            "type": "Double"
+          },
+          "systemName": {
+            "description": "",
+            "type": "String"
+          },
+          "toleranceMm": {
+            "description": "",
+            "type": "Double"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      }
+    },
+    {
       "name": "revit_create_air_terminal",
       "description_hash": "sha256:8095a049efb8a2915c4cbf739857230985061c09c2afb9c5445596d68a7187c8",
       "inputSchema": {
@@ -1992,7 +2036,7 @@
     },
     {
       "name": "revit_create_pipe",
-      "description_hash": "sha256:6ad2e3b82a2aea593c622e1f536d43d4a23d8a9f176dcfb95e9c403266c2d552",
+      "description_hash": "sha256:0844ef50abde96ff0fd0b552823163832d4a1b6bdc3d1a9fb43b0553f769aa7f",
       "inputSchema": {
         "properties": {
           "diameter": {

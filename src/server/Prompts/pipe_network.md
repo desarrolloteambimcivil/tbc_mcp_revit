@@ -16,18 +16,19 @@ Before you start
 - Resolve the scope with me: system name, area or element IDs. Never treat an empty request as every system in the model.
 
 Steps
-1. revit_find_mep_disconnects with domainFilter: piping → open pipe ends in scope.
-2. revit_get_mep_element_connectors for the pipes involved → connector IDs, positions (mm) and diameters. Group open ends that coincide within a few millimetres.
-3. For each group, check whether a structure sits at that point. Classify every open end: needs fitting (with the kind), inside a structure, or unresolved (lone end, gap, diameter or level mismatch).
-4. Show the plan as a table and ask me to confirm: junction | pipes (IDs, diameters) | fitting kind | reason. List skipped and unresolved ends separately.
-5. After I confirm, call revit_create_mep_fitting once per junction with the connector IDs from step 2. Set the filter value on each new fitting when the rules above require it and revit_set_element_parameter_values is exposed.
-6. Run revit_find_mep_disconnects again and compare with step 1. If revit_capture_view_image is exposed, offer a capture of a changed junction.
+1. revit_connect_pipe_network with the scope (systemName or elementIds) and dryRun: true → planned junctions with their fitting kind, ends inside structures, and unresolved ends with a reason. The tool treats generic models and plumbing/mechanical equipment as structures; if the model uses other families for manholes or chambers, tell me.
+2. Show the plan as a table and ask me to confirm: junction | pipes (IDs, diameters) | fitting kind | deflection. List ends inside structures and unresolved ends separately.
+3. After I confirm, repeat the same call with dryRun: false. It copies the pipes' Comments to each fitting when they agree; set any other filter value with revit_set_element_parameter_values if it is exposed.
+4. For each failed or unresolved junction that should still be joined, read revit_get_mep_element_connectors and propose a single revit_create_mep_fitting call, or explain why the junction needs a modelling decision from me.
+5. Compare open_ends_before and open_ends_after, and run revit_find_mep_disconnects for the scope. If revit_capture_view_image is exposed, offer a capture of a changed junction.
+
+Without revit_connect_pipe_network (older add-in): find open ends with revit_find_mep_disconnects, group coincident ends from revit_get_mep_element_connectors, classify them by the rules above and create each fitting with revit_create_mep_fitting after I confirm.
 
 Report
 - Fittings created (ID, kind, pipes joined), junctions skipped because a structure is there, and anything unresolved with the reason. A failed fitting is reported with Revit's message, not retried with moved pipes.
-- Tell me each fitting is its own Revit Undo step unless they were created in one call.
+- Tell me that one revit_connect_pipe_network call is one Revit Undo step, and each revit_create_mep_fitting call is its own.
 
 Do not
-- Do not create fittings before I have confirmed the plan. In a read-only session, stop at the plan.
+- Do not run revit_connect_pipe_network with dryRun: false or create fittings before I have confirmed the plan. In a read-only session, stop at the plan; the write tools are hidden there.
 - Do not delete, move, resize or re-slope pipes, and do not change systems or pipe types, unless I ask for it.
 - Do not use revit_send_code_to_revit when the typed tools can do the job.

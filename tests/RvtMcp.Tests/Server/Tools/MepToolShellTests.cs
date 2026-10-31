@@ -15,6 +15,7 @@ namespace RvtMcp.Tests
         {
             "revit_analyze_mep_network",
             "revit_connect_mep_elements",
+            "revit_connect_pipe_network",
             "revit_create_air_terminal",
             "revit_create_cable_tray",
             "revit_create_conduit",
@@ -157,6 +158,25 @@ namespace RvtMcp.Tests
             Assert.Equal(2, json.Value<long>("element_id_2"));
             Assert.Equal(0, json.Value<long>("connector_index_1"));
             Assert.Equal(1, json.Value<long>("connector_index_2"));
+        }
+
+        [Fact]
+        public async Task Connect_pipe_network_defaults_to_dry_run_and_sends_scope()
+        {
+            var sent = await Capture.Send(() => MepTools.ConnectPipeNetwork(systemName: "EMA-Pluviales"));
+
+            Assert.Equal("connect_pipe_network", sent.Command);
+            var json = sent.Json();
+            Assert.Equal("EMA-Pluviales", json.Value<string>("system_name"));
+            Assert.True(json.Value<bool>("dry_run"));
+            Assert.True(json.Value<bool>("copy_comments"));
+            Assert.Equal(5, json.Value<double>("tolerance_mm"));
+            Assert.Equal(100, json.Value<double>("structure_margin_mm"));
+            Assert.Equal(200, json.Value<int>("limit"));
+
+            sent = await Capture.Send(() => MepTools.ConnectPipeNetwork(elementIds: new long[] { 7, 8 }, dryRun: false));
+            Assert.Equal(new long[] { 7, 8 }, sent.Json()["element_ids"].Values<long>().ToArray());
+            Assert.False(sent.Json().Value<bool>("dry_run"));
         }
 
         [Fact]

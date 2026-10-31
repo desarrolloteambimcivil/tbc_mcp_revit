@@ -20,6 +20,8 @@ namespace RvtMcp.Tests
         [InlineData("pre_issue_check")]
         [InlineData("stairs")]
         [InlineData("pipe_network")]
+        [InlineData("asbuilt_network")]
+        [InlineData("parametric_family")]
         public void Embedded_prompt_body_loads(string name)
         {
             Assert.False(string.IsNullOrWhiteSpace(PromptBody.Load(name)), $"missing RvtMcp.Prompts.{name}.md");
@@ -346,6 +348,44 @@ namespace RvtMcp.Tests
             Assert.Contains("A structure is the junction", rendered);
             Assert.DoesNotContain("{request}", rendered);
             Assert.DoesNotContain("{mode}", rendered);
+        }
+
+        [Theory]
+        [InlineData(false, "Writes need confirmation of the agreed rules")]
+        [InlineData(true, "READ-ONLY")]
+        public void AsBuiltNetwork_renders_request_mode_and_reading_rules(bool readOnly, string expectedMode)
+        {
+            ServerState.Config = new RvtMcpConfig { Toolsets = new List<string> { "mep", "links", "meta" }, ReadOnly = readOnly };
+
+            var rendered = RevitPrompts.AsBuiltNetwork("Pluviales from PLANO ESTADO FINAL PLUVIAL.dwg");
+
+            Assert.Contains("Network and drawing: Pluviales from PLANO ESTADO FINAL PLUVIAL.dwg", rendered);
+            Assert.Contains(expectedMode, rendered);
+            Assert.Contains("revit_map_cad_link_points", rendered);
+            Assert.Contains("revit_connect_pipe_network", rendered);
+            Assert.Contains("zone by zone", rendered);
+            Assert.DoesNotContain("{request}", rendered);
+            Assert.DoesNotContain("{mode}", rendered);
+
+            ServerState.Config = new RvtMcpConfig { Toolsets = new List<string> { "mep", "meta" } };
+            Assert.Contains("Missing: links", RevitPrompts.AsBuiltNetwork("x"));
+        }
+
+        [Fact]
+        public void ParametricFamily_needs_send_code_and_carries_the_build_rules()
+        {
+            ServerState.Config = new RvtMcpConfig { Toolsets = new List<string> { "families", "meta" }, EnableSendCode = true };
+
+            var rendered = RevitPrompts.ParametricFamily("EMA_Imbornal: grate to the end of the body");
+
+            Assert.Contains("Family: EMA_Imbornal: grate to the end of the body", rendered);
+            Assert.Contains("not(a < b)", rendered);
+            Assert.Contains("nested family", rendered);
+            Assert.Contains("overwriteParameterValues = false", rendered);
+            Assert.Contains("Ask me which family", RevitPrompts.ParametricFamily(" "));
+
+            ServerState.Config = new RvtMcpConfig { Toolsets = new List<string> { "families", "meta" }, EnableSendCode = false };
+            Assert.DoesNotContain("Family: ", RevitPrompts.ParametricFamily("x"));
         }
 
         [Fact]

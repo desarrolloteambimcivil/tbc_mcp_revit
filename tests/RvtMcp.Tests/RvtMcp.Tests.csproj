@@ -31,6 +31,7 @@
     <Compile Include="..\..\src\shared\Infrastructure\RevitApiReference.cs" Link="Shared\Infrastructure\RevitApiReference.cs" />
     <Compile Include="..\..\src\shared\Handlers\Families\FamilySpec.cs" Link="Shared\Handlers\Families\FamilySpec.cs" />
     <Compile Include="..\..\src\shared\Handlers\Links\CadLinkCalibration.cs" Link="Shared\Handlers\Links\CadLinkCalibration.cs" />
+    <Compile Include="..\..\src\shared\Handlers\Mep\PipeJunctionPlanner.cs" Link="Shared\Handlers\Mep\PipeJunctionPlanner.cs" />
        <Compile Include="..\..\src\shared\Infrastructure\NoDocumentGuidance.cs" Link="Shared\Infrastructure\NoDocumentGuidance.cs" />
     <Compile Include="..\..\src\shared\Infrastructure\RecentFileList.cs" Link="Shared\Infrastructure\RecentFileList.cs" />
     <Compile Include="..\..\src\shared\Infrastructure\McpAddinDiscovery.cs" Link="Shared\Infrastructure\McpAddinDiscovery.cs" />

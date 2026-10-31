@@ -32,8 +32,17 @@ Install only the [latest GitHub Release](https://github.com/bimwright/rvt-mcp/re
 
 ### Pipe networks: fittings by default
 
-- **`revit_pipe_network` prompt** (`mep,meta`): makes a piping network continuous. Open pipe ends that meet without a structure get a fitting (elbow, union, tee, cross or transition); ends inside a manhole, chamber, gully, channel or tank stay open, because the structure is the junction. The agent proposes a table and writes only after confirmation; read-only sessions stop at the plan. New fittings take the same view-filter value (for example Comments) as the pipes they join. Pipes are never moved to make a fitting fit. Seven prompts in total.
-- **`revit_create_pipe`** description: consecutive segments should end at the same point and be joined with `revit_create_mep_fitting` in the same task.
+- **`revit_connect_pipe_network`** (`mep`, write, marked destructive because fittings trim the pipes they join): joins pipes that meet outside a structure. Open pipe End connectors within `toleranceMm` (default 5) are grouped:
+  - 2 ends → elbow, or union/transition when they continue straight;
+  - 3 ends → tee, with the straight run detected;
+  - 4 ends → cross.
+
+  Ends inside the extent of a generic model or plumbing/mechanical equipment (`structureMarginMm`, default 100) stay open, because the structure is the junction. Pipes are never moved. A fitting Revit refuses is listed in `failed`, while the others are kept. Scope with `systemName` (system or system-type name prefix) or `elementIds`; the whole model is never processed by default. `dryRun=true` (the default) returns the plan. New fittings copy the pipes' Comments when they agree, so view filters keep them. The response reports open ends before and after.
+- Development source counts: `--toolsets all` **246**, adaptive bake **249**, and bare defaults **53**.
+- **`revit_pipe_network` prompt** (`mep,meta`): makes a piping network continuous. Open pipe ends that meet without a structure get a fitting (elbow, union, tee, cross or transition); ends inside a manhole, chamber, gully, channel or tank stay open, because the structure is the junction. The agent proposes a table and writes only after confirmation; read-only sessions stop at the plan. New fittings take the same view-filter value (for example Comments) as the pipes they join. Pipes are never moved to make a fitting fit.
+- **`revit_asbuilt_network` prompt** (`mep,links,meta`): brings a piped network in line with an as-built DWG. It reads the drawing zone by zone before trusting automatic pairing, maps coordinates with `revit_map_cad_link_points`, compares drawing and model, and agrees the rules for missing levels and conflicts. It then rebuilds in named transactions, joins the network with `revit_connect_pipe_network` and verifies. Assumptions go into the report, never into a parameter that view filters use. Works with tbc-acad-mcp when it is connected.
+- **`revit_parametric_family` prompt** (`families,meta`, `send_code`): creates or improves a family that stays right for every type and instance value. Forms are tied to the reference planes their parameters move, and detailed patterns go in nested families. Every type and instance range is flexed, and the family is loaded keeping the instances' values, which are checked afterwards. Nine prompts in total.
+- **`revit_create_pipe`** description: consecutive segments should end at the same point and be joined with `revit_connect_pipe_network` in the same task.
 - [Placement and MEP contracts](docs/placement-and-mep-contracts.md#network-continuity) documents the convention.
 
 ## v1.3.2 — 2026-10-30

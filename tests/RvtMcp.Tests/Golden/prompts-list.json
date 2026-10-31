@@ -1,7 +1,19 @@
 {
   "generated_by": "PromptsListSnapshotTests",
-  "prompt_count": 7,
+  "prompt_count": 9,
   "prompts": [
+    {
+      "name": "revit_asbuilt_network",
+      "description_hash": "sha256:37a3768ebd8597b3cf026a43715bae0f59d719e74fa8129a3ab42dd946608225",
+      "arguments": [
+        {
+          "name": "request",
+          "required": true,
+          "default": null,
+          "description_hash": "sha256:2e584184c4e2c7803b5dc2e7f18766eb9c55c46e62e572dd4dd780bc1c7620eb"
+        }
+      ]
+    },
     {
       "name": "revit_change",
       "description_hash": "sha256:605949a12368ea387879f25148f5c42494fb92c326a67f2677b150f2ed210f11",
@@ -40,6 +52,18 @@
           "required": false,
           "default": "all",
           "description_hash": "sha256:abfd5f8525c96a1cfe8fe1ae972342ddbf3cec71ce7674bd99033cc4d4ca869c"
+        }
+      ]
+    },
+    {
+      "name": "revit_parametric_family",
+      "description_hash": "sha256:61f847872de92f1ccfe7c52c2aab0419ec75689eb08ece88b6224978da22d8e7",
+      "arguments": [
+        {
+          "name": "request",
+          "required": true,
+          "default": null,
+          "description_hash": "sha256:94f2825e18abcaced5087e448e3a5c035d3719295a84b432aaaff37ef6f5214b"
         }
       ]
     },

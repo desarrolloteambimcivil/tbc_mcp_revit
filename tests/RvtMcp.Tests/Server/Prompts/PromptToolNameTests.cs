@@ -41,8 +41,8 @@ namespace RvtMcp.Tests
                 .Where(n => n.StartsWith("RvtMcp.Prompts.", System.StringComparison.Ordinal)
                             && n.EndsWith(".md", System.StringComparison.Ordinal))
                 .ToArray();
-            Assert.True(resourceNames.Length == 7,
-                "expected 7 embedded prompt bodies, found: " + string.Join(", ", resourceNames));
+            Assert.True(resourceNames.Length == 9,
+                "expected 9 embedded prompt bodies, found: " + string.Join(", ", resourceNames));
 
             var failures = new List<string>();
             foreach (var resourceName in resourceNames)
