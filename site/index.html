@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>tbc-revit-mcp · TeamBIMCivil</title>
-  <meta name="description" content="tbc-revit-mcp conecta Claude y otros agentes MCP con Revit 2022–2027 y AutoCAD/Civil 3D: lee planos DWG, rehace redes as-built, detecta colisiones y une tuberías. Local y reversible. TeamBIMCivil.">
-  <meta property="og:title" content="tbc-revit-mcp · TeamBIMCivil">
-  <meta property="og:description" content="Agentes que modelan en Revit con datos de tus planos: redes as-built, uniones, colisiones y familias, con cada cambio verificado y reversible.">
+  <title>TBC-MCP · Del plano CAD al modelo BIM · TeamBIMCivil</title>
+  <meta name="description" content="TBC-MCP conecta Claude y otros agentes MCP con Revit, AutoCAD y Civil 3D 2022–2027 a la vez: el agente lee el plano DWG como un técnico y lo lleva al modelo Revit con coordenadas verificadas, uniones y sin colisiones. Local. TeamBIMCivil.">
+  <meta property="og:title" content="TBC-MCP · Del plano CAD al modelo BIM">
+  <meta property="og:description" content="Un agente de IA que lee tus planos de AutoCAD y Civil 3D y modela en Revit con esos datos: redes as-built, uniones, colisiones y familias. Un instalador, todo en tu equipo.">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#ffffff">
   <link rel="icon" href="assets/teambimcivil_icono.png" type="image/png">
@@ -29,14 +29,14 @@
   <div class="wrap header-row">
     <a class="brand" href="#top">
       <img src="assets/teambimcivil_logo_h.png" alt="TeamBIMCivil" width="862" height="180">
-      <span class="product">tbc-revit-mcp</span>
+      <span class="product">TBC-MCP</span>
     </a>
     <nav class="nav" aria-label="Principal">
+      <a href="#producto"><span lang="es">Producto</span><span lang="en">Product</span></a>
       <a href="#casos"><span lang="es">Casos</span><span lang="en">Cases</span></a>
       <a href="#herramientas"><span lang="es">Herramientas</span><span lang="en">Tools</span></a>
-      <a href="#funcionamiento"><span lang="es">Cómo funciona</span><span lang="en">How it works</span></a>
+      <a href="#preguntas"><span lang="es">Preguntas</span><span lang="en">FAQ</span></a>
       <a href="#instalar"><span lang="es">Instalar</span><span lang="en">Install</span></a>
-      <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit">GitHub</a>
     </nav>
     <div class="lang-toggle" role="group" aria-label="Idioma / Language">
       <button type="button" data-set-lang="es" aria-pressed="true">ES</button>
@@ -50,30 +50,35 @@
 <section class="hero dark" data-grid>
   <div class="wrap hero-grid">
     <div>
-      <p class="kicker"><span lang="es">MCP para Autodesk Revit 2022–2027 y AutoCAD / Civil 3D</span><span lang="en">MCP for Autodesk Revit 2022–2027 and AutoCAD / Civil 3D</span></p>
+      <p class="kicker">Revit · AutoCAD · Civil 3D · 2022–2027</p>
       <h1>
-        <span lang="es">Un agente que modela en Revit con <em>los datos de tus planos</em>.</span>
-        <span lang="en">An agent that models in Revit from <em>your drawings</em>.</span>
+        <span lang="es">Del plano CAD al modelo BIM, <em>con un agente que entiende los dos</em>.</span>
+        <span lang="en">From CAD drawing to BIM model, <em>with an agent that understands both</em>.</span>
       </h1>
       <p class="lead">
-        <span lang="es">tbc-revit-mcp conecta Claude, o cualquier cliente MCP, con el modelo que tienes abierto. Lee planos DWG, rehace redes as-built, une tuberías, detecta colisiones y corrige familias. Todo en tu equipo, y cada cambio en una transacción que puedes deshacer.</span>
-        <span lang="en">tbc-revit-mcp connects Claude, or any MCP client, to the model you have open. It reads DWG drawings, rebuilds as-built networks, joins pipes, finds clashes and fixes families. Everything runs on your machine, and every change is a transaction you can undo.</span>
+        <span lang="es">TBC-MCP conecta Claude, o cualquier asistente compatible con MCP, con Revit, AutoCAD y Civil 3D a la vez. El agente lee el plano como lo haría un técnico (textos, cotas, capas y bloques) y lo lleva al modelo con coordenadas verificadas, uniones correctas y sin colisiones. Todo ocurre en tu equipo.</span>
+        <span lang="en">TBC-MCP connects Claude, or any MCP-compatible assistant, to Revit, AutoCAD and Civil 3D at once. The agent reads the drawing the way a technician would (texts, levels, layers and blocks) and takes it into the model with verified coordinates, proper joints and no clashes. Everything happens on your machine.</span>
       </p>
       <div class="ctas">
         <a class="btn btn-primary" href="https://github.com/desarrolloteambimcivil/tbc_mcp_setup/releases/latest"><span lang="es">Descargar TBC-MCP</span><span lang="en">Download TBC-MCP</span></a>
-        <a class="btn btn-secondary" href="#casos"><span lang="es">Ver casos resueltos</span><span lang="en">See solved cases</span></a>
+        <a class="btn btn-secondary" href="#flujo"><span lang="es">Ver el flujo plano → modelo</span><span lang="en">See the drawing → model flow</span></a>
       </div>
+      <p class="hero-note"><span lang="es">Un instalador para Windows · sin permisos de administrador · código abierto</span><span lang="en">One Windows installer · no administrator rights · open source</span></p>
     </div>
 
     <aside class="console" aria-labelledby="console-title">
       <div class="console-bar">
         <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
         <span id="console-title"><span lang="es">caso real · red de pluviales as-built</span><span lang="en">real case · as-built stormwater network</span></span>
-        <span class="live">REVIT 2024</span>
+        <span class="live">CIVIL 3D + REVIT</span>
       </div>
       <ol class="console-log">
+        <li><span class="cmd">dwg_open_drawing</span> <span class="arg">read_only=true</span>
+          <span class="out"><span lang="es">plano de pluviales · 28 capas · abierto sin riesgo</span><span lang="en">stormwater drawing · 28 layers · opened safely</span></span></li>
+        <li><span class="cmd">dwg_query_entities</span> <span class="arg">layer="Z TUBO."</span>
+          <span class="out"><span lang="es">84 rótulos de cota leídos · Z ARQUETA / Z TUBERÍA</span><span lang="en">84 level labels read · rim / invert</span></span></li>
         <li><span class="cmd">revit_map_cad_link_points</span> <span class="arg">calibration=21</span>
-          <span class="out"><span lang="es">error máximo 0,06 mm · coordenadas compartidas verificadas</span><span lang="en">largest error 0.06 mm · shared coordinates verified</span></span></li>
+          <span class="out"><span lang="es">error máximo 0,06 mm · coordenadas compartidas</span><span lang="en">largest error 0.06 mm · shared coordinates</span></span></li>
         <li><span class="cmd">revit_asbuilt_network</span> <span class="arg">network=Pluviales</span>
           <span class="out"><span lang="es">59 tuberías · 35 estructuras · Δ cotas de fondo 0 mm</span><span lang="en">59 pipes · 35 structures · Δ inverts 0 mm</span></span></li>
         <li><span class="cmd">revit_connect_pipe_network</span> <span class="arg">dryRun=false</span>
@@ -87,11 +92,122 @@
 
   <div class="wrap">
     <ul class="stats">
-      <li><b>248</b><span lang="es">herramientas de Revit</span><span lang="en">Revit tools</span></li>
-      <li><b>9</b><span lang="es">flujos de trabajo guiados</span><span lang="en">guided workflows</span></li>
-      <li><b>2022–2027</b><span lang="es">versiones de Revit</span><span lang="en">Revit versions</span></li>
-      <li><b>Local</b><span lang="es">el modelo no sale de tu equipo</span><span lang="en">the model never leaves your PC</span></li>
+      <li><b data-count="317">317</b><span lang="es">herramientas: 248 de Revit y 69 de AutoCAD</span><span lang="en">tools: 248 for Revit and 69 for AutoCAD</span></li>
+      <li><b>3</b><span lang="es">programas: Revit, AutoCAD y Civil 3D</span><span lang="en">programs: Revit, AutoCAD and Civil 3D</span></li>
+      <li><b>0,06&nbsp;mm</b><span lang="es">error al llevar el plano al modelo</span><span lang="en">error taking the drawing into the model</span></li>
+      <li><b>1</b><span lang="es">instalador para todo</span><span lang="en">installer for everything</span></li>
     </ul>
+  </div>
+</section>
+
+<section id="problema">
+  <div class="wrap">
+    <h2><span lang="es">Revit ve las líneas del plano. TBC-MCP lo lee entero.</span><span lang="en">Revit sees the drawing's lines. TBC-MCP reads all of it.</span></h2>
+    <p class="section-lead">
+      <span lang="es">Un plano de estado final lleva los datos en textos, rótulos y bloques. Al vincularlo en Revit esos datos se pierden, y alguien tiene que medirlos y teclearlos uno a uno.</span>
+      <span lang="en">A final-state drawing carries its data in texts, labels and blocks. Linked into Revit, that data is lost, and someone has to measure and type it in one by one.</span>
+    </p>
+    <div class="versus">
+      <div class="versus-col versus-before" data-reveal>
+        <p class="versus-tag"><span lang="es">DWG vinculado en Revit</span><span lang="en">DWG linked in Revit</span></p>
+        <ul>
+          <li><span lang="es">No ve los textos: ni cotas de tapa y fondo, ni rótulos de diámetro.</span><span lang="en">No texts: no rim or invert levels, no diameter labels.</span></li>
+          <li><span lang="es">Los bloques llegan descompuestos, sin nombre ni atributos.</span><span lang="en">Blocks arrive exploded, without name or attributes.</span></li>
+          <li><span lang="es">La Z de las polilíneas no es fiable para cotas.</span><span lang="en">Polyline Z cannot be trusted for levels.</span></li>
+          <li><span lang="es">Comprobar el modelo contra el plano es trabajo a ojo.</span><span lang="en">Checking the model against the drawing is done by eye.</span></li>
+        </ul>
+      </div>
+      <div class="versus-col versus-after" data-reveal>
+        <p class="versus-tag"><span lang="es">Con TBC-MCP</span><span lang="en">With TBC-MCP</span></p>
+        <ul>
+          <li><span lang="es">Lee los textos ya legibles (Ø, %%c, unicode) y asocia cada cota a su arqueta.</span><span lang="en">Reads texts already decoded (Ø, %%c, unicode) and ties each level to its chamber.</span></li>
+          <li><span lang="es">Lee bloques con su nombre y atributos, y capas por diámetro.</span><span lang="en">Reads blocks with their name and attributes, and layers by diameter.</span></li>
+          <li><span lang="es">Lleva las coordenadas al modelo con error de cierre de 0,1 mm en cuatro planos reales.</span><span lang="en">Maps coordinates into the model with a 0.1 mm closure error on four real drawings.</span></li>
+          <li><span lang="es">Compara tramo a tramo y te entrega lo que falta, lo desplazado y lo que sobra.</span><span lang="en">Compares pipe by pipe and reports what is missing, displaced or extra.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band paper" id="producto">
+  <div class="wrap">
+    <h2><span lang="es">Un producto, dos programas, un agente</span><span lang="en">One product, two programs, one agent</span></h2>
+    <p class="section-lead">
+      <span lang="es">TBC-MCP instala dos conectores que trabajan juntos. El agente usa los dos en la misma conversación: lee en AutoCAD y escribe en Revit.</span>
+      <span lang="en">TBC-MCP installs two connectors that work together. The agent uses both in the same conversation: it reads in AutoCAD and writes in Revit.</span>
+    </p>
+    <div class="duo">
+      <article class="duo-card" data-reveal>
+        <p class="duo-count">248 <span lang="es">herramientas</span><span lang="en">tools</span></p>
+        <h3>Revit <span class="duo-years">2022–2027</span></h3>
+        <p class="duo-sub"><code>tbc-revit-mcp</code></p>
+        <ul>
+          <li><span lang="es">Redes de tuberías: crear, unir con piezas y resolver colisiones.</span><span lang="en">Pipe networks: create, join with fittings and resolve clashes.</span></li>
+          <li><span lang="es">Familias paramétricas que funcionan en todos sus tipos.</span><span lang="en">Parametric families that work in every type.</span></li>
+          <li><span lang="es">Vistas, planos, tablas, filtros y etiquetas.</span><span lang="en">Views, sheets, schedules, filters and tags.</span></li>
+          <li><span lang="es">Auditoría del modelo, avisos y control de cambios.</span><span lang="en">Model audit, warnings and change control.</span></li>
+          <li><span lang="es">C# contra la API, con modo de prueba que lo deshace todo.</span><span lang="en">C# against the API, with a dry run that rolls everything back.</span></li>
+        </ul>
+      </article>
+      <div class="duo-hub" aria-hidden="true">
+        <span class="duo-line"></span>
+        <span class="duo-node">
+          <b><span lang="es">Agente</span><span lang="en">Agent</span></b>
+          <small>Claude<br>Cursor · Codex</small>
+        </span>
+        <span class="duo-line"></span>
+      </div>
+      <article class="duo-card" data-reveal>
+        <p class="duo-count">69 <span lang="es">herramientas</span><span lang="en">tools</span></p>
+        <h3>AutoCAD · Civil 3D <span class="duo-years">2022–2027</span></h3>
+        <p class="duo-sub"><code>tbc-acad-mcp</code></p>
+        <ul>
+          <li><span lang="es">Textos, capas, bloques y atributos como datos, no como líneas.</span><span lang="en">Texts, layers, blocks and attributes as data, not lines.</span></li>
+          <li><span lang="es">Capturas del plano y zoom a una zona para comprobar la lectura.</span><span lang="en">Drawing captures and zoom into a region to check the reading.</span></li>
+          <li><span lang="es">Planos abiertos en solo lectura para analizarlos sin riesgo.</span><span lang="en">Drawings opened read-only to analyse them safely.</span></li>
+          <li><span lang="es">Edición de textos, capas, cotas, polilíneas y tablas.</span><span lang="en">Editing of texts, layers, dimensions, polylines and tables.</span></li>
+          <li><span lang="es">C# contra la API de AutoCAD para lo que no tenga herramienta.</span><span lang="en">C# against the AutoCAD API for anything without a tool.</span></li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="dark deep" id="flujo" data-grid>
+  <div class="wrap">
+    <h2><span lang="es">Del plano al modelo en cinco pasos</span><span lang="en">From drawing to model in five steps</span></h2>
+    <p class="section-lead">
+      <span lang="es">El flujo guiado <code>revit_asbuilt_network</code> lleva al agente paso a paso, y te pide confirmación antes de escribir en el modelo.</span>
+      <span lang="en">The guided workflow <code>revit_asbuilt_network</code> takes the agent step by step, and asks you before it writes to the model.</span>
+    </p>
+    <ol class="flow">
+      <li data-reveal>
+        <h3><span lang="es">Leer el plano</span><span lang="en">Read the drawing</span></h3>
+        <p><span lang="es">Trazados por capa, diámetros de rótulos y bloques, y cotas de tapa y fondo.</span><span lang="en">Routes by layer, diameters from labels and blocks, rim and invert levels.</span></p>
+        <p class="chips"><code>dwg_query_entities</code><code>dwg_get_block_attributes</code></p>
+      </li>
+      <li data-reveal>
+        <h3><span lang="es">Comprobar con capturas</span><span lang="en">Check with captures</span></h3>
+        <p><span lang="es">Mira el plano zona a zona antes de fiarse de la lectura automática.</span><span lang="en">Looks at the drawing zone by zone before trusting the automatic reading.</span></p>
+        <p class="chips"><code>dwg_capture_view_image</code><code>dwg_inspect_view_region</code></p>
+      </li>
+      <li data-reveal>
+        <h3><span lang="es">Calibrar coordenadas</span><span lang="en">Calibrate coordinates</span></h3>
+        <p><span lang="es">Del plano al modelo, contrastado con curvas del vínculo y con el error medido.</span><span lang="en">Drawing to model, checked against curves of the link, with the measured error.</span></p>
+        <p class="chips"><code>revit_map_cad_link_points</code></p>
+      </li>
+      <li data-reveal>
+        <h3><span lang="es">Comparar y modelar</span><span lang="en">Compare and model</span></h3>
+        <p><span lang="es">Qué está bien, qué está desplazado y qué falta. Con tus criterios, rehace la red.</span><span lang="en">What is right, displaced or missing. With your rules, it rebuilds the network.</span></p>
+        <p class="chips"><code>revit_asbuilt_network</code><code>revit_create_pipe</code></p>
+      </li>
+      <li data-reveal>
+        <h3><span lang="es">Unir y verificar</span><span lang="en">Join and verify</span></h3>
+        <p><span lang="es">Piezas en las uniones, colisiones resueltas y un informe con cada supuesto.</span><span lang="en">Fittings at the joints, clashes resolved and a report with every assumption.</span></p>
+        <p class="chips"><code>revit_connect_pipe_network</code><code>revit_find_pipe_clashes</code></p>
+      </li>
+    </ol>
   </div>
 </section>
 
@@ -225,13 +341,42 @@
   </div>
 </section>
 
+<section id="para-quien">
+  <div class="wrap">
+    <h2><span lang="es">Para quién es</span><span lang="en">Who it is for</span></h2>
+    <p class="section-lead">
+      <span lang="es">Para equipos de ingeniería civil e instalaciones que trabajan entre AutoCAD y Revit, y quieren dedicar las horas a decidir, no a medir.</span>
+      <span lang="en">For civil and MEP engineering teams working between AutoCAD and Revit who want to spend their hours deciding, not measuring.</span>
+    </p>
+    <div class="audience">
+      <article data-reveal>
+        <h3><span lang="es">Redes y as-built</span><span lang="en">Networks and as-built</span></h3>
+        <p><span lang="es">Saneamiento, pluviales, abastecimiento y electricidad, del plano de estado final al modelo, con cotas e informe.</span><span lang="en">Sanitary, stormwater, water supply and power, from the final-state drawing to the model, with levels and a report.</span></p>
+      </article>
+      <article data-reveal>
+        <h3><span lang="es">Coordinación BIM</span><span lang="en">BIM coordination</span></h3>
+        <p><span lang="es">Colisiones clasificadas y resueltas con criterio de pendiente, sin romper las cotas que vienen del plano.</span><span lang="en">Clashes classified and resolved with the fall in mind, without breaking the levels from the drawing.</span></p>
+      </article>
+      <article data-reveal>
+        <h3><span lang="es">BIM managers</span><span lang="en">BIM managers</span></h3>
+        <p><span lang="es">Auditorías, avisos, nombres de vistas, familias y revisión antes de emitir, a demanda.</span><span lang="en">Audits, warnings, view names, families and pre-issue checks, on demand.</span></p>
+      </article>
+      <article data-reveal>
+        <h3><span lang="es">Delineación CAD</span><span lang="en">CAD drafting</span></h3>
+        <p><span lang="es">Textos, capas y bloques consultados y corregidos en lote, y planos revisados sin abrirlos a mano.</span><span lang="en">Texts, layers and blocks queried and fixed in bulk, drawings checked without opening them by hand.</span></p>
+      </article>
+    </div>
+  </div>
+</section>
+
 <section class="dark" id="herramientas" data-grid>
   <div class="wrap">
     <h2><span lang="es">Herramientas</span><span lang="en">Tools</span></h2>
     <p class="section-lead">
-      <span lang="es">248 herramientas con nombre propio para Revit, un MCP hermano para AutoCAD y Civil 3D, y C# para lo que no tenga herramienta. Una selección:</span>
-      <span lang="en">248 named Revit tools, a sibling MCP for AutoCAD and Civil 3D, and C# for whatever has no tool. A selection:</span>
+      <span lang="es">317 herramientas con nombre propio y C# para lo que no tenga herramienta. Una selección:</span>
+      <span lang="en">317 named tools, and C# for whatever has no tool. A selection:</span>
     </p>
+    <h3 class="tool-head"><span>Revit</span><small>248</small></h3>
     <div class="tool-grid">
       <section class="tool-group" data-reveal>
         <h3><span lang="es">Ver y capturar</span><span lang="en">See and capture</span></h3>
@@ -282,11 +427,38 @@
         </dl>
       </section>
     </div>
+    <h3 class="tool-head"><span>AutoCAD · Civil 3D</span><small>69</small></h3>
+    <div class="tool-grid">
+      <section class="tool-group" data-reveal>
+        <h3><span lang="es">Leer el plano</span><span lang="en">Read the drawing</span></h3>
+        <dl>
+          <dt>dwg_get_drawing_profile</dt><dd><span lang="es">Resumen del plano: unidades, capas, bloques y tipos de entidad.</span><span lang="en">Drawing summary: units, layers, blocks and entity types.</span></dd>
+          <dt>dwg_query_entities</dt><dd><span lang="es">Entidades por capa, tipo o zona, con texto legible, posición y extensión.</span><span lang="en">Entities by layer, type or region, with readable text, position and extents.</span></dd>
+          <dt>dwg_get_block_attributes</dt><dd><span lang="es">Atributos de bloques con su valor tal como se ve en el plano.</span><span lang="en">Block attributes with their value as the drawing shows it.</span></dd>
+        </dl>
+      </section>
+      <section class="tool-group" data-reveal>
+        <h3><span lang="es">Ver y abrir</span><span lang="en">See and open</span></h3>
+        <dl>
+          <dt>dwg_capture_view_image</dt><dd><span lang="es">Imagen de la vista actual del plano.</span><span lang="en">Image of the drawing's current view.</span></dd>
+          <dt>dwg_inspect_view_region</dt><dd><span lang="es">Amplía una zona de una captura anterior y devuelve una imagen nueva.</span><span lang="en">Zooms into a region of an earlier capture and returns a new image.</span></dd>
+          <dt>dwg_open_drawing</dt><dd><span lang="es">Abre planos, también en solo lectura.</span><span lang="en">Opens drawings, also read-only.</span></dd>
+        </dl>
+      </section>
+      <section class="tool-group" data-reveal>
+        <h3><span lang="es">Editar y exportar</span><span lang="en">Edit and export</span></h3>
+        <dl>
+          <dt>dwg_update_texts</dt><dd><span lang="es">Corrige textos en lote; un solo Ctrl+Z deshace todo el lote.</span><span lang="en">Fixes texts in bulk; a single Ctrl+Z undoes the whole batch.</span></dd>
+          <dt>dwg_create_polyline</dt><dd><span lang="es">Polilíneas, textos, cotas, tablas y bloques por coordenadas.</span><span lang="en">Polylines, texts, dimensions, tables and blocks by coordinates.</span></dd>
+          <dt>dwg_export_dxf</dt><dd><span lang="es">Exporta el plano a DXF.</span><span lang="en">Exports the drawing to DXF.</span></dd>
+        </dl>
+      </section>
+    </div>
 
     <h3 class="sub"><span lang="es">Flujos de trabajo guiados</span><span lang="en">Guided workflows</span></h3>
     <p class="section-lead">
-      <span lang="es">Prompts que el servidor entrega a cualquier cliente MCP. El agente sigue el procedimiento y te pide confirmación antes de escribir.</span>
-      <span lang="en">Prompts the server hands to any MCP client. The agent follows the procedure and asks you before writing.</span>
+      <span lang="es">Procedimientos que el servidor entrega a cualquier cliente MCP. El agente los sigue y te pide confirmación antes de escribir.</span>
+      <span lang="en">Procedures the server hands to any MCP client. The agent follows them and asks you before writing.</span>
     </p>
     <ul class="workflows">
       <li><code>revit_asbuilt_network</code><span lang="es">Red as-built desde un DWG</span><span lang="en">As-built network from a DWG</span></li>
@@ -306,8 +478,8 @@
   <div class="wrap">
     <h2><span lang="es">Cómo funciona</span><span lang="en">How it works</span></h2>
     <p class="section-lead">
-      <span lang="es">Dos programas pequeños en tu equipo. El agente habla MCP con un servidor local y el servidor con un complemento dentro de Revit, que ejecuta cada petición en el hilo de Revit. Para AutoCAD y Civil 3D, <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_autocad">tbc-acad-mcp</a> hace lo mismo, y el agente usa los dos en la misma conversación.</span>
-      <span lang="en">Two small programs on your machine. The agent talks MCP to a local server, and the server to an add-in inside Revit that runs each request on Revit's own thread. For AutoCAD and Civil 3D, <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_autocad">tbc-acad-mcp</a> does the same, and the agent uses both in the same conversation.</span>
+      <span lang="es">Programas pequeños en tu equipo. El agente habla MCP con un servidor local por programa, y cada servidor con un complemento dentro de Revit o de AutoCAD, que ejecuta las peticiones en el hilo del programa.</span>
+      <span lang="en">Small programs on your machine. The agent talks MCP to one local server per program, and each server to an add-in inside Revit or AutoCAD that runs requests on the program's own thread.</span>
     </p>
     <svg class="arch" viewBox="0 0 1000 250" role="img" aria-labelledby="arch-title">
       <title id="arch-title">Claude o cualquier cliente MCP, al servidor local, al complemento de Revit o de AutoCAD, al modelo o al plano</title>
@@ -326,36 +498,71 @@
       <g class="a-small"><text x="252" y="246" text-anchor="middle">stdio</text><text x="542" y="132" text-anchor="middle"><tspan lang="es">pipe / TCP local</tspan><tspan lang="en">local pipe / TCP</tspan></text><text x="792" y="132" text-anchor="middle">API</text></g>
     </svg>
     <div class="principles">
-      <div><h3><span lang="es">Reversible</span><span lang="en">Reversible</span></h3><p><span lang="es">Cada cambio es una transacción con nombre: Ctrl+Z lo deshace. El modelo nunca se guarda por ti.</span><span lang="en">Each change is a named transaction: Ctrl+Z undoes it. The model is never saved for you.</span></p></div>
+      <div><h3><span lang="es">Reversible en Revit</span><span lang="en">Reversible in Revit</span></h3><p><span lang="es">Cada cambio es una transacción con nombre: Ctrl+Z lo deshace. El modelo nunca se guarda por ti.</span><span lang="en">Each change is a named transaction: Ctrl+Z undoes it. The model is never saved for you.</span></p></div>
       <div><h3><span lang="es">Los avisos no se esconden</span><span lang="en">Warnings are not hidden</span></h3><p><span lang="es">Si Revit avisa durante una petición, el cambio se revierte y el aviso queda registrado en Historial → Incidencias.</span><span lang="en">If Revit warns during a request, the change is rolled back and the warning is recorded in History → Issues.</span></p></div>
-      <div><h3><span lang="es">Primero el plan</span><span lang="en">Plan first</span></h3><p><span lang="es">Las herramientas que cambian mucho enseñan antes el plan (dryRun) y esperan tu confirmación.</span><span lang="en">Tools that change a lot show the plan first (dryRun) and wait for your confirmation.</span></p></div>
-      <div><h3><span lang="es">Local</span><span lang="en">Local</span></h3><p><span lang="es">Pipe o TCP local con token por sesión. Tu modelo no pasa por ningún servidor nuestro.</span><span lang="en">Local pipe or TCP with a per-session token. Your model never goes through a server of ours.</span></p></div>
+      <div><h3><span lang="es">Primero el plan</span><span lang="en">Plan first</span></h3><p><span lang="es">Las herramientas que cambian mucho enseñan antes el plan y esperan tu confirmación. Los planos se pueden abrir en solo lectura.</span><span lang="en">Tools that change a lot show the plan first and wait for your confirmation. Drawings can be opened read-only.</span></p></div>
+      <div><h3><span lang="es">Local</span><span lang="en">Local</span></h3><p><span lang="es">Pipe o TCP local con token por sesión. Tus modelos y planos no pasan por ningún servidor nuestro.</span><span lang="en">Local pipe or TCP with a per-session token. Your models and drawings never go through a server of ours.</span></p></div>
     </div>
     <p class="clients-label"><span lang="es">Funciona con</span><span lang="en">Works with</span></p>
     <ul class="clients"><li>Claude Code</li><li>Claude Desktop</li><li>Cursor</li><li>Codex</li><li>Cline</li><li><span lang="es">cualquier cliente MCP</span><span lang="en">any MCP client</span></li></ul>
   </div>
 </section>
 
-<section id="instalar">
+<section id="preguntas">
+  <div class="wrap faq-wrap">
+    <div>
+      <h2><span lang="es">Preguntas frecuentes</span><span lang="en">Questions</span></h2>
+      <p class="section-lead"><span lang="es">Lo que suele preguntar un equipo antes de probarlo.</span><span lang="en">What teams usually ask before trying it.</span></p>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary><span lang="es">¿Qué necesito para usarlo?</span><span lang="en">What do I need?</span></summary>
+        <p><span lang="es">Windows con Revit, AutoCAD o Civil 3D de 2022 a 2027 y un asistente compatible con MCP: Claude Code, Claude Desktop, Cursor, Codex u otro. Puedes instalar solo la parte del programa que tengas. AutoCAD LT no sirve porque no tiene API .NET.</span><span lang="en">Windows with Revit, AutoCAD or Civil 3D from 2022 to 2027, and an MCP-compatible assistant: Claude Code, Claude Desktop, Cursor, Codex or another. You can install only the part for the program you have. AutoCAD LT is not supported because it has no .NET API.</span></p>
+      </details>
+      <details>
+        <summary><span lang="es">¿Mis modelos y planos salen de mi equipo?</span><span lang="en">Do my models and drawings leave my machine?</span></summary>
+        <p><span lang="es">Los conectores y los servidores son locales, y no pasan por ningún servidor nuestro. Lo que el agente lee para responderte viaja a tu proveedor de IA dentro de la conversación, igual que cualquier texto que le escribas.</span><span lang="en">The connectors and servers are local and nothing goes through a server of ours. What the agent reads to answer you travels to your AI provider within the conversation, like any text you type to it.</span></p>
+      </details>
+      <details>
+        <summary><span lang="es">¿Puede estropear un modelo o un plano?</span><span lang="en">Can it break a model or a drawing?</span></summary>
+        <p><span lang="es">En Revit cada cambio es una transacción que deshaces con Ctrl+Z; si Revit avisa, el cambio se revierte, y el modelo nunca se guarda por ti. Las herramientas que cambian mucho enseñan antes el plan. Los planos de AutoCAD se pueden abrir en solo lectura para analizarlos.</span><span lang="en">In Revit each change is a transaction you undo with Ctrl+Z; if Revit warns, the change is rolled back, and the model is never saved for you. Tools that change a lot show the plan first. AutoCAD drawings can be opened read-only for analysis.</span></p>
+      </details>
+      <details>
+        <summary><span lang="es">¿Sirve si solo uso Revit, o solo AutoCAD?</span><span lang="en">Does it help if I only use Revit, or only AutoCAD?</span></summary>
+        <p><span lang="es">Sí. El instalador detecta qué programas tienes y marca solo esos. Cada parte funciona por su cuenta; juntas, el agente puede llevar el plano al modelo.</span><span lang="en">Yes. The installer detects which programs you have and ticks only those. Each part works on its own; together, the agent can take the drawing into the model.</span></p>
+      </details>
+      <details>
+        <summary><span lang="es">¿Cómo se actualiza?</span><span lang="en">How is it updated?</span></summary>
+        <p><span lang="es">Pregunta al agente por la salud de cada conector (<code>revit_health</code>, <code>dwg_health</code>): compara tu versión con la última publicada. Para actualizar, ejecuta el nuevo instalador; tus ajustes y tu historial se conservan.</span><span lang="en">Ask the agent for each connector's health (<code>revit_health</code>, <code>dwg_health</code>): it compares your version with the latest release. To update, run the new installer; your settings and history are kept.</span></p>
+      </details>
+      <details>
+        <summary><span lang="es">¿Es de código abierto?</span><span lang="en">Is it open source?</span></summary>
+        <p><span lang="es">Sí, con licencia Apache-2.0. Parte de rvt-mcp y dwg-mcp, de Khoa Le (Bimwright), y lo amplía TeamBIMCivil con herramientas que salen de proyectos reales.</span><span lang="en">Yes, under the Apache-2.0 license. It builds on rvt-mcp and dwg-mcp by Khoa Le (Bimwright), extended by TeamBIMCivil with tools that come from real projects.</span></p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="paper" id="instalar">
   <div class="wrap install">
     <div>
       <h2><span lang="es">Instalar</span><span lang="en">Install</span></h2>
       <p class="section-lead">
-        <span lang="es">Windows con Revit 2022–2027, AutoCAD o Civil 3D 2022–2027. Sin permisos de administrador.</span>
-        <span lang="en">Windows with Revit 2022–2027, AutoCAD or Civil 3D 2022–2027. No administrator rights needed.</span>
+        <span lang="es">Windows con Revit, AutoCAD o Civil 3D 2022–2027. Sin permisos de administrador.</span>
+        <span lang="en">Windows with Revit, AutoCAD or Civil 3D 2022–2027. No administrator rights needed.</span>
       </p>
       <div class="pick">
         <div class="pick-card pick-main">
           <p class="pick-tag"><span lang="es">Recomendado</span><span lang="en">Recommended</span></p>
           <h3>TBC-MCP <span class="pick-sub">Revit + AutoCAD / Civil 3D</span></h3>
-          <p><span lang="es">Un instalador para los dos: detecta qué programas tienes y marca solo esos. Instala tbc-revit-mcp y tbc-acad-mcp y los conecta a tus asistentes.</span><span lang="en">One installer for both: it detects which programs you have and ticks only those. It installs tbc-revit-mcp and tbc-acad-mcp and connects them to your assistants.</span></p>
+          <p><span lang="es">Un instalador para todo: detecta qué programas tienes, marca solo esos y los conecta a tus asistentes.</span><span lang="en">One installer for everything: it detects which programs you have, ticks only those and connects them to your assistants.</span></p>
           <p class="pick-file"><code>TbcMcp_Setup_&lt;<span lang="es">versión</span><span lang="en">version</span>&gt;.exe</code></p>
           <a class="btn btn-primary" href="https://github.com/desarrolloteambimcivil/tbc_mcp_setup/releases/latest"><span lang="es">Descargar TBC-MCP</span><span lang="en">Download TBC-MCP</span></a>
         </div>
         <div class="pick-card">
           <p class="pick-tag"><span lang="es">Solo Revit</span><span lang="en">Revit only</span></p>
           <h3>tbc-revit-mcp</h3>
-          <p><span lang="es">Si no usas AutoCAD ni Civil 3D. Si más adelante instalas TBC-MCP, sustituye a este instalador y conserva tus datos.</span><span lang="en">If you do not use AutoCAD or Civil 3D. If you install TBC-MCP later, it replaces this installer and keeps your data.</span></p>
+          <p><span lang="es">El conector de Revit por separado. Si más adelante instalas TBC-MCP, lo sustituye y conserva tus datos.</span><span lang="en">The Revit connector on its own. If you install TBC-MCP later, it replaces it and keeps your data.</span></p>
           <p class="pick-file"><code>TbcRevitMcp_Setup_&lt;<span lang="es">versión</span><span lang="en">version</span>&gt;.exe</code></p>
           <a class="btn btn-secondary" href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><span lang="es">Descargar tbc-revit-mcp</span><span lang="en">Download tbc-revit-mcp</span></a>
         </div>
@@ -364,7 +571,7 @@
         <li><b><span lang="es">Cierra Revit, AutoCAD y tus asistentes</span><span lang="en">Close Revit, AutoCAD and your assistants</span></b>
           <span lang="es">También Claude Desktop desde la bandeja del sistema: al cerrarse reescribe su configuración.</span><span lang="en">Also Claude Desktop from the system tray: it rewrites its configuration when it quits.</span></li>
         <li><b><span lang="es">Ejecuta el instalador</span><span lang="en">Run the installer</span></b>
-          <span lang="es">Elige qué asistentes conectar: Claude Code, Claude Desktop, Cursor o Codex.</span><span lang="en">Choose the assistants to connect: Claude Code, Claude Desktop, Cursor or Codex.</span></li>
+          <span lang="es">Elige programas y asistentes: Claude Code, Claude Desktop, Cursor o Codex.</span><span lang="en">Choose programs and assistants: Claude Code, Claude Desktop, Cursor or Codex.</span></li>
         <li><b><span lang="es">Abre Revit o AutoCAD y pregunta</span><span lang="en">Open Revit or AutoCAD and ask</span></b>
           <span lang="es">Si en Revit MCP no arranca solo, pulsa Complementos → RvtMcp y reinicia tu asistente.</span><span lang="en">If MCP does not start by itself in Revit, click Add-Ins → RvtMcp and restart your assistant.</span></li>
       </ol>
@@ -372,18 +579,35 @@
         <summary><span lang="es">Instalación por script (ZIP + PowerShell)</span><span lang="en">Scripted install (ZIP + PowerShell)</span></summary>
         <pre class="code">powershell -ExecutionPolicy Bypass -File .\install.ps1 -WhatIf -Client claude
 powershell -ExecutionPolicy Bypass -File .\install.ps1 -Client claude</pre>
-        <p><span lang="es">Descomprime antes <code>TbcRevitMcp.Setup-&lt;versión&gt;-win-x64.zip</code> y compruébalo con su <code>.sha256</code>. Para otros clientes: <code>-Client claude-desktop</code>, <code>cursor</code> o <code>codex</code>.</span><span lang="en">Unzip <code>TbcRevitMcp.Setup-&lt;version&gt;-win-x64.zip</code> first and check it against its <code>.sha256</code>. For other clients: <code>-Client claude-desktop</code>, <code>cursor</code> or <code>codex</code>.</span></p>
+        <p><span lang="es">Cada conector publica su ZIP con su <code>.sha256</code>: <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest">Revit</a> y <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_autocad/releases/latest">AutoCAD/Civil 3D</a>. Descomprímelo, compruébalo y ejecuta su <code>install.ps1</code>. Para otros clientes: <code>-Client claude-desktop</code>, <code>cursor</code> o <code>codex</code>.</span><span lang="en">Each connector publishes its ZIP with a <code>.sha256</code>: <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest">Revit</a> and <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_autocad/releases/latest">AutoCAD/Civil 3D</a>. Unzip it, check it and run its <code>install.ps1</code>. For other clients: <code>-Client claude-desktop</code>, <code>cursor</code> or <code>codex</code>.</span></p>
       </details>
     </div>
     <div class="ask">
-      <h3><span lang="es">Peticiones que ya resuelve</span><span lang="en">Requests it already handles</span></h3>
+      <h3><span lang="es">Pídeselo así</span><span lang="en">Ask it like this</span></h3>
       <ul>
-        <li><span lang="es">«Compara la red de pluviales del modelo con el plano as-built.»</span><span lang="en">“Compare the stormwater network in the model with the as-built drawing.”</span></li>
-        <li><span lang="es">«Une las tuberías de saneamiento que se encuentran sin pieza.»</span><span lang="en">“Join the sanitary pipes that meet without a fitting.”</span></li>
+        <li><span lang="es">«Lee las cotas del plano de pluviales y dime qué arquetas faltan en el modelo.»</span><span lang="en">“Read the levels on the stormwater drawing and tell me which chambers are missing in the model.”</span></li>
+        <li><span lang="es">«Compara la red de saneamiento del modelo con el plano as-built.»</span><span lang="en">“Compare the sanitary network in the model with the as-built drawing.”</span></li>
+        <li><span lang="es">«Une las tuberías que se encuentran sin pieza.»</span><span lang="en">“Join the pipes that meet without a fitting.”</span></li>
         <li><span lang="es">«Busca colisiones de pluviales con 50 mm de holgura.»</span><span lang="en">“Find stormwater clashes with 50 mm clearance.”</span></li>
-        <li><span lang="es">«Haz que la rejilla de esta familia llegue al final en todos los tipos.»</span><span lang="en">“Make this family's grate reach the end in every type.”</span></li>
+        <li><span lang="es">«¿Qué capas y bloques tiene este plano?»</span><span lang="en">“Which layers and blocks does this drawing have?”</span></li>
         <li><span lang="es">«Revisa los avisos del modelo antes de emitir.»</span><span lang="en">“Check the model warnings before we issue.”</span></li>
       </ul>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band dark" data-grid>
+  <div class="wrap cta">
+    <div>
+      <h2><span lang="es">Prueba TBC-MCP con tu próximo plano</span><span lang="en">Try TBC-MCP on your next drawing</span></h2>
+      <p>
+        <span lang="es">Instálalo en diez minutos y pídele al agente que lea un plano de tu proyecto. Si quieres implantarlo en tu equipo y adaptarlo a vuestras normas de modelado, en TeamBIMCivil te ayudamos.</span>
+        <span lang="en">Install it in ten minutes and ask the agent to read a drawing from your project. If you want to roll it out in your team and adapt it to your modelling standards, TeamBIMCivil can help.</span>
+      </p>
+    </div>
+    <div class="ctas">
+      <a class="btn btn-primary" href="https://github.com/desarrolloteambimcivil/tbc_mcp_setup/releases/latest"><span lang="es">Descargar TBC-MCP</span><span lang="en">Download TBC-MCP</span></a>
+      <a class="btn btn-secondary" href="https://www.teambimcivil.com/contacto"><span lang="es">Hablar con TeamBIMCivil</span><span lang="en">Talk to TeamBIMCivil</span></a>
     </div>
   </div>
 </section>
@@ -393,16 +617,16 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1 -Client claude</pre>
     <div>
       <h2><span lang="es">Hecho en TeamBIMCivil</span><span lang="en">Made at TeamBIMCivil</span></h2>
       <p>
-        <span lang="es">tbc-revit-mcp lo desarrolla y mantiene <b>Nour Rouas</b>, desarrollador y modelador BIM en <b>TeamBIMCivil</b> (ingeniería, formación y consultoría). Cada herramienta nueva sale de un problema real de modelado en un proyecto real.</span>
-        <span lang="en">tbc-revit-mcp is built and maintained by <b>Nour Rouas</b>, BIM developer and modeller at <b>TeamBIMCivil</b> (engineering, training and consultancy). Each new tool comes from a real modelling problem on a real project.</span>
+        <span lang="es">TBC-MCP lo desarrolla y mantiene <b>Nour Rouas</b>, desarrollador y modelador BIM en <a href="https://www.teambimcivil.com/"><b>TeamBIMCivil</b></a> (ingeniería, formación y consultoría). Cada herramienta nueva sale de un problema real de modelado en un proyecto real.</span>
+        <span lang="en">TBC-MCP is built and maintained by <b>Nour Rouas</b>, BIM developer and modeller at <a href="https://www.teambimcivil.com/"><b>TeamBIMCivil</b></a> (engineering, training and consultancy). Each new tool comes from a real modelling problem on a real project.</span>
       </p>
       <a class="btn btn-secondary" href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/issues"><span lang="es">Proponer una función</span><span lang="en">Suggest a feature</span></a>
     </div>
     <div class="license">
       <h3><span lang="es">Código abierto, con reconocimiento</span><span lang="en">Open source, with credit</span></h3>
       <p>
-        <span lang="es">Apache-2.0. tbc-revit-mcp parte de <a href="https://github.com/bimwright/rvt-mcp">rvt-mcp</a>, de Khoa Le (Bimwright); el copyright y la licencia originales se conservan en NOTICE.</span>
-        <span lang="en">Apache-2.0. tbc-revit-mcp is a fork of <a href="https://github.com/bimwright/rvt-mcp">rvt-mcp</a> by Khoa Le (Bimwright); the original copyright and license are kept in NOTICE.</span>
+        <span lang="es">Apache-2.0. tbc-revit-mcp parte de <a href="https://github.com/bimwright/rvt-mcp">rvt-mcp</a> y tbc-acad-mcp de <a href="https://github.com/bimwright/dwg-mcp">dwg-mcp</a>, ambos de Khoa Le (Bimwright); el copyright y la licencia originales se conservan en NOTICE.</span>
+        <span lang="en">Apache-2.0. tbc-revit-mcp is a fork of <a href="https://github.com/bimwright/rvt-mcp">rvt-mcp</a> and tbc-acad-mcp of <a href="https://github.com/bimwright/dwg-mcp">dwg-mcp</a>, both by Khoa Le (Bimwright); the original copyright and license are kept in NOTICE.</span>
       </p>
     </div>
   </div>
@@ -414,12 +638,12 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1 -Client claude</pre>
   <div class="wrap footer-row">
     <img src="assets/teambimcivil_logo_h.png" alt="TeamBIMCivil" width="862" height="180">
     <nav>
-      <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit">GitHub</a>
+      <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_setup"><span lang="es">Instalador</span><span lang="en">Installer</span></a>
+      <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit">tbc-revit-mcp</a>
       <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_autocad">tbc-acad-mcp</a>
-      <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_setup"><span lang="es">Instalador TBC-MCP</span><span lang="en">TBC-MCP installer</span></a>
-      <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/blob/master/CHANGELOG.md">Changelog</a>
       <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/blob/master/LICENSE"><span lang="es">Licencia</span><span lang="en">License</span></a>
       <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/blob/master/SECURITY.md"><span lang="es">Seguridad</span><span lang="en">Security</span></a>
+      <a href="https://www.teambimcivil.com/contacto"><span lang="es">Contacto</span><span lang="en">Contact</span></a>
     </nav>
     <p>
       <span lang="es">© 2026 Nour Rouas · TeamBIMCivil. Autodesk, Revit, AutoCAD y Civil 3D son marcas registradas de Autodesk, Inc. Este proyecto no está afiliado ni respaldado por Autodesk.</span>

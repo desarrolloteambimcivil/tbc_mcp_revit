@@ -126,6 +126,8 @@ h1 em { font-style: normal; color: var(--red); }
 .lead { font-size: 1.12rem; margin: 24px 0 34px; max-width: 600px; }
 .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
 
+.hero-note { margin: 18px 0 0; font: 0.8rem var(--mono); color: var(--ink-muted); letter-spacing: 0.02em; }
+
 /* Console with the real tool calls of the case. */
 .console {
   position: relative; border: 1px solid var(--ink-line); border-radius: var(--radius-panel);
@@ -148,6 +150,8 @@ h1 em { font-style: normal; color: var(--red); }
 .console-log li:nth-child(3) { animation-delay: 1.9s; }
 .console-log li:nth-child(4) { animation-delay: 2.7s; }
 @keyframes line-in { to { opacity: 1; transform: none; } }
+.console-log li:nth-child(5) { animation-delay: 3.5s; }
+.console-log li:nth-child(6) { animation-delay: 4.3s; }
 .console-log .cmd { color: var(--ink-strong); }
 .console-log .cmd::before { content: "› "; color: var(--red); }
 .console-log .arg { color: var(--ink-muted); }
@@ -160,6 +164,64 @@ h1 em { font-style: normal; color: var(--red); }
 .stats li::before { content: ""; position: absolute; top: -4px; left: 0; width: 1px; height: 8px; background: var(--ink-muted); }
 .stats b { display: block; font-family: var(--mono); font-size: 1.9rem; font-weight: 600; letter-spacing: -0.02em; }
 .stats span { font-size: 0.9rem; color: var(--ink-muted); }
+
+/* ---------- Problem: linked DWG versus TBC-MCP ---------- */
+.versus { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.versus-col { border: 1px solid var(--grey-surface); border-radius: var(--radius-panel); padding: 26px 28px; background: var(--surface); }
+.versus-before { background: var(--bg); }
+.versus-after { border-color: var(--red-action); box-shadow: inset 4px 0 0 var(--red), 0 24px 48px -36px rgba(184, 36, 29, 0.45); }
+.versus-tag { margin: 0 0 14px; font: 600 0.78rem var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--grey-brand); }
+.versus-after .versus-tag { color: var(--red-action); }
+.versus ul { margin: 0; padding: 0; list-style: none; }
+.versus li { position: relative; padding: 10px 0 10px 30px; border-bottom: 1px dashed var(--grey-surface); }
+.versus li:last-child { border-bottom: 0; }
+.versus li::before { position: absolute; left: 0; top: 10px; font: 700 0.9rem var(--mono); }
+.versus-before li::before { content: "\00D7"; color: var(--grey-brand); }
+.versus-after li::before { content: "\2713"; color: var(--red-action); }
+
+/* ---------- One product, two programs ---------- */
+.duo { display: grid; grid-template-columns: 1fr 150px 1fr; align-items: stretch; }
+.duo-card { position: relative; border: 1px solid var(--grey-surface); border-radius: var(--radius-panel); padding: 28px; background: var(--surface); box-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.3); }
+.duo-card::before { content: ""; position: absolute; left: 28px; top: -1px; width: 44px; height: 3px; background: var(--red); }
+.duo-count { margin: 0 0 6px; font: 700 0.85rem var(--mono); color: var(--red-action); }
+.duo-card h3 { font-size: 1.5rem; }
+.duo-years { font: 500 0.95rem var(--mono); color: var(--grey-brand); margin-left: 6px; white-space: nowrap; }
+.duo-sub { margin: 6px 0 16px; }
+.duo-sub code { background: var(--ink); color: var(--ink-strong); border-radius: 6px; padding: 3px 9px; font-size: 0.8rem; }
+.duo-card ul { margin: 0; padding: 0; list-style: none; }
+.duo-card li { position: relative; padding: 8px 0 8px 22px; border-bottom: 1px dashed var(--grey-surface); font-size: 0.97rem; }
+.duo-card li:last-child { border-bottom: 0; }
+.duo-card li::before { content: ""; position: absolute; left: 0; top: 18px; width: 10px; height: 2px; background: var(--red); }
+.duo-hub { display: flex; align-items: center; }
+.duo-line { flex: 1; height: 2px; background: repeating-linear-gradient(90deg, var(--red) 0 6px, transparent 6px 12px); background-size: 24px 2px; animation: flow 1s linear infinite; }
+@keyframes flow { to { background-position: 24px 0; } }
+@keyframes flow-v { to { background-position: 0 24px; } }
+.duo-node { flex: none; width: 112px; height: 112px; border-radius: 50%; display: grid; place-content: center; text-align: center; background: var(--ink); color: var(--ink-strong); box-shadow: 0 0 0 6px rgba(228, 51, 43, 0.15), 0 0 0 1px var(--red) inset; }
+.duo-node b { font-size: 1rem; }
+.duo-node small { font: 0.62rem var(--mono); color: var(--ink-muted); padding: 0 8px; line-height: 1.4; }
+
+/* ---------- Drawing to model flow (dark) ---------- */
+.flow { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; counter-reset: flow; position: relative; }
+.flow::before { content: ""; position: absolute; left: 22px; right: calc(20% - 10px); top: 22px; height: 1px; background: repeating-linear-gradient(90deg, var(--ink-muted) 0 4px, transparent 4px 8px); }
+.flow li { counter-increment: flow; position: relative; padding-top: 64px; }
+.flow li::before {
+  content: counter(flow, decimal-leading-zero); position: absolute; top: 0; left: 0; width: 44px; height: 44px; display: grid; place-items: center;
+  border: 1px solid var(--red); border-radius: 8px; background: var(--ink-2); color: var(--ink-strong); font: 700 0.9rem var(--mono);
+  box-shadow: 0 0 0 5px var(--ink-2);
+}
+.flow li:last-child::before { background: var(--red-action); border-color: var(--red-action); }
+.flow h3 { font-size: 1.02rem; margin-bottom: 8px; }
+.flow p { margin: 0 0 10px; font-size: 0.92rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips code { font-size: 0.74rem; color: #ff8a80; border: 1px solid var(--ink-line); border-radius: 6px; padding: 2px 7px; background: var(--ink-3); overflow-wrap: anywhere; }
+
+/* ---------- Audience ---------- */
+.audience { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.audience article { border-top: 2px solid var(--grey-surface); padding-top: 20px; position: relative; }
+.audience article::before { content: ""; position: absolute; top: -2px; left: 0; width: 40px; height: 2px; background: var(--red); transition: width 0.35s ease; }
+.audience article:hover::before { width: 100%; }
+.audience h3 { margin-bottom: 10px; }
+.audience p { margin: 0; font-size: 0.95rem; }
 
 /* ---------- Cases on drawing paper ---------- */
 .paper {
@@ -240,6 +302,10 @@ svg text { font-family: var(--font); }
 .workflows code::before { content: "/"; color: var(--red); margin-right: 2px; }
 .workflows span { font-size: 0.92rem; color: var(--ink-muted); }
 
+.tool-head { display: flex; align-items: baseline; gap: 12px; margin: 8px 0 20px; font-size: 1.3rem; }
+.tool-head small { font: 600 0.8rem var(--mono); color: var(--ink-strong); background: var(--red-action); border-radius: 6px; padding: 2px 8px; }
+.tool-grid + .tool-head { margin-top: 48px; }
+
 /* ---------- Architecture (dark) ---------- */
 .arch { width: 100%; height: auto; margin: 8px 0 44px; }
 .a-box rect { fill: var(--ink-3); stroke: var(--ink-line); stroke-width: 1.5; }
@@ -289,6 +355,21 @@ svg text { font-family: var(--font); }
 .ask li::before { content: "›"; position: absolute; left: 0; color: var(--red); font-family: var(--mono); }
 .ask li:last-child { border-bottom: 0; }
 
+/* ---------- FAQ ---------- */
+.faq-wrap { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 56px; align-items: start; }
+.faq details { border-bottom: 1px solid var(--grey-surface); }
+.faq details:first-child { border-top: 1px solid var(--grey-surface); }
+.faq summary { cursor: pointer; list-style: none; padding: 18px 40px 18px 0; position: relative; font-weight: 600; color: var(--strong); }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; position: absolute; right: 6px; top: 14px; font: 400 1.4rem var(--mono); color: var(--red-action); transition: transform 0.2s; }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq details p { margin: 0 0 18px; }
+
+/* ---------- Closing call to action ---------- */
+.cta-band { padding: 80px 0; overflow: hidden; }
+.cta { display: grid; grid-template-columns: 1.3fr auto; gap: 40px; align-items: center; }
+.cta p { margin: 14px 0 0; max-width: 640px; }
+
 /* ---------- About ---------- */
 .about-band { background: var(--bg); border-top: 1px solid var(--grey-surface); }
 .about { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 56px; align-items: start; }
@@ -316,11 +397,19 @@ footer { padding: 40px 0 48px; border-top: 1px solid var(--grey-surface); }
 }
 
 /* Grid items may shrink below the width of long tool names. */
-.hero-grid > *, .case > *, .install > *, .pick > *, .about > *, .tool-grid > *, .workflows > *, .principles > *, .stats > * { min-width: 0; }
+.hero-grid > *, .case > *, .install > *, .pick > *, .versus > *, .duo > *, .flow > *, .audience > *, .faq-wrap > *, .cta > *, .about > *, .tool-grid > *, .workflows > *, .principles > *, .stats > * { min-width: 0; }
 
 @media (max-width: 960px) {
   .hero-grid, .case, .install, .about { grid-template-columns: minmax(0, 1fr); gap: 36px; }
   .pick { grid-template-columns: minmax(0, 1fr); }
+  .versus, .faq-wrap, .cta { grid-template-columns: minmax(0, 1fr); }
+  .faq-wrap, .cta { gap: 24px; }
+  .duo { grid-template-columns: minmax(0, 1fr); }
+  .duo-hub { flex-direction: column; height: 150px; }
+  .duo-line { width: 2px; height: auto; background: repeating-linear-gradient(180deg, var(--red) 0 6px, transparent 6px 12px); background-size: 2px 24px; animation-name: flow-v; }
+  .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 20px; }
+  .flow::before { display: none; }
+  .audience { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; }
   .tool-grid, .workflows { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .principles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .nav { display: none; }
@@ -334,7 +423,7 @@ footer { padding: 40px 0 48px; border-top: 1px solid var(--grey-surface); }
   .brand .product { font-size: 0.82rem; padding-left: 10px; }
   .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
   .stats b { font-size: 1.5rem; }
-  .tool-grid, .workflows, .principles { grid-template-columns: minmax(0, 1fr); }
+  .tool-grid, .workflows, .principles, .flow, .audience { grid-template-columns: minmax(0, 1fr); }
   .ctas .btn { width: 100%; justify-content: center; }
   .console { font-size: 0.8rem; }
   .case-number { font-size: 2.6rem; }
