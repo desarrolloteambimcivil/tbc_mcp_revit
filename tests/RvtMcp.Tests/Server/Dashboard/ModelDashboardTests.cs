@@ -28,7 +28,7 @@ namespace RvtMcp.Tests
                 ["networks"] = ModelSnapshotBuilder.Networks("Comments",
                     new[] { new SnapshotNetworkCurve { Id = 1, Network = "Red A", Kind = "pipe", DiameterMm = 160, LengthM = length } },
                     new SnapshotNetworkItem[0], Enumerable.Range(1, openEnds).Select(i => ((long)i, "Red A")), null, 50),
-                ["health"] = ModelSnapshotBuilder.Health(new SnapshotHealthCounts(), new[] { "W" }),
+                ["health"] = ModelSnapshotBuilder.Health(new SnapshotHealthCounts(), new[] { ("w", "W") }),
             });
 
         private SnapshotStore Store() => new SnapshotStore(Path.Combine(_root, "snapshots"));

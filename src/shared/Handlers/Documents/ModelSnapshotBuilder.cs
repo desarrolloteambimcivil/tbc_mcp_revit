@@ -79,11 +79,12 @@ namespace RvtMcp.Plugin.Handlers
             return section;
         }
 
-        internal static JObject Health(SnapshotHealthCounts counts, IEnumerable<string> warningDescriptions)
+        /// <summary>Warnings are grouped by <c>Key</c> (the failure type) and shown with the first <c>Label</c> of each group.</summary>
+        internal static JObject Health(SnapshotHealthCounts counts, IEnumerable<(string Key, string Label)> warningTypes)
         {
-            var warnings = warningDescriptions.ToList();
-            var byType = warnings.GroupBy(d => string.IsNullOrWhiteSpace(d) ? "" : d.Trim())
-                .Select(g => new { description = g.Key, count = g.Count() })
+            var warnings = warningTypes.ToList();
+            var byType = warnings.GroupBy(w => Key(w.Key))
+                .Select(g => new { description = Key(g.First().Label), count = g.Count() })
                 .OrderByDescending(x => x.count).ThenBy(x => x.description, StringComparer.Ordinal).ToList();
             return new JObject
             {

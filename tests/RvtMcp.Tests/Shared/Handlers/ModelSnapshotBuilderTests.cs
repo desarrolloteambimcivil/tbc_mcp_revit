@@ -105,11 +105,13 @@ namespace RvtMcp.Tests
         [Fact]
         public void Health_groups_warnings_by_description()
         {
-            var h = ModelSnapshotBuilder.Health(new SnapshotHealthCounts { InPlaceFamilies = 2 }, new[] { "Overlap", "Overlap ", "Duplicate mark" });
+            // One failure type with system-specific texts counts as one type, labelled by its first text.
+            var h = ModelSnapshotBuilder.Health(new SnapshotHealthCounts { InPlaceFamilies = 2 },
+                new[] { ("flow", "Flow direction does not match"), ("flow", "System 11: flow direction"), ("mark", "Duplicate mark") });
 
             Assert.Equal(3, h.Value<int>("warnings_total"));
             Assert.Equal(2, h.Value<int>("warning_types"));
-            Assert.Equal("Overlap", h["warnings_by_type"][0].Value<string>("description"));
+            Assert.Equal("Flow direction does not match", h["warnings_by_type"][0].Value<string>("description"));
             Assert.Equal(2, h["warnings_by_type"][0].Value<int>("count"));
             Assert.Equal(2, h.Value<int>("in_place_families"));
             Assert.Equal(JTokenType.Null, h["file_size_bytes"].Type);

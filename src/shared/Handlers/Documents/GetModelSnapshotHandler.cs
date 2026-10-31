@@ -106,7 +106,7 @@ namespace RvtMcp.Plugin.Handlers
             foreach (var e in new FilteredElementCollector(doc).WhereElementIsNotElementType())
             {
                 var category = e.Category;
-                if (category == null || category.CategoryType != CategoryType.Model || e is ElementType) continue;
+                if (category == null || category.CategoryType != CategoryType.Model || !IsPhysical(e)) continue;
                 var level = "";
                 if (e.LevelId != null && e.LevelId != ElementId.InvalidElementId)
                 {
@@ -150,7 +150,33 @@ namespace RvtMcp.Plugin.Handlers
                 Schedules = schedules,
                 FileSizeBytes = size,
             };
-            return ModelSnapshotBuilder.Health(counts, doc.GetWarnings().Select(SafeDescription));
+            // Group by the failure type, not the text: many messages repeat one type with a different system or element name.
+            var registry = Autodesk.Revit.ApplicationServices.Application.GetFailureDefinitionRegistry();
+            var labels = new Dictionary<Guid, string>();
+            var warnings = doc.GetWarnings().Select(w =>
+            {
+                Guid key;
+                try { key = w.GetFailureDefinitionId().Guid; } catch (Exception) { return (SafeDescription(w), SafeDescription(w)); }
+                if (!labels.TryGetValue(key, out var label))
+                {
+                    try { label = registry?.FindFailureDefinition(w.GetFailureDefinitionId())?.GetDescriptionText(); } catch (Exception) { label = null; }
+                    labels[key] = label = string.IsNullOrWhiteSpace(label) ? SafeDescription(w) : label;
+                }
+                return (key.ToString(), label);
+            });
+            return ModelSnapshotBuilder.Health(counts, warnings);
+        }
+
+        /// <summary>
+        /// Elements that occupy the model: categories of model type still include materials, appearance assets, MEP
+        /// systems, pipe segments, analytical centrelines (plain <see cref="Element"/>), sketches, links and base points.
+        /// </summary>
+        private static bool IsPhysical(Element e)
+        {
+            if (e is ElementType || e.ViewSpecific || e.GetType() == typeof(Element)) return false;
+            if (e is Material || e is PropertySetElement || e is MEPSystem || e is View || e is CurveElement || e is SunAndShadowSettings
+                || e is ImportInstance || e is RevitLinkInstance || e is BasePoint || e is InternalOrigin || e is ProjectInfo) return false;
+            return e.get_BoundingBox(null) != null;
         }
 
         private static JObject Networks(Document doc, string parameter, Func<Element, string> network, double clearance, int sampleLimit,
