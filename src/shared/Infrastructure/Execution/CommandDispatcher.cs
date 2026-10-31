@@ -110,6 +110,8 @@ namespace RvtMcp.Plugin
             Register(new Handlers.ConnectMepElementsHandler());
             Register(new Handlers.CreateMepFittingHandler());
             Register(new Handlers.ConnectPipeNetworkHandler());
+            Register(new Handlers.FindPipeClashesHandler());
+            Register(new Handlers.ResolvePipeClashHandler());
             Register(new Handlers.SetSystemClassificationHandler());
             Register(new Handlers.GetPanelScheduleHandler());
             Register(new Handlers.FindMepDisconnectsHandler());

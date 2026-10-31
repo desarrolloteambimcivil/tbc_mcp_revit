@@ -59,6 +59,7 @@ namespace RvtMcp.Plugin
             ["get_system_inventory"] = "Retry with exact `systemId`, `includeParameters=false`, and a smaller `limit`.",
             ["set_system_classification"] = "Split `elementIds` into smaller batches.",
             ["find_mep_disconnects"] = "Retry with `domainFilter`, `viewOnly=true`, and a smaller `limit`.",
+            ["find_pipe_clashes"] = "Retry with exact `elementIds` or a narrower `systemName`, `against=scope`, and a smaller `limit`.",
             ["connect_pipe_network"] = "Retry with exact `elementIds` or a narrower `systemName` and a smaller `limit`.",
             ["create_view_filter"] = "Retry with fewer `categories` or rules.",
             ["list_view_filters"] = "Retry with exact `viewId` and `includeUsage=false`.",

@@ -25,10 +25,12 @@ namespace RvtMcp.Tests
             "revit_create_pipe",
             "revit_detect_system_elements",
             "revit_find_mep_disconnects",
+            "revit_find_pipe_clashes",
             "revit_get_mep_element_connectors",
             "revit_get_panel_schedule",
             "revit_get_system_inventory",
             "revit_list_mep_systems",
+            "revit_resolve_pipe_clash",
             "revit_set_system_classification"
         };
 
@@ -177,6 +179,35 @@ namespace RvtMcp.Tests
             sent = await Capture.Send(() => MepTools.ConnectPipeNetwork(elementIds: new long[] { 7, 8 }, dryRun: false));
             Assert.Equal(new long[] { 7, 8 }, sent.Json()["element_ids"].Values<long>().ToArray());
             Assert.False(sent.Json().Value<bool>("dry_run"));
+        }
+
+        [Fact]
+        public async Task Find_pipe_clashes_sends_scope_and_clearance()
+        {
+            var sent = await Capture.Send(() => MepTools.FindPipeClashes(systemName: "EMA-Pluviales", clearanceMm: 50));
+
+            Assert.Equal("find_pipe_clashes", sent.Command);
+            var json = sent.Json();
+            Assert.Equal("EMA-Pluviales", json.Value<string>("system_name"));
+            Assert.Equal("all", json.Value<string>("against"));
+            Assert.Equal(50, json.Value<double>("clearance_mm"));
+            Assert.Equal(200, json.Value<int>("limit"));
+        }
+
+        [Fact]
+        public async Task Resolve_pipe_clash_defaults_to_dry_run()
+        {
+            var sent = await Capture.Send(() => MepTools.ResolvePipeClash(1248377, 1248371, "end", "above"));
+
+            Assert.Equal("resolve_pipe_clash", sent.Command);
+            var json = sent.Json();
+            Assert.Equal(1248377, json.Value<long>("element_id"));
+            Assert.Equal(1248371, json.Value<long>("other_id"));
+            Assert.Equal("end", json.Value<string>("fixed_end"));
+            Assert.Equal("above", json.Value<string>("side"));
+            Assert.True(json.Value<bool>("dry_run"));
+            Assert.True(json.Value<bool>("keep_fall_direction"));
+            Assert.Equal(50, json.Value<double>("clearance_mm"));
         }
 
         [Fact]

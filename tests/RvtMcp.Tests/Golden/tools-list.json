@@ -1,6 +1,6 @@
 {
   "generated_by": "ToolsListSnapshotTests",
-  "tool_count": 246,
+  "tool_count": 248,
   "tools": [
     {
       "name": "revit_acquire_coordinates_from_link",
@@ -3820,6 +3820,46 @@
       }
     },
     {
+      "name": "revit_find_pipe_clashes",
+      "description_hash": "sha256:a781ec62263c6aaf03e71c1dfbda260e163b01f6ccceff17ec1202f801f71d89",
+      "inputSchema": {
+        "properties": {
+          "against": {
+            "description": "",
+            "type": "String"
+          },
+          "clearanceMm": {
+            "description": "",
+            "type": "Double"
+          },
+          "elementIds": {
+            "description": "",
+            "type": "Int64[]"
+          },
+          "limit": {
+            "description": "",
+            "type": "Int32"
+          },
+          "structureMarginMm": {
+            "description": "",
+            "type": "Double"
+          },
+          "systemName": {
+            "description": "",
+            "type": "String"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      }
+    },
+    {
       "name": "revit_find_schedule_elements",
       "description_hash": "sha256:03bc013bd7989a890cead0b276f39524437efcfbd0e431cc33df07366746e49c",
       "inputSchema": {
@@ -6787,6 +6827,59 @@
           "sourceModelKey",
           "decision",
           "reason"
+        ],
+        "type": "object"
+      },
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      }
+    },
+    {
+      "name": "revit_resolve_pipe_clash",
+      "description_hash": "sha256:9cc5d42ab791921dc92963ea3f67020ce3464ebecaefa49afef065b37b944556",
+      "inputSchema": {
+        "properties": {
+          "clearanceMm": {
+            "description": "",
+            "type": "Double"
+          },
+          "dryRun": {
+            "description": "",
+            "type": "Boolean"
+          },
+          "elementId": {
+            "description": "",
+            "type": "Int64"
+          },
+          "fixedEnd": {
+            "description": "",
+            "type": "String"
+          },
+          "keepFallDirection": {
+            "description": "",
+            "type": "Boolean"
+          },
+          "maxEndMoveMm": {
+            "description": "",
+            "type": "Double"
+          },
+          "otherId": {
+            "description": "",
+            "type": "Int64"
+          },
+          "side": {
+            "description": "",
+            "type": "String"
+          }
+        },
+        "required": [
+          "elementId",
+          "otherId",
+          "fixedEnd",
+          "side"
         ],
         "type": "object"
       },

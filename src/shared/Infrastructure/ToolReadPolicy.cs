@@ -107,6 +107,7 @@ namespace RvtMcp.Plugin
             "list_worksets",
             "load_selection",
             "map_cad_link_points",
+            "find_pipe_clashes",
             "measure_distance_between_elements",
             "project_point_onto_face",
             "raycast_from_point",

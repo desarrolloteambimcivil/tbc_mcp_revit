@@ -61,6 +61,24 @@ A modelled pipe network should be continuous, so Revit reads it as one system an
 | `too_many_ends` | More than four ends meet. |
 | `branch_along_pipe` | An end lies on another pipe's axis but points along it, so a tee would not fit. |
 
+## Pipe clashes
+
+`revit_find_pipe_clashes` checks straight pipes and conduits as cylinders: two curves clash when the distance between their centrelines is less than the sum of their outer radii plus `clearanceMm`. It is exact for round sections and fast enough for a whole site network. Rectangular ducts and cable trays are not checked; use `revit_clash_detection` for categories and solids.
+
+Not reported as clashes:
+- curves joined directly or through one fitting;
+- ends that meet at a point (a junction for `revit_connect_pipe_network`);
+- crossings inside a structure of their own network: same rules as network continuity, so a structure whose Comments differ from both curves does not excuse the crossing.
+
+For each clash, the levels are taken on the same vertical at the plan crossing. `raise_*_mm` and `lower_*_mm` say how far each curve would have to move there to clear the other by the clearance.
+
+`revit_resolve_pipe_clash` moves one end of a curve vertically and keeps the other end, so the change at the crossing is the end move times the crossing's share of the length. Decide which curve and which end may move before calling it:
+- **Gravity networks** (drainage, stormwater) keep the levels read from drawings, and cannot dip under a crossing because they would run uphill. `keepFallDirection` refuses a move that reverses the fall. Move the end whose level was assumed, usually to pass over the other pipe.
+- **Pressure pipes and conduits** may move freely within their cover. A local offset with elbows is not done by this tool yet; moving a free end is.
+- **Joined ends** are refused: moving them would break the fitting. Move or disconnect the joined element first, or choose the other end.
+
+Run with `dryRun=true` first and check `clashes_after`; the moved curve can meet another curve in its new position.
+
 ## Interpret MEP membership and connector counts
 
 `revit_list_mep_systems`, `revit_analyze_mep_network`, and `revit_get_system_inventory` share membership reads:

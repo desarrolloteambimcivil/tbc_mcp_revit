@@ -18,7 +18,7 @@
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
-  <a href="#tools"><img src="https://img.shields.io/badge/MCP-246%20tools-6C47FF" alt="MCP tools" /></a>
+  <a href="#tools"><img src="https://img.shields.io/badge/MCP-248%20tools-6C47FF" alt="MCP tools" /></a>
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc_mcp_revit" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
@@ -96,10 +96,10 @@ Counts below match this source tree; other builds can expose a different catalog
 
 | Mode | Tools | Notes |
 |------|------:|-------|
-| Fresh install | **246** | `install.ps1` seeds `"toolsets": ["all"]` in `rvtmcp.config.json` |
+| Fresh install | **248** | `install.ps1` seeds `"toolsets": ["all"]` in `rvtmcp.config.json` |
 | Bare `tbc-revit-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
-| `--toolsets all` | **246** | Full catalog |
-| `all` + adaptive bake | **249** | Adds 3 suggestion-lifecycle tools |
+| `--toolsets all` | **248** | Full catalog |
+| `all` + adaptive bake | **251** | Adds 3 suggestion-lifecycle tools |
 
 Counts exclude your personal baked tools. The installer writes the seeded default only when `rvtmcp.config.json` doesn't already set `toolsets` — your own list survives upgrades, and removing the key (or setting your own CSV) returns a bare server to the 53-tool surface. Read-only filters individual tools by `ReadOnly=true`, including reads inside mixed toolsets. Tools that can write files are excluded even when their default output is inline.
 
@@ -262,6 +262,7 @@ MCP annotations describe each tool's document/file effects. Transient selection,
       "mcp__tbc-revit-mcp__revit_detect_system_elements",
       "mcp__tbc-revit-mcp__revit_find_elements_in_volume",
       "mcp__tbc-revit-mcp__revit_find_mep_disconnects",
+      "mcp__tbc-revit-mcp__revit_find_pipe_clashes",
       "mcp__tbc-revit-mcp__revit_find_overlapping_elements",
       "mcp__tbc-revit-mcp__revit_find_schedule_elements",
       "mcp__tbc-revit-mcp__revit_find_undimensioned_elements",

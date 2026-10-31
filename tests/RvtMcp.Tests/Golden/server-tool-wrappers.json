@@ -2221,6 +2221,28 @@
       "result": "Error: golden probe failure"
     }
   },
+  "revit_find_pipe_clashes": {
+    "success": {
+      "calls": [
+        {
+          "command": "find_pipe_clashes",
+          "params": "{\"system_name\":null,\"element_ids\":null,\"against\":\"all\",\"clearance_mm\":0.0,\"structure_margin_mm\":100.0,\"limit\":200}",
+          "timeout": null
+        }
+      ],
+      "result": "{\r\n  \"golden_probe\": true,\r\n  \"items\": [\r\n    1,\r\n    2\r\n  ]\r\n}"
+    },
+    "failure": {
+      "calls": [
+        {
+          "command": "find_pipe_clashes",
+          "params": "{\"system_name\":null,\"element_ids\":null,\"against\":\"all\",\"clearance_mm\":0.0,\"structure_margin_mm\":100.0,\"limit\":200}",
+          "timeout": null
+        }
+      ],
+      "result": "Error: golden probe failure"
+    }
+  },
   "revit_find_schedule_elements": {
     "success": {
       "calls": [
@@ -4151,6 +4173,28 @@
         {
           "command": "replace_family_type",
           "params": "{\"from_type_id\":\"probe\",\"to_type_id\":\"probe\",\"scope\":\"all\",\"view_id\":null,\"dry_run\":false}",
+          "timeout": null
+        }
+      ],
+      "result": "Error: golden probe failure"
+    }
+  },
+  "revit_resolve_pipe_clash": {
+    "success": {
+      "calls": [
+        {
+          "command": "resolve_pipe_clash",
+          "params": "{\"element_id\":1,\"other_id\":1,\"fixed_end\":\"probe\",\"side\":\"probe\",\"clearance_mm\":50.0,\"max_end_move_mm\":1000.0,\"keep_fall_direction\":true,\"dry_run\":true}",
+          "timeout": null
+        }
+      ],
+      "result": "{\r\n  \"golden_probe\": true,\r\n  \"items\": [\r\n    1,\r\n    2\r\n  ]\r\n}"
+    },
+    "failure": {
+      "calls": [
+        {
+          "command": "resolve_pipe_clash",
+          "params": "{\"element_id\":1,\"other_id\":1,\"fixed_end\":\"probe\",\"side\":\"probe\",\"clearance_mm\":50.0,\"max_end_move_mm\":1000.0,\"keep_fall_direction\":true,\"dry_run\":true}",
           "timeout": null
         }
       ],

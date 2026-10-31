@@ -20,7 +20,7 @@
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
-  <a href="#tools"><img src="https://img.shields.io/badge/MCP-246%20tools-6C47FF" alt="MCP tools" /></a>
+  <a href="#tools"><img src="https://img.shields.io/badge/MCP-248%20tools-6C47FF" alt="MCP tools" /></a>
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc_mcp_revit" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
@@ -99,10 +99,10 @@ Các số dưới đây khớp với mã nguồn hiện tại; các bản build 
 
 | Mode | Tools | Ghi chú |
 |------|------:|---------|
-| Fresh install | **246** | `install.ps1` seeds `"toolsets": ["all"]` trong `rvtmcp.config.json` |
+| Fresh install | **248** | `install.ps1` seeds `"toolsets": ["all"]` trong `rvtmcp.config.json` |
 | Bare `tbc-revit-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
-| `--toolsets all` | **246** | Full catalog |
-| `all` + adaptive bake | **249** | Thêm 3 tool vòng đời suggestion |
+| `--toolsets all` | **248** | Full catalog |
+| `all` + adaptive bake | **251** | Thêm 3 tool vòng đời suggestion |
 
 Số lượng chưa tính baked tool cá nhân. Installer chỉ seed khi `rvtmcp.config.json` chưa có `toolsets` — list của bạn sống sót qua upgrade; bỏ key (hoặc đặt CSV riêng) thì bare server về mặt 53 tool. Read-only lọc từng tool theo `ReadOnly=true`, nên vẫn giữ công cụ đọc trong nhóm hỗn hợp. Tool có thể ghi file sẽ bị loại, kể cả khi output mặc định là inline.
 
@@ -260,6 +260,7 @@ Annotations mô tả tác động lên document/file của từng tool. Đổi s
       "mcp__tbc-revit-mcp__revit_detect_system_elements",
       "mcp__tbc-revit-mcp__revit_find_elements_in_volume",
       "mcp__tbc-revit-mcp__revit_find_mep_disconnects",
+      "mcp__tbc-revit-mcp__revit_find_pipe_clashes",
       "mcp__tbc-revit-mcp__revit_find_overlapping_elements",
       "mcp__tbc-revit-mcp__revit_find_schedule_elements",
       "mcp__tbc-revit-mcp__revit_find_undimensioned_elements",
