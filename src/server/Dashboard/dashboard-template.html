@@ -68,10 +68,11 @@ section.block > h2 { margin-bottom: 12px; }
 .kpi svg { display: block; margin-top: 8px; width: 100%; height: 28px; }
 
 /* Bars (HTML): thin marks, 4px rounded data end, value labels in text ink */
-.bars { display: grid; grid-template-columns: minmax(80px, auto) 1fr auto; gap: 7px 10px; align-items: center; font-size: 0.86rem; }
-.bars .name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px; }
+.bars { display: grid; grid-template-columns: minmax(70px, 40%) minmax(40px, 1fr) auto; gap: 7px 10px; align-items: center; font-size: 0.86rem; }
+.bars .name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .bars .track { height: 12px; position: relative; }
 .bars .fill { height: 100%; border-radius: 0 4px 4px 0; min-width: 2px; }
+.bars.facts { grid-template-columns: minmax(0, 1fr) auto; }
 .bars .val { font-family: var(--mono); font-size: 0.8rem; color: var(--strong); text-align: right; font-variant-numeric: tabular-nums; }
 
 /* Tall segmented bar: one whole, parts with 2px surface gaps */
@@ -117,7 +118,7 @@ table { border-collapse: collapse; width: 100%; font-size: 0.84rem; }
 /* Pending tables */
 .pending td, .pending th { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--hair); vertical-align: top; }
 .pending th { color: var(--muted); font-weight: 600; font-size: 0.8rem; }
-.ids { font-family: var(--mono); font-size: 0.78rem; overflow-wrap: anywhere; color: var(--strong); }
+.ids { font-family: var(--mono); font-size: 0.78rem; overflow-wrap: break-word; color: var(--strong); }
 
 .findings { border-left: 3px solid var(--red); background: var(--surface); border-radius: 0 12px 12px 0; padding: 14px 18px; white-space: pre-wrap; }
 .findings small { display: block; color: var(--muted); font-size: 0.78rem; margin-bottom: 6px; white-space: normal; }
@@ -127,6 +128,7 @@ footer { color: var(--muted); font-size: 0.8rem; padding: 18px 0 32px; border-to
 #tip b { color: #fff; }
 
 @media (max-width: 860px) { .g2, .g3 { grid-template-columns: minmax(0, 1fr); } .net dl { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .pending th:nth-child(3), .pending td:nth-child(3) { display: none; } .pending td, .pending th { padding: 6px 4px; } .head .tools { margin-left: 0; } }
 @media print {
   body { background: #fff; font-size: 12px; }
   .tools, #tip, .copy { display: none !important; }
@@ -451,12 +453,11 @@ footer { color: var(--muted); font-size: 0.8rem; padding: 18px 0 32px; border-to
     var shown = foldTail(rows, 9, t('others'));
     var warnCard = card(t('warnings_by_type') + ' · ' + nf(sec.warnings_total), rows.length ? bars(shown) : h('p', { 'class': 'note', text: '✓ 0' }));
     grid.appendChild(warnCard);
-    var facts = h('div', { 'class': 'bars' });
+    var facts = h('div', { 'class': 'bars facts' });
     [['families', sec.families_total], ['in_place', sec.in_place_families], ['imported_cad', sec.imported_cad], ['linked_cad', sec.linked_cad], ['linked_rvt', sec.linked_rvt],
      ['views_off', sec.views_not_on_sheets + ' / ' + nf(sec.views_total)], ['sheets', sec.sheets], ['schedules', sec.schedules],
      ['file_size', sec.file_size_bytes == null ? '–' : nf(sec.file_size_bytes / 1048576, 1) + ' MB']].forEach(function (f) {
       facts.appendChild(h('span', { 'class': 'name', text: t(f[0]) }));
-      facts.appendChild(h('span'));
       facts.appendChild(h('span', { 'class': 'val', text: typeof f[1] === 'number' ? nf(f[1]) : f[1] }));
     });
     grid.appendChild(card(t('health'), facts));
