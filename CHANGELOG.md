@@ -43,6 +43,7 @@ Install only the [latest GitHub Release](https://github.com/bimwright/rvt-mcp/re
 
 - **`revit_find_pipe_clashes`** (`mep`, read-only): finds clashes between straight pipes and conduits from their centrelines and outer diameters, which is exact for round sections, with an optional `clearanceMm`.
   - Not counted as clashes: pairs joined through a fitting, ends meeting at a point, and crossings inside a structure of their own network.
+  - Each clash has a kind: `crossing`, `parallel` (axes within 5°, e.g. a tube bank laid closer than its diameter) or `duplicate` (two curves on the same axis). Joints left without a fitting, where one curve continues where the other ends, are listed apart in `junctions_without_fitting`, for `revit_connect_pipe_network`.
   - Each clash reports the crossing point, the overlap, both centre levels on the same vertical, each curve's ends (level, joined or free), and how much each side would have to rise or drop at the crossing to clear it.
   - The scope is a system name prefix or element IDs, compared with every pipe and conduit (`against=all`) or within the scope.
 - **`revit_resolve_pipe_clash`** (`mep`, write, destructive): clears one clash by moving the free end of a pipe or conduit vertically while the other end stays, so it passes above or below the other curve with clearance.

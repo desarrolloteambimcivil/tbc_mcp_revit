@@ -54,17 +54,21 @@ namespace RvtMcp.Plugin.Handlers
             if (scope.Count == 0)
                 return CommandResult.Fail("No straight pipes or conduits match the scope.");
 
-            var clashes = PipeClashFinder.Find(scope, against == "all" ? all : scope, ReadStructures(doc), clearance, margin);
-            var curves = all.ToDictionary(c => c.Id);
+            var found = PipeClashFinder.Find(scope, against == "all" ? all : scope, ReadStructures(doc), clearance, margin);
+            var clashes = found.Where(c => c.Kind != "junction_without_fitting").ToList();
+            var joints = found.Where(c => c.Kind == "junction_without_fitting").ToList();
             return CommandResult.Ok(new
             {
                 scope_curves = scope.Count,
                 compared_with = against == "all" ? all.Count : scope.Count,
                 clearance_mm = clearance,
                 clash_count = clashes.Count,
+                by_kind = clashes.GroupBy(c => c.Kind).ToDictionary(g => g.Key, g => g.Count()),
                 truncated = clashes.Count > limit,
                 clashes = clashes.Take(limit).Select(c => new
                 {
+                    kind = c.Kind,
+                    angle_deg = Math.Round(c.AngleDeg, 1),
                     point_mm = new[] { Math.Round(c.X, 1), Math.Round(c.Y, 1), Math.Round(c.Z, 1) },
                     overlap_mm = Math.Round(c.OverlapMm, 1),
                     a = Describe(doc, c.A, c.ZaMm),
@@ -74,7 +78,10 @@ namespace RvtMcp.Plugin.Handlers
                     raise_a_mm = Math.Round(c.RaiseAMm, 1), lower_a_mm = Math.Round(c.LowerAMm, 1),
                     raise_b_mm = Math.Round(c.RaiseBMm, 1), lower_b_mm = Math.Round(c.LowerBMm, 1)
                 }).ToList(),
-                note = "Gravity networks usually keep the levels taken from drawings; resolve with revit_resolve_pipe_clash by moving the end whose level is assumed or free."
+                junctions_without_fitting = joints.Take(limit).Select(c => new { a = c.A.Id, b = c.B.Id, network = c.A.Network, angle_deg = Math.Round(c.AngleDeg, 1),
+                    point_mm = new[] { Math.Round(c.X, 1), Math.Round(c.Y, 1), Math.Round(c.Z, 1) } }).ToList(),
+                junctions_without_fitting_count = joints.Count,
+                note = "Gravity networks usually keep the levels taken from drawings; resolve crossings with revit_resolve_pipe_clash by moving the end whose level is assumed or free. Join junctions_without_fitting with revit_connect_pipe_network (raise toleranceMm). duplicate = two curves on the same axis: delete one."
             });
         }
 

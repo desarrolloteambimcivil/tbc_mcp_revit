@@ -19,6 +19,10 @@ namespace RvtMcp.Plugin.Handlers
     internal sealed class PipeClash
     {
         public RoundCurve A, B;
+        /// <summary>crossing, parallel (axes within 5°), duplicate (parallel and on the same axis), or
+        /// junction_without_fitting (their nearest ends meet: a joint to fit, not a clash).</summary>
+        public string Kind;
+        public double AngleDeg;
         public double DistanceMm;          // between centrelines
         public double OverlapMm;           // radii + clearance - distance (> 0 = clash)
         public double X, Y, Z;             // midpoint of the closest points
@@ -34,6 +38,9 @@ namespace RvtMcp.Plugin.Handlers
     /// </summary>
     internal static class PipeClashFinder
     {
+        internal const double ParallelDeg = 5.0;
+
+        /// <summary>Clashes and, separately, joints without a fitting (nearest ends within reach), most severe first.</summary>
         internal static List<PipeClash> Find(IList<RoundCurve> scope, IList<RoundCurve> others, IList<StructureBox> structures,
             double clearanceMm, double structureMarginMm)
         {
@@ -55,6 +62,7 @@ namespace RvtMcp.Plugin.Handlers
                     c.OverlapMm = reach - c.DistanceMm;
                     if (EndToEnd(c, a, b)) continue;
                     if (structures != null && structures.Any(s => Inside(s, c.X, c.Y, c.Z, structureMarginMm) && OwnNetwork(s, a, b))) continue;
+                    Classify(c, reach);
                     AtPlanCrossing(c);
                     Clearances(c, clearanceMm);
                     clashes.Add(c);
@@ -102,6 +110,38 @@ namespace RvtMcp.Plugin.Handlers
             };
         }
 
+        private static void Classify(PipeClash c, double reach)
+        {
+            RoundCurve a = c.A, b = c.B;
+            double ux = a.Ex - a.Sx, uy = a.Ey - a.Sy, uz = a.Ez - a.Sz, vx = b.Ex - b.Sx, vy = b.Ey - b.Sy, vz = b.Ez - b.Sz;
+            double cos = Math.Abs(ux * vx + uy * vy + uz * vz) / (Math.Sqrt(ux * ux + uy * uy + uz * uz) * Math.Sqrt(vx * vx + vy * vy + vz * vz));
+            c.AngleDeg = Math.Acos(Math.Min(1, cos)) * 180 / Math.PI;
+            if (c.AngleDeg < 90 - ParallelDeg && Continues(a, b, reach)) c.Kind = "junction_without_fitting";
+            else if (c.AngleDeg >= ParallelDeg) c.Kind = "crossing";
+            else c.Kind = c.DistanceMm < 0.2 * Math.Min(a.OuterRadiusMm, b.OuterRadiusMm) ? "duplicate" : "parallel";
+        }
+
+        /// <summary>
+        /// One curve ends where the other begins and the second carries on beyond it (a polyline vertex
+        /// left without a fitting). Side-by-side ends of parallel tubes do not continue each other.
+        /// </summary>
+        private static bool Continues(RoundCurve a, RoundCurve b, double reach)
+        {
+            var aEnds = new[] { new[] { a.Sx, a.Sy, a.Sz, a.Ex, a.Ey, a.Ez }, new[] { a.Ex, a.Ey, a.Ez, a.Sx, a.Sy, a.Sz } };
+            var bEnds = new[] { new[] { b.Sx, b.Sy, b.Sz, b.Ex, b.Ey, b.Ez }, new[] { b.Ex, b.Ey, b.Ez, b.Sx, b.Sy, b.Sz } };
+            foreach (var pa in aEnds)
+                foreach (var pb in bEnds)
+                {
+                    double dx = pa[0] - pb[0], dy = pa[1] - pb[1], dz = pa[2] - pb[2];
+                    if (Math.Sqrt(dx * dx + dy * dy + dz * dz) > reach) continue;
+                    // Outward direction of a at this end, and the direction b runs away from its end.
+                    double ox = pa[0] - pa[3], oy = pa[1] - pa[4], oz = pa[2] - pa[5];
+                    double ix = pb[3] - pb[0], iy = pb[4] - pb[1], iz = pb[5] - pb[2];
+                    if (ox * ix + oy * iy + oz * iz > 0) return true;
+                }
+            return false;
+        }
+
         /// <summary>
         /// When the two curves cross in plan, the levels that matter are the ones on the same vertical:
         /// replace the closest-point levels and parameters by those at the plan intersection.
@@ -134,6 +174,10 @@ namespace RvtMcp.Plugin.Handlers
         {
             bool aEnd = c.Ta < 1e-6 || c.Ta > 1 - 1e-6, bEnd = c.Tb < 1e-6 || c.Tb > 1 - 1e-6;
             if (!aEnd || !bEnd) return false;
+            // Parallel curves have closest points at their ends even when they lie along each other.
+            double ux = a.Ex - a.Sx, uy = a.Ey - a.Sy, uz = a.Ez - a.Sz, vx = b.Ex - b.Sx, vy = b.Ey - b.Sy, vz = b.Ez - b.Sz;
+            var cos = Math.Abs(ux * vx + uy * vy + uz * vz) / (Math.Sqrt(ux * ux + uy * uy + uz * uz) * Math.Sqrt(vx * vx + vy * vy + vz * vz));
+            if (cos > Math.Cos(ParallelDeg * Math.PI / 180)) return false;
             return c.DistanceMm <= Math.Max(a.OuterRadiusMm, b.OuterRadiusMm);
         }
 
@@ -181,6 +225,16 @@ namespace RvtMcp.Plugin.Handlers
             if (share < 0.05) { plan.Reason = "crossing_too_close_to_fixed_end"; return plan; }
             var delta = need / share;
             Fill(plan, moved, delta);
+            // Sloped curves: the shortest distance is slightly less than the vertical gap, so check in 3D and add the residual.
+            for (int i = 0; i < 4; i++)
+            {
+                var probe = new RoundCurve { Sx = plan.NewSx, Sy = plan.NewSy, Sz = plan.NewSz, Ex = plan.NewEx, Ey = plan.NewEy, Ez = plan.NewEz };
+                var check = PipeClashFinder.Closest(probe, other);
+                var residual = rm + ro + clearanceMm - check.DistanceMm;
+                if (residual <= 0.01) break;
+                delta += (above ? 1 : -1) * (residual + 0.1) / share;
+                Fill(plan, moved, delta);
+            }
             if (Math.Abs(delta) > maxEndDeltaMm) { plan.Reason = "end_move_exceeds_limit"; return plan; }
             if (keepFallDirection && Math.Sign(Fall(moved.Sz, moved.Ez)) != 0
                 && Math.Sign(Fall(plan.NewSz, plan.NewEz)) != Math.Sign(Fall(moved.Sz, moved.Ez)))

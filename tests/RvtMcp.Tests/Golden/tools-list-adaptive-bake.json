@@ -3883,7 +3883,7 @@
     },
     {
       "name": "revit_find_pipe_clashes",
-      "description_hash": "sha256:a781ec62263c6aaf03e71c1dfbda260e163b01f6ccceff17ec1202f801f71d89",
+      "description_hash": "sha256:c49ccbc08b70edbf2bdb1327c438b687e649c1d5ba91aca224d0652f2f992caa",
       "inputSchema": {
         "properties": {
           "against": {

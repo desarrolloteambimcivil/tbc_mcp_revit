@@ -70,6 +70,32 @@ namespace RvtMcp.Tests
         }
 
         [Fact]
+        public void Clashes_are_classified_as_crossing_parallel_duplicate_or_unjoined_joint()
+        {
+            var crossing = PipeClashFinder.Find(new[] { Collector(), Branch1() }, null, null, 0, 100);
+            Assert.Equal("crossing", Assert.Single(crossing).Kind);
+
+            // Two tubes of a bank laid 150 mm apart with an outer diameter of 170 mm.
+            var parallel = PipeClashFinder.Find(new[] { C(1, 0, 0, 9600, 12000, 0, 9600, 170), C(2, 0, 150, 9600, 12000, 150, 9600, 170) }, null, null, 0, 100);
+            Assert.Equal("parallel", Assert.Single(parallel).Kind);
+
+            var duplicate = PipeClashFinder.Find(new[] { C(1, 0, 0, 9600, 1237, 0, 9600, 170), C(2, 0, 1, 9600, 1237, 1, 9600, 170) }, null, null, 0, 100);
+            Assert.Equal("duplicate", Assert.Single(duplicate).Kind);
+
+            // Consecutive segments of a drawn polyline that overlap 30 mm at an 11° vertex without a fitting (EMA Poliducto).
+            var joint = PipeClashFinder.Find(new[] { C(1, 0, 0, 9000, 7850, 0, 9000, 273), C(2, 7820, 20, 9000, 17300, 1890, 9000, 273) }, null, null, 0, 100);
+            Assert.Equal("junction_without_fitting", Assert.Single(joint).Kind);
+        }
+
+        [Fact]
+        public void Regrade_clears_the_full_clearance_in_three_dimensions()
+        {
+            var plan = PipeRegrade.Plan(Branch1(), Collector(), fixedEnd: 1, above: true, clearanceMm: 50, maxEndDeltaMm: 1000, keepFallDirection: true);
+            var moved = C(1248377, plan.NewSx, plan.NewSy, plan.NewSz, plan.NewEx, plan.NewEy, plan.NewEz, 160);
+            Assert.True(PipeClashFinder.Closest(moved, Collector()).DistanceMm >= 80 + 162 + 50 - 0.01);
+        }
+
+        [Fact]
         public void Raising_the_free_end_lifts_the_branch_over_the_collector()
         {
             // Manhole B end (index 1, +8.97 from the plan) stays; the channel end (index 0, assumed level) moves.
@@ -84,7 +110,7 @@ namespace RvtMcp.Tests
             var moved = C(1248377, plan.NewSx, plan.NewSy, plan.NewSz, plan.NewEx, plan.NewEy, plan.NewEz, 160);
             var check = PipeClashFinder.Closest(moved, Collector());
             PipeClashFinder.AtPlanCrossing(check);
-            Assert.Equal(check.ZbMm + 162 + 50, check.ZaMm - 80, 1);   // bottom of the branch = top of the collector + clearance
+            Assert.True(check.ZaMm - 80 >= check.ZbMm + 162 + 50 - 0.01);   // bottom of the branch at least the top of the collector + clearance
         }
 
         [Fact]

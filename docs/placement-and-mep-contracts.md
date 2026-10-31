@@ -70,6 +70,13 @@ Not reported as clashes:
 - ends that meet at a point (a junction for `revit_connect_pipe_network`);
 - crossings inside a structure of their own network: same rules as network continuity, so a structure whose Comments differ from both curves does not excuse the crossing.
 
+Each clash has a `kind`:
+- `crossing`: curves at an angle;
+- `parallel`: axes within 5°, for example tubes of a bank laid closer than their diameter;
+- `duplicate`: two curves on the same axis, where one should be deleted.
+
+A joint left without a fitting, where one curve carries on where the other ends (a polyline vertex), is not a clash. It is listed in `junctions_without_fitting` so `revit_connect_pipe_network` can join it.
+
 For each clash, the levels are taken on the same vertical at the plan crossing. `raise_*_mm` and `lower_*_mm` say how far each curve would have to move there to clear the other by the clearance.
 
 `revit_resolve_pipe_clash` moves one end of a curve vertically and keeps the other end, so the change at the crossing is the end move times the crossing's share of the length. Decide which curve and which end may move before calling it:
