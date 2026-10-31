@@ -150,6 +150,11 @@ namespace RvtMcp.Tests
 
                 Assert.Contains("No document is open.", reply);
                 Assert.False(Directory.Exists(Path.Combine(_root, "snapshots")));
+
+                await Capture.WithSendOverride((c, p, t) => Task.FromResult(new JObject { ["items"] = new JArray(1, 2) }),
+                    async () => reply = await ModelDashboardTools.CreateModelSnapshot());
+                Assert.StartsWith("Error: The add-in did not return a model snapshot", reply);
+                Assert.False(Directory.Exists(Path.Combine(_root, "snapshots")));
                 Assert.StartsWith("Error:", ModelDashboardTools.CreateModelDashboard());
             }
             finally { ModelDashboardTools.DataRootOverride = null; }

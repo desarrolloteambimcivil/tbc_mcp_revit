@@ -79,13 +79,15 @@ namespace RvtMcp.Tests
                 new SnapshotNetworkItem { Id = 11, Network = "Pluviales", Kind = "structure" },
                 new SnapshotNetworkItem { Id = 12, Network = "Pluviales", Kind = "structure" },
             };
-            var open = Enumerable.Range(1, 8).Select(i => ((long)i, "Pluviales"));
+            // Element 1 has both ends open: 8 ends on 7 elements.
+            var open = Enumerable.Range(1, 7).Select(i => ((long)i, "Pluviales")).Concat(new[] { (1L, "Pluviales") });
             var n = Networks(new[] { Pipe(1, "Pluviales", 160, 1) }, items, open, sample: 3);
 
             var pluv = Item(n, "Pluviales");
             Assert.Equal(1, pluv.Value<int>("fittings"));
             Assert.Equal(2, pluv.Value<int>("structures"));
             Assert.Equal(8, pluv["open_ends"].Value<int>("count"));
+            Assert.Equal(7, pluv["open_ends"].Value<int>("elements"));
             Assert.Equal(3, pluv["open_ends"]["sample_ids"].Count());
         }
 

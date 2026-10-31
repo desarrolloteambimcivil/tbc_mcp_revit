@@ -153,7 +153,7 @@ namespace RvtMcp.Plugin.Handlers
                     ["fittings"] = ownItems.Count(i => i.Kind == "fitting"),
                     ["accessories"] = ownItems.Count(i => i.Kind == "accessory"),
                     ["structures"] = ownItems.Count(i => i.Kind == "structure"),
-                    ["open_ends"] = new JObject { ["count"] = ownOpen.Count, ["sample_ids"] = new JArray(ownOpen.Distinct().Take(sampleLimit).Cast<object>().ToArray()) },
+                    ["open_ends"] = new JObject { ["count"] = ownOpen.Count, ["elements"] = ownOpen.Distinct().Count(), ["sample_ids"] = new JArray(ownOpen.Distinct().Take(sampleLimit).Cast<object>().ToArray()) },
                     ["clashes_total"] = ownPairs.Sum(p => p.Count),
                     ["unjoined_joints"] = new JObject
                     {

@@ -515,7 +515,7 @@ footer { color: var(--muted); font-size: 0.8rem; padding: 18px 0 32px; border-to
     var net = sn.sections.networks, dq = sn.sections.data_quality;
     var rows = [];
     if (net) net.items.forEach(function (n) {
-      if (n.open_ends.count) rows.push([netName(n.name), t('open_ends_l'), n.open_ends.count, n.open_ends.sample_ids]);
+      if (n.open_ends.count) rows.push([netName(n.name), t('open_ends_l'), n.open_ends.count, n.open_ends.sample_ids, n.open_ends.elements]);
       if (n.unjoined_joints.count) rows.push([netName(n.name), t('joints_l'), n.unjoined_joints.count, [].concat.apply([], n.unjoined_joints.sample_pairs)]);
     });
     if (net) net.clash_pairs.forEach(function (p) { rows.push([netName(p.a) + ' × ' + netName(p.b), t('clash_pairs_l'), p.count, [].concat.apply([], p.sample_pairs)]); });
@@ -532,7 +532,7 @@ footer { color: var(--muted); font-size: 0.8rem; padding: 18px 0 32px; border-to
         if (navigator.clipboard) navigator.clipboard.writeText(ids.join(', ')).then(done, function () {});
       });
       table.appendChild(h('tr', null, h('td', { text: r[0] }), h('td', { text: r[1] }), h('td', { 'class': 'mono', text: nf(r[2]) }),
-        h('td', { 'class': 'ids', text: ids.join(', ') + (r[2] > ids.length && r[1] === t('open_ends_l') ? ' … (+' + nf(r[2] - ids.length) + ' ' + t('more') + ')' : '') }), h('td', null, copy)));
+        h('td', { 'class': 'ids', text: ids.join(', ') + ((r[4] || 0) > ids.length ? ' … (+' + nf(r[4] - ids.length) + ' ' + t('more') + ')' : '') }), h('td', null, copy)));
     });
     b.appendChild(card(null, h('div', { 'class': 'scroll' }, table)));
     return b;

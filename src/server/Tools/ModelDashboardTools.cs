@@ -49,6 +49,9 @@ namespace RvtMcp.Server
                     new { sections, network_parameter = networkParameter, clearance_mm = clearanceMm, sample_limit = sampleLimit }, SnapshotTimeoutSeconds);
                 if (data.Value<bool?>("success") == false || ToolGateway.IsPendingOrUnknown(data))
                     return data.ToString(Formatting.Indented);
+                // An add-in without the command, or any other reply, is never stored as history.
+                if (data.Value<string>("schema") != ModelSnapshotSchema.Schema)
+                    return "Error: The add-in did not return a model snapshot; nothing was saved. Update the gateway and the Revit add-in together.";
 
                 // Call metadata (_target, _operation…) goes back to the agent, not into the stored snapshot.
                 var metadata = data.Properties().Where(p => p.Name.StartsWith("_", StringComparison.Ordinal)).ToList();
