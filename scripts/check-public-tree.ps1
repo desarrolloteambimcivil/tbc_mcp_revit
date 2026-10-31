@@ -18,6 +18,7 @@ $publicDocs = @(
     'src/server/Prompts/change.md', 'src/server/Prompts/drawing_layout.md',
     'src/server/Prompts/getting_started.md', 'src/server/Prompts/model_audit.md',
     'src/server/Prompts/pre_issue_check.md', 'src/server/Prompts/stairs.md',
+    'src/server/Prompts/asbuilt_network.md', 'src/server/Prompts/parametric_family.md', 'src/server/Prompts/pipe_network.md',
     'tests/RvtMcp.Tests/README.md', 'tests/RvtMcp.Settings.Tests/README.md',
     'tests/RvtMcp.Toast.Tests/README.md', 'tests/RvtMcp.Tests/Golden/response-size-scoped-commands.txt'
 )
