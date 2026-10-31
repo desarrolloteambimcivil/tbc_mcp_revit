@@ -19,6 +19,7 @@
       if (lang !== 'es' && lang !== 'en') lang = (navigator.language || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
       document.documentElement.setAttribute('data-lang', lang);
       document.documentElement.setAttribute('lang', lang);
+      document.documentElement.className += ' js';
     })();
   </script>
 </head>
@@ -46,13 +47,13 @@
 
 <main id="top">
 
-<section class="hero">
+<section class="hero dark" data-grid>
   <div class="wrap hero-grid">
     <div>
       <p class="kicker"><span lang="es">MCP para Autodesk Revit 2022–2027 y AutoCAD / Civil 3D</span><span lang="en">MCP for Autodesk Revit 2022–2027 and AutoCAD / Civil 3D</span></p>
       <h1>
-        <span lang="es">Un agente que modela en Revit con los datos de tus planos.</span>
-        <span lang="en">An agent that models in Revit from your drawings.</span>
+        <span lang="es">Un agente que modela en Revit con <em>los datos de tus planos</em>.</span>
+        <span lang="en">An agent that models in Revit from <em>your drawings</em>.</span>
       </h1>
       <p class="lead">
         <span lang="es">tbc-revit-mcp conecta Claude, o cualquier cliente MCP, con el modelo que tienes abierto. Lee planos DWG, rehace redes as-built, une tuberías, detecta colisiones y corrige familias. Todo en tu equipo, y cada cambio en una transacción que puedes deshacer.</span>
@@ -64,16 +65,23 @@
       </div>
     </div>
 
-    <aside class="result-panel" aria-labelledby="result-title">
-      <p class="panel-label" id="result-title"><span lang="es">Caso real · red de pluviales as-built</span><span lang="en">Real case · as-built stormwater network</span></p>
-      <dl class="figures">
-        <div><dt>59</dt><dd><span lang="es">tuberías rehechas desde el plano DWG</span><span lang="en">pipes rebuilt from the DWG drawing</span></dd></div>
-        <div><dt>35</dt><dd><span lang="es">arquetas, pozos e imbornales colocados</span><span lang="en">chambers, manholes and gullies placed</span></dd></div>
-        <div><dt>0 mm</dt><dd><span lang="es">entre las cotas de fondo del modelo y las del plano</span><span lang="en">between model inverts and the drawing</span></dd></div>
-        <div><dt>13</dt><dd><span lang="es">codos y tes insertados automáticamente</span><span lang="en">elbows and tees inserted automatically</span></dd></div>
-        <div><dt>0</dt><dd><span lang="es">colisiones entre tuberías de la red al terminar</span><span lang="en">clashes left within the network</span></dd></div>
-      </dl>
-      <p class="panel-foot"><span lang="es">Cada supuesto, en el informe; ninguno escondido en el modelo.</span><span lang="en">Every assumption is in the report, none hidden in the model.</span></p>
+    <aside class="console" aria-labelledby="console-title">
+      <div class="console-bar">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span id="console-title"><span lang="es">caso real · red de pluviales as-built</span><span lang="en">real case · as-built stormwater network</span></span>
+        <span class="live">REVIT 2024</span>
+      </div>
+      <ol class="console-log">
+        <li><span class="cmd">revit_map_cad_link_points</span> <span class="arg">calibration=21</span>
+          <span class="out"><span lang="es">error máximo 0,06 mm · coordenadas compartidas verificadas</span><span lang="en">largest error 0.06 mm · shared coordinates verified</span></span></li>
+        <li><span class="cmd">revit_asbuilt_network</span> <span class="arg">network=Pluviales</span>
+          <span class="out"><span lang="es">59 tuberías · 35 estructuras · Δ cotas de fondo 0 mm</span><span lang="en">59 pipes · 35 structures · Δ inverts 0 mm</span></span></li>
+        <li><span class="cmd">revit_connect_pipe_network</span> <span class="arg">dryRun=false</span>
+          <span class="out"><span lang="es">13 piezas · 2 codos · 11 tes · 0 rechazadas</span><span lang="en">13 fittings · 2 elbows · 11 tees · 0 refused</span></span></li>
+        <li><span class="cmd">revit_find_pipe_clashes</span> <span class="arg">clearance=50</span>
+          <span class="out"><span lang="es">pluviales × pluviales: 0 colisiones</span><span lang="en">stormwater × stormwater: 0 clashes</span></span></li>
+      </ol>
+      <p class="console-foot"><span lang="es">Cada supuesto, en el informe; ninguno escondido en el modelo.</span><span lang="en">Every assumption is in the report, none hidden in the model.</span></p>
     </aside>
   </div>
 
@@ -87,7 +95,7 @@
   </div>
 </section>
 
-<section class="band" id="casos">
+<section class="band paper" id="casos">
   <div class="wrap">
     <h2><span lang="es">Casos resueltos</span><span lang="en">Solved cases</span></h2>
     <p class="section-lead">
@@ -95,7 +103,7 @@
       <span lang="en">Problems from real civil engineering projects. New tools come from them.</span>
     </p>
 
-    <article class="case">
+    <article class="case" data-reveal>
       <div class="case-text">
         <p class="case-number">01</p>
         <h3><span lang="es">Red as-built rehecha desde el plano DWG</span><span lang="en">As-built network rebuilt from the DWG drawing</span></h3>
@@ -123,7 +131,7 @@
       </figure>
     </article>
 
-    <article class="case">
+    <article class="case" data-reveal>
       <div class="case-text">
         <p class="case-number">02</p>
         <h3><span lang="es">Uniones de tubería, sin dejarlas al azar</span><span lang="en">Pipe joints, not left to chance</span></h3>
@@ -148,6 +156,7 @@
           <g class="d-open"><circle cx="110" cy="90" r="6"/><circle cx="230" cy="90" r="6"/><circle cx="350" cy="90" r="6"/></g>
           <text x="20" y="180" class="d-label d-accent"><tspan lang="es">Después</tspan><tspan lang="en">After</tspan></text>
           <line x1="20" y1="240" x2="440" y2="240" class="d-pipe"/>
+          <line x1="20" y1="240" x2="440" y2="240" class="d-flow"/>
           <g class="d-pipe-thin"><line x1="110" y1="200" x2="110" y2="234"/><line x1="230" y1="200" x2="230" y2="234"/><line x1="350" y1="200" x2="350" y2="234"/></g>
           <g class="d-canal"><rect x="85" y="190" width="50" height="10"/><rect x="205" y="190" width="50" height="10"/><rect x="325" y="190" width="50" height="10"/></g>
           <g class="d-fitting"><rect x="102" y="232" width="16" height="16"/><rect x="222" y="232" width="16" height="16"/><rect x="342" y="232" width="16" height="16"/></g>
@@ -157,7 +166,7 @@
       </figure>
     </article>
 
-    <article class="case">
+    <article class="case" data-reveal>
       <div class="case-text">
         <p class="case-number">03</p>
         <h3><span lang="es">Colisiones detectadas y resueltas con criterio</span><span lang="en">Clashes found and resolved with judgement</span></h3>
@@ -193,7 +202,7 @@
       </figure>
     </article>
 
-    <article class="case">
+    <article class="case" data-reveal>
       <div class="case-text">
         <p class="case-number">04</p>
         <h3><span lang="es">Familias que se comportan en todos sus tipos</span><span lang="en">Families that behave in every type</span></h3>
@@ -216,7 +225,7 @@
   </div>
 </section>
 
-<section id="herramientas">
+<section class="dark" id="herramientas" data-grid>
   <div class="wrap">
     <h2><span lang="es">Herramientas</span><span lang="en">Tools</span></h2>
     <p class="section-lead">
@@ -224,7 +233,7 @@
       <span lang="en">248 named Revit tools, a sibling MCP for AutoCAD and Civil 3D, and C# for whatever has no tool. A selection:</span>
     </p>
     <div class="tool-grid">
-      <section class="tool-group">
+      <section class="tool-group" data-reveal>
         <h3><span lang="es">Ver y capturar</span><span lang="en">See and capture</span></h3>
         <dl>
           <dt>revit_capture_view_image</dt><dd><span lang="es">Imagen de una vista o solo de los elementos elegidos, desde una vista 3D temporal.</span><span lang="en">Image of a view, or of chosen elements only, from a temporary 3D view.</span></dd>
@@ -232,7 +241,7 @@
           <dt>revit_get_current_view_info</dt><dd><span lang="es">Vista activa, nivel, escala y selección.</span><span lang="en">Active view, level, scale and selection.</span></dd>
         </dl>
       </section>
-      <section class="tool-group">
+      <section class="tool-group" data-reveal>
         <h3><span lang="es">Leer planos CAD</span><span lang="en">Read CAD drawings</span></h3>
         <dl>
           <dt>dwg_query_entities</dt><dd><span lang="es">Textos legibles (Ø, %%, unicode), capas, bloques y coordenadas del DWG.</span><span lang="en">Readable texts (Ø, %%, unicode), layers, blocks and coordinates from the DWG.</span></dd>
@@ -240,7 +249,7 @@
           <dt>revit_list_linked_cad</dt><dd><span lang="es">Vínculos e importaciones CAD del modelo.</span><span lang="en">CAD links and imports in the model.</span></dd>
         </dl>
       </section>
-      <section class="tool-group">
+      <section class="tool-group" data-reveal>
         <h3><span lang="es">Redes de tuberías</span><span lang="en">Pipe networks</span></h3>
         <dl>
           <dt>revit_connect_pipe_network</dt><dd><span lang="es">Codos, tes, cruces y reducciones donde las tuberías se encuentran fuera de una arqueta.</span><span lang="en">Elbows, tees, crosses and transitions where pipes meet outside a chamber.</span></dd>
@@ -248,7 +257,7 @@
           <dt>revit_create_pipe</dt><dd><span lang="es">Tuberías por coordenadas, con sistema y diámetro heredados de la conexión.</span><span lang="en">Pipes by coordinates, inheriting system and diameter from the connection.</span></dd>
         </dl>
       </section>
-      <section class="tool-group">
+      <section class="tool-group" data-reveal>
         <h3><span lang="es">Colisiones</span><span lang="en">Clashes</span></h3>
         <dl>
           <dt>revit_find_pipe_clashes</dt><dd><span lang="es">Cruces, paralelos y duplicados entre tuberías y tubos, con holgura y cotas en el cruce.</span><span lang="en">Crossings, parallels and duplicates between pipes and conduits, with clearance and levels at the crossing.</span></dd>
@@ -256,7 +265,7 @@
           <dt>revit_clash_detection</dt><dd><span lang="es">Colisiones por sólidos entre categorías cualesquiera.</span><span lang="en">Solid clashes between any two categories.</span></dd>
         </dl>
       </section>
-      <section class="tool-group">
+      <section class="tool-group" data-reveal>
         <h3><span lang="es">Familias y tipos</span><span lang="en">Families and types</span></h3>
         <dl>
           <dt>revit_create_family</dt><dd><span lang="es">Familia nueva desde una especificación: parámetros, extrusiones y tipos.</span><span lang="en">New family from a spec: parameters, extrusions and types.</span></dd>
@@ -264,7 +273,7 @@
           <dt>revit_set_railing_structure</dt><dd><span lang="es">Postes, balaustres y barandales de barandillas.</span><span lang="en">Posts, balusters and rails of railings.</span></dd>
         </dl>
       </section>
-      <section class="tool-group">
+      <section class="tool-group" data-reveal>
         <h3><span lang="es">Control y calidad</span><span lang="en">Control and quality</span></h3>
         <dl>
           <dt>revit_send_code_to_revit</dt><dd><span lang="es">C# contra la API de Revit, con modo de prueba que lo deshace todo.</span><span lang="en">C# against the Revit API, with a dry run that rolls everything back.</span></dd>
@@ -293,7 +302,7 @@
   </div>
 </section>
 
-<section class="band" id="funcionamiento">
+<section class="dark deep" id="funcionamiento" data-grid>
   <div class="wrap">
     <h2><span lang="es">Cómo funciona</span><span lang="en">How it works</span></h2>
     <p class="section-lead">
@@ -302,6 +311,10 @@
     </p>
     <svg class="arch" viewBox="0 0 1000 250" role="img" aria-labelledby="arch-title">
       <title id="arch-title">Claude o cualquier cliente MCP, al servidor local, al complemento de Revit o de AutoCAD, al modelo o al plano</title>
+      <g class="a-packet" aria-hidden="true">
+        <circle r="4"><animateMotion dur="2.4s" repeatCount="indefinite" path="M220 120H255V65H284H510H574H760H824"/></circle>
+        <circle r="4"><animateMotion dur="2.4s" begin="1.2s" repeatCount="indefinite" path="M220 120H255V185H284H510H574H760H824"/></circle>
+      </g>
       <g class="a-box"><rect x="20" y="70" width="200" height="100" rx="8"/><text x="120" y="114" text-anchor="middle" class="a-strong">Claude</text><text x="120" y="140" text-anchor="middle" class="a-small"><tspan lang="es">o cualquier cliente MCP</tspan><tspan lang="en">or any MCP client</tspan></text></g>
       <g class="a-box a-main"><rect x="290" y="20" width="220" height="90" rx="8"/><text x="400" y="60" text-anchor="middle" class="a-strong">tbc-revit-mcp</text><text x="400" y="86" text-anchor="middle" class="a-small"><tspan lang="es">servidor local · .NET 8</tspan><tspan lang="en">local server · .NET 8</tspan></text></g>
       <g class="a-box"><rect x="290" y="140" width="220" height="90" rx="8"/><text x="400" y="180" text-anchor="middle" class="a-strong">tbc-acad-mcp</text><text x="400" y="206" text-anchor="middle" class="a-small">AutoCAD · Civil 3D</text></g>
@@ -360,7 +373,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1 -Client claude</pre>
   </div>
 </section>
 
-<section class="band" id="autor">
+<section class="about-band" id="autor">
   <div class="wrap about">
     <div>
       <h2><span lang="es">Hecho en TeamBIMCivil</span><span lang="en">Made at TeamBIMCivil</span></h2>
