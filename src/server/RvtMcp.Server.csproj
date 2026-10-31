@@ -53,6 +53,7 @@
     <Compile Include="..\shared\Infrastructure\LegacyDataMigration.cs" Link="Shared\Infrastructure\LegacyDataMigration.cs" />
     <Compile Include="..\shared\Infrastructure\ProductIdentity.cs" Link="Shared\Infrastructure\ProductIdentity.cs" />
     <Compile Include="..\shared\Infrastructure\ToolReadPolicy.cs" Link="Shared\Infrastructure\ToolReadPolicy.cs" />
+    <Compile Include="..\shared\Handlers\Documents\ModelSnapshotSchema.cs" Link="Shared\Handlers\Documents\ModelSnapshotSchema.cs" />
     <Compile Include="..\shared\Infrastructure\RuntimeIdentity.cs" Link="Shared\Infrastructure\RuntimeIdentity.cs" />
     <Compile Include="..\shared\Survey\SurveyContract.cs" Link="Shared\Survey\SurveyContract.cs" />
     <Compile Include="..\shared\Survey\SurveySnapshotCache.cs" Link="Shared\Survey\SurveySnapshotCache.cs" />
@@ -81,6 +82,12 @@
     <EmbeddedResource Include="Prompts\*.md">
       <LogicalName>RvtMcp.Prompts.%(Filename)%(Extension)</LogicalName>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <!-- Model dashboard: the HTML template and the TeamBIMCivil logo it embeds as a data URI. -->
+  <ItemGroup>
+    <EmbeddedResource Include="Dashboard\dashboard-template.html" LogicalName="RvtMcp.Dashboard.template.html" />
+    <EmbeddedResource Include="..\..\site\assets\teambimcivil_logo_h.png" LogicalName="RvtMcp.Dashboard.logo.png" />
   </ItemGroup>
 
   <!-- Expose internal helpers (ParseCsv, ApplyCliArgs, ApplyEnvVars, Load overloads, etc.)

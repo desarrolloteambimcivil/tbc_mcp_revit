@@ -20,7 +20,7 @@
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
-  <a href="#tools"><img src="https://img.shields.io/badge/MCP-248%20tools-6C47FF" alt="MCP tools" /></a>
+  <a href="#tools"><img src="https://img.shields.io/badge/MCP-252%20tools-6C47FF" alt="MCP tools" /></a>
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc_mcp_revit" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
@@ -99,10 +99,10 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-deskt
 
 | モード | Tools | 注記 |
 |--------|------:|------|
-| 新規インストール | **248** | `install.ps1` が `rvtmcp.config.json` に `"toolsets": ["all"]` をシード |
+| 新規インストール | **252** | `install.ps1` が `rvtmcp.config.json` に `"toolsets": ["all"]` をシード |
 | 素の `tbc-revit-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
-| `--toolsets all` | **248** | フルカタログ |
-| `all` + adaptive bake | **251** | 提案ライフサイクル 3 ツールを追加 |
+| `--toolsets all` | **252** | フルカタログ |
+| `all` + adaptive bake | **255** | 提案ライフサイクル 3 ツールを追加 |
 
 件数に個人 baked ツールは含みません。インストーラーがシードするのは `rvtmcp.config.json` に `toolsets` が未設定の場合のみ——独自リストはアップグレード後も残り、キー削除（または独自 CSV）で素のサーバーは 53 ツールに戻ります。Read-only は `ReadOnly=true` のツールだけを残すため、混在 toolset 内の読み取りツールも使えます。既定の出力が inline でも、ファイルを書けるツールは除外されます。
 
@@ -112,7 +112,7 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-deskt
 | `create` | 通り芯、レベル、部屋、線/点/面要素、グループ |
 | `view` | ビュー作成、シート配置補助、キャプチャ、クロップ/縮尺 |
 | `meta` | バッチ（最大 20）、複数 Revit、最近のモデル、プロジェクト情報、purge（MVP）、メッセージ、send_code |
-| `lint` | ビュー命名、firm-profile、警告サマリ |
+| `lint` | ビュー命名、firm-profile、警告サマリ、日付付きモデルスナップショットとローカルダッシュボード |
 | `schedule` | 集計表 list/作成、フィールド、式、データ |
 | `families` | ロード/アンロード、タイプ、インスタンス、監査、`.rfa` エクスポート（プロジェクト側） |
 | `modify` | 操作/着色、パラメータ、タイプ変更、ワークセット |
@@ -285,6 +285,7 @@ Annotations は各ツールのドキュメントとファイルへの影響を�
       "mcp__tbc-revit-mcp__revit_get_material_properties",
       "mcp__tbc-revit-mcp__revit_get_material_quantities",
       "mcp__tbc-revit-mcp__revit_get_mep_element_connectors",
+      "mcp__tbc-revit-mcp__revit_get_model_snapshot",
       "mcp__tbc-revit-mcp__revit_get_model_warnings_summary",
       "mcp__tbc-revit-mcp__revit_get_operation_status",
       "mcp__tbc-revit-mcp__revit_get_panel_schedule",
@@ -318,6 +319,7 @@ Annotations は各ツールのドキュメントとファイルへの影響を�
       "mcp__tbc-revit-mcp__revit_list_linked_models",
       "mcp__tbc-revit-mcp__revit_list_loaded_families",
       "mcp__tbc-revit-mcp__revit_list_materials",
+      "mcp__tbc-revit-mcp__revit_list_model_snapshots",
       "mcp__tbc-revit-mcp__revit_list_mep_systems",
       "mcp__tbc-revit-mcp__revit_list_phases",
       "mcp__tbc-revit-mcp__revit_list_project_parameter_bindings",

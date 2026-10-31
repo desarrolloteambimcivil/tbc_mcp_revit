@@ -13,7 +13,7 @@ $publicDocs = @(
     'docs/bake.md', 'docs/change-survey.md', 'docs/change-tracking.md', 'docs/controlled-failures.md',
     'docs/firm-profiles/README.md', 'docs/install.md', 'docs/localization.md',
     'docs/mcp-client-wiring.md', 'docs/mcp-config-claude-clients.md',
-    'docs/mcp-config-codex.md', 'docs/mcp-config-opencode-kilo.md',
+    'docs/mcp-config-codex.md', 'docs/mcp-config-opencode-kilo.md', 'docs/model-dashboard.md',
     'docs/placement-and-mep-contracts.md', 'docs/schedules.md', 'docs/send-code.md', 'docs/stairs-workflow.md',
     'src/server/Prompts/change.md', 'src/server/Prompts/drawing_layout.md',
     'src/server/Prompts/getting_started.md', 'src/server/Prompts/model_audit.md',

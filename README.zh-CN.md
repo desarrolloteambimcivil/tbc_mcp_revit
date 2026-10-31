@@ -20,7 +20,7 @@
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml"><img src="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/actions/workflows/build.yml/badge.svg" alt="build" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="license" /></a>
   <a href="#supported-revit-versions"><img src="https://img.shields.io/badge/Revit-2022--2027-186BFF" alt="Revit 2022-2027" /></a>
-  <a href="#tools"><img src="https://img.shields.io/badge/MCP-248%20tools-6C47FF" alt="MCP tools" /></a>
+  <a href="#tools"><img src="https://img.shields.io/badge/MCP-252%20tools-6C47FF" alt="MCP tools" /></a>
   <a href="https://github.com/desarrolloteambimcivil/tbc_mcp_revit/releases/latest"><img src="https://img.shields.io/github/v/release/desarrolloteambimcivil/tbc_mcp_revit" alt="latest release" /></a>
   <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-version%20history-informational" alt="changelog" /></a>
 </p>
@@ -98,10 +98,10 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-deskt
 
 | 模式 | Tools | 说明 |
 |------|------:|------|
-| 全新安装 | **248** | `install.ps1` 在 `rvtmcp.config.json` 中写入 `"toolsets": ["all"]` |
+| 全新安装 | **252** | `install.ps1` 在 `rvtmcp.config.json` 中写入 `"toolsets": ["all"]` |
 | 裸 `tbc-revit-mcp.exe` | **53** | `query` + `create` + `view` + `meta` |
-| `--toolsets all` | **248** | 完整目录 |
-| `all` + adaptive bake | **251** | 再加 3 个 suggestion 生命周期工具 |
+| `--toolsets all` | **252** | 完整目录 |
+| `all` + adaptive bake | **255** | 再加 3 个 suggestion 生命周期工具 |
 
 数量不含个人 baked 工具。只有当 `rvtmcp.config.json` 尚未设置 `toolsets` 时安装器才会写入默认值——你的自定义列表在升级时保留；删除该键（或设置自己的 CSV）则裸服务器回到 53 个工具。Read-only 按 `ReadOnly=true` 逐个筛选工具，因此混合 toolset 中的读取工具仍可用。即使默认 output 是 inline，能写文件的工具也会被排除。
 
@@ -111,7 +111,7 @@ powershell -ExecutionPolicy Bypass -File "$dir\install.ps1" -Client claude-deskt
 | `create` | 轴网、标高、房间、线/点/面构件、组 |
 | `view` | 建视图、图纸布局辅助、截图、裁剪/比例 |
 | `meta` | 批处理（最多 20）、多 Revit 目标、最近模型、项目信息、purge（MVP）、消息、send_code |
-| `lint` | 视图命名、firm-profile、警告摘要 |
+| `lint` | 视图命名、firm-profile、警告摘要、带日期的模型快照与本地仪表板 |
 | `schedule` | 明细表 list/创建、字段、公式、数据 |
 | `families` | 加载/卸载、类型、实例、审计、导出 `.rfa`（项目侧） |
 | `modify` | 操作/着色、写参数、换类型、workset |
@@ -284,6 +284,7 @@ Annotations 描述每个工具对文档和文件的影响。临时 selection、a
       "mcp__tbc-revit-mcp__revit_get_material_properties",
       "mcp__tbc-revit-mcp__revit_get_material_quantities",
       "mcp__tbc-revit-mcp__revit_get_mep_element_connectors",
+      "mcp__tbc-revit-mcp__revit_get_model_snapshot",
       "mcp__tbc-revit-mcp__revit_get_model_warnings_summary",
       "mcp__tbc-revit-mcp__revit_get_operation_status",
       "mcp__tbc-revit-mcp__revit_get_panel_schedule",
@@ -317,6 +318,7 @@ Annotations 描述每个工具对文档和文件的影响。临时 selection、a
       "mcp__tbc-revit-mcp__revit_list_linked_models",
       "mcp__tbc-revit-mcp__revit_list_loaded_families",
       "mcp__tbc-revit-mcp__revit_list_materials",
+      "mcp__tbc-revit-mcp__revit_list_model_snapshots",
       "mcp__tbc-revit-mcp__revit_list_mep_systems",
       "mcp__tbc-revit-mcp__revit_list_phases",
       "mcp__tbc-revit-mcp__revit_list_project_parameter_bindings",

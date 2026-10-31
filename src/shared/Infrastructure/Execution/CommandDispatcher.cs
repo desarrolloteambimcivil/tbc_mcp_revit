@@ -19,6 +19,7 @@ namespace RvtMcp.Plugin
             Register(new Handlers.GetFamilyTypesHandler());
             Register(new Handlers.AiElementFilterHandler());
             Register(new Handlers.AnalyzeModelStatisticsHandler());
+            Register(new Handlers.GetModelSnapshotHandler());
             Register(new Handlers.GetMaterialQuantitiesHandler());
             Register(new Handlers.GetElementDetailsHandler());
             Register(new Handlers.GetElementParametersHandler());

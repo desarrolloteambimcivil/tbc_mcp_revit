@@ -29,6 +29,25 @@
 
 Install only the [latest GitHub Release](https://github.com/bimwright/rvt-mcp/releases/latest). v0.1.0–v0.5.0 are kept as git tags for history; any GitHub Releases for them are no longer published, and the legacy NuGet package `Bimwright.Rvt.Server` (0.1–0.3) is obsolete.
 
+## Unreleased
+
+### Model snapshots and dashboard
+
+- **`revit_create_model_snapshot`** saves a dated snapshot of the active model's figures as a local JSON file. The model is only read.
+  - **Composition:** elements by category, level and workset.
+  - **Health:** warnings by type, in-place families, imported and linked CAD, views not on sheets, sheets, schedules and file size.
+  - **Networks:** grouped by `networkParameter` (default Comments), with length by diameter, fittings, structures, open ends and clashes between networks.
+  - **Data quality:** whether the network parameter is filled.
+  - It returns the key figures and their change since the previous snapshot.
+- **`revit_get_model_snapshot`** returns the same figures without saving them, and works in `--read-only`.
+- **`revit_list_model_snapshots`** lists the stored snapshots and needs no Revit.
+- **`revit_create_model_dashboard`** draws one model's snapshots as a self-contained HTML page that works offline and needs no Revit.
+  - It shows key figures with their change, networks, a clash matrix, health, composition, data quality and progress over time.
+  - With the internal audience it also lists the pending element ids.
+  - `audience=client` leaves out internal sections and element ids.
+- See [docs/model-dashboard.md](docs/model-dashboard.md).
+- Development source counts: `--toolsets all` **252**, adaptive bake **255**, and bare defaults **53**.
+
 ## v1.3.3 — 2026-10-31
 
 ### Pipe networks: fittings by default

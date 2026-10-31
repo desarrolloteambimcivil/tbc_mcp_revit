@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel del modelo · TBC-MCP</title>
+<style>
+/* TeamBIMCivil (GAIA): red #E4332B only for accents, #B8241D for surfaces and red text, greys from the logo.
+   Series colours are the validated categorical palette (slots 1-7); the brand red never encodes data. */
+:root {
+  --red: #e4332b; --red-action: #b8241d;
+  --text: #4a4a4a; --strong: #222324; --muted: #808080; --hair: #e0e0e0; --bg: #f2f2f2; --surface: #ffffff; --soft: #fafafa;
+  --ink: #131417; --ink-text: #c9cdd3;
+  --grid: #e1e0d9; --axis: #c3c2b7;
+  --good: #006300; --bad: #d03b3b; --warn: #b26b00;
+  --seq-1: #cde2fb; --seq-2: #9ec5f4; --seq-3: #6da7ec; --seq-4: #3987e5; --seq-5: #256abf; --seq-6: #184f95; --seq-7: #0d366b;
+  --font: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --mono: "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 15px/1.5 var(--font); color: var(--text); background: var(--bg); }
+h1, h2, h3 { color: var(--strong); margin: 0; line-height: 1.2; }
+h2 { font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+h2::before { content: ""; width: 4px; height: 18px; background: var(--red); border-radius: 2px; }
+h3 { font-size: 1rem; }
+code, .mono { font-family: var(--mono); font-size: 0.86em; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+
+/* Header */
+header { background: var(--surface); border-bottom: 1px solid var(--hair); position: relative; }
+header::after { content: ""; position: absolute; left: 0; bottom: -1px; width: 120px; height: 2px; background: var(--red); }
+.head { display: flex; align-items: center; gap: 18px; min-height: 68px; flex-wrap: wrap; padding: 10px 0; }
+.head img { height: 30px; width: auto; display: block; }
+.head .product { padding-left: 16px; border-left: 1px solid var(--hair); font: 600 0.9rem var(--mono); color: var(--strong); }
+.head .tools { margin-left: auto; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+select, button { font: inherit; font-size: 0.88rem; border: 1px solid var(--hair); background: var(--surface); color: var(--strong); border-radius: 8px; padding: 6px 10px; }
+button { cursor: pointer; }
+button:hover, select:hover { border-color: var(--muted); }
+.seg { display: inline-flex; border: 1px solid var(--hair); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; font: 600 0.78rem var(--mono); padding: 6px 10px; }
+.seg button[aria-pressed="true"] { background: var(--red-action); color: #fff; }
+
+.title-row { padding: 26px 0 8px; display: flex; flex-wrap: wrap; align-items: end; gap: 10px 24px; }
+.title-row h1 { font-size: 1.6rem; overflow-wrap: anywhere; }
+.meta { color: var(--muted); font-size: 0.88rem; }
+.badge { font: 600 0.72rem var(--mono); text-transform: uppercase; letter-spacing: 0.06em; border: 1px solid var(--red-action); color: var(--red-action); border-radius: 6px; padding: 2px 8px; }
+
+/* Cards and grid */
+main { padding: 8px 0 48px; }
+section.block { margin-top: 26px; }
+section.block > h2 { margin-bottom: 12px; }
+.grid { display: grid; gap: 16px; }
+.g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.card { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; padding: 18px 20px; min-width: 0; break-inside: avoid; }
+.card h3 { margin-bottom: 12px; }
+.note { color: var(--muted); font-size: 0.85rem; margin: 8px 0 0; }
+
+/* KPI tiles */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.kpi { background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; padding: 14px 16px; position: relative; min-width: 0; }
+.kpi::before { content: ""; position: absolute; left: 16px; top: -1px; width: 28px; height: 2px; background: var(--red); }
+.kpi .label { font-size: 0.82rem; color: var(--muted); }
+.kpi .value { font-size: 1.9rem; font-weight: 600; color: var(--strong); line-height: 1.15; margin-top: 4px; overflow-wrap: anywhere; }
+.kpi .unit { font-size: 0.95rem; font-weight: 400; color: var(--muted); margin-left: 3px; }
+.delta { font-size: 0.82rem; margin-top: 2px; }
+.delta.good { color: var(--good); } .delta.bad { color: var(--bad); } .delta.flat { color: var(--muted); }
+.kpi svg { display: block; margin-top: 8px; width: 100%; height: 28px; }
+
+/* Bars (HTML): thin marks, 4px rounded data end, value labels in text ink */
+.bars { display: grid; grid-template-columns: minmax(80px, auto) 1fr auto; gap: 7px 10px; align-items: center; font-size: 0.86rem; }
+.bars .name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px; }
+.bars .track { height: 12px; position: relative; }
+.bars .fill { height: 100%; border-radius: 0 4px 4px 0; min-width: 2px; }
+.bars .val { font-family: var(--mono); font-size: 0.8rem; color: var(--strong); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Tall segmented bar: one whole, parts with 2px surface gaps */
+.segbar { display: flex; gap: 2px; height: 28px; margin: 4px 0 10px; }
+.segbar div { border-radius: 4px; color: #fff; font: 600 0.75rem var(--mono); display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap; min-width: 3px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.84rem; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 10px; height: 10px; border-radius: 3px; display: inline-block; flex: none; }
+
+/* Network cards */
+.net { border-top: 3px solid var(--c, var(--muted)); }
+.net h3 { display: flex; align-items: center; gap: 8px; }
+.net dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 12px; margin: 0 0 14px; }
+.net dt { font-size: 0.76rem; color: var(--muted); }
+.net dd { margin: 0; font-size: 1.15rem; font-weight: 600; color: var(--strong); }
+.warn { color: var(--warn); } .ok { color: var(--good); }
+
+/* Meter */
+.meter { margin: 10px 0 4px; }
+.meter .top { display: flex; justify-content: space-between; font-size: 0.86rem; }
+.meter .top b { color: var(--strong); font-size: 1.1rem; }
+.meter .track { height: 10px; background: var(--seq-1); border-radius: 5px; margin-top: 6px; overflow: hidden; }
+.meter .fill { height: 100%; background: var(--seq-5); border-radius: 5px; }
+
+/* Heatmap */
+table { border-collapse: collapse; width: 100%; font-size: 0.84rem; }
+.heat th, .heat td { padding: 6px 8px; text-align: center; }
+.heat th { font-weight: 600; color: var(--strong); white-space: nowrap; }
+.heat th.row { text-align: right; }
+.heat td { border: 2px solid var(--surface); border-radius: 4px; font-family: var(--mono); font-variant-numeric: tabular-nums; min-width: 44px; }
+.heat td.empty { color: var(--axis); background: var(--soft); }
+.scroll { overflow-x: auto; }
+
+/* Lines */
+.line svg { width: 100%; height: auto; display: block; overflow: visible; }
+.line .gridl { stroke: var(--grid); stroke-width: 1; }
+.line .axis { stroke: var(--axis); stroke-width: 1; }
+.line text { font: 11px var(--font); fill: var(--muted); }
+.line .serie { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.line .dot { stroke: var(--surface); stroke-width: 2; }
+.line .cross { stroke: var(--axis); stroke-width: 1; stroke-dasharray: 3 3; }
+
+/* Pending tables */
+.pending td, .pending th { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--hair); vertical-align: top; }
+.pending th { color: var(--muted); font-weight: 600; font-size: 0.8rem; }
+.ids { font-family: var(--mono); font-size: 0.78rem; overflow-wrap: anywhere; color: var(--strong); }
+
+.findings { border-left: 3px solid var(--red); background: var(--surface); border-radius: 0 12px 12px 0; padding: 14px 18px; white-space: pre-wrap; }
+.findings small { display: block; color: var(--muted); font-size: 0.78rem; margin-bottom: 6px; white-space: normal; }
+footer { color: var(--muted); font-size: 0.8rem; padding: 18px 0 32px; border-top: 1px solid var(--hair); }
+
+#tip { position: fixed; pointer-events: none; z-index: 10; background: var(--ink); color: #f4f5f6; font-size: 0.8rem; padding: 6px 9px; border-radius: 6px; max-width: 280px; display: none; box-shadow: 0 8px 20px -8px rgba(0,0,0,.5); }
+#tip b { color: #fff; }
+
+@media (max-width: 860px) { .g2, .g3 { grid-template-columns: minmax(0, 1fr); } .net dl { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media print {
+  body { background: #fff; font-size: 12px; }
+  .tools, #tip, .copy { display: none !important; }
+  .card, .kpi { border-color: #ccc; }
+  section.block { break-inside: avoid-page; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap head">
+    <img src="__TBC_LOGO__" alt="TeamBIMCivil" width="862" height="180">
+    <span class="product">TBC-MCP</span>
+    <div class="tools">
+      <label><span data-t="snapshot"></span> <select id="pick"></select></label>
+      <div class="seg" role="group" aria-label="Idioma / Language"><button type="button" data-lang="es">ES</button><button type="button" data-lang="en">EN</button></div>
+      <button type="button" id="print" data-t="print"></button>
+    </div>
+  </div>
+</header>
+<main class="wrap" id="app"></main>
+<div id="tip" role="tooltip"></div>
+<script type="application/json" id="tbc-data">__TBC_DATA__</script>
+<script>
+(function () {
+  'use strict';
+  var D = JSON.parse(document.getElementById('tbc-data').textContent);
+  var SERIES = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#6250d6'];
+  var NEUTRAL = '#898781';
+  var SEQ = ['--seq-1', '--seq-2', '--seq-3', '--seq-4', '--seq-5', '--seq-6', '--seq-7'];
+
+  var T = {
+    es: {
+      title: 'Panel del modelo', snapshot: 'Snapshot', print: 'Imprimir', internal: 'Interno', client: 'Cliente',
+      captured: 'Capturado', snapshots: 'snapshots', of: 'de', revit: 'Revit',
+      kpi_elements: 'Elementos del modelo', kpi_warnings: 'Avisos', kpi_length: 'Metros de red', kpi_open: 'Extremos abiertos',
+      kpi_clashes: 'Colisiones entre redes', kpi_filled: 'con valor', vs_prev: 'vs. anterior', first: 'primer snapshot', no_change: 'sin cambios',
+      networks: 'Redes', networks_lead: 'Agrupadas por', share: 'Reparto de metros por red', unassigned: '(sin valor)', other: 'Otras',
+      pipes: 'Tuberías', conduits: 'Tubos', length: 'Metros', fittings: 'Uniones', accessories: 'Accesorios', structures: 'Estructuras',
+      open_ends: 'Extremos abiertos', clashes: 'Colisiones', joints: 'Uniones sin pieza', by_dn: 'Metros por diámetro',
+      clash_matrix: 'Colisiones entre redes', clearance: 'holgura', no_clashes: 'Sin colisiones entre tuberías y tubos.', clashes_skipped: 'Comprobación de colisiones omitida: el modelo supera el límite de curvas.',
+      health: 'Salud del modelo', warnings_by_type: 'Avisos por tipo', in_place: 'Familias in situ', imported_cad: 'CAD importados', linked_cad: 'CAD vinculados',
+      linked_rvt: 'Revit vinculados', views_off: 'Vistas fuera de plano', sheets: 'Planos', schedules: 'Tablas', families: 'Familias', file_size: 'Tamaño del archivo',
+      composition: 'Composición', by_category: 'Elementos por categoría', by_level: 'Elementos por nivel', by_workset: 'Por subproyecto', no_level: '(sin nivel)',
+      quality: 'Calidad de datos', filled: 'rellenos', scope: 'Alcance', missing: 'sin valor',
+      evolution: 'Evolución', evolution_need: 'La evolución aparece a partir de dos snapshots del mismo modelo.',
+      pending: 'Pendientes', pending_lead: 'Ids de Revit para pedir al agente «selecciona estos elementos». Muestra limitada a', copy: 'Copiar ids', copied: 'Copiado',
+      network: 'Red', what: 'Qué', count: 'Nº', ids: 'Ids', open_ends_l: 'Extremos abiertos', missing_l: 'Sin', clash_pairs_l: 'Pares en colisión', joints_l: 'Uniones sin pieza',
+      findings: 'Hallazgos', findings_note: 'Comentario del agente, no son datos del modelo.', generated: 'Generado', product: 'Generado con TBC-MCP · TeamBIMCivil',
+      local: 'Datos de snapshots locales; nada sale de este equipo.', others: 'otros', elements: 'elementos', more: 'más',
+      truncated: 'Secciones recortadas por límites:'
+    },
+    en: {
+      title: 'Model dashboard', snapshot: 'Snapshot', print: 'Print', internal: 'Internal', client: 'Client',
+      captured: 'Captured', snapshots: 'snapshots', of: 'of', revit: 'Revit',
+      kpi_elements: 'Model elements', kpi_warnings: 'Warnings', kpi_length: 'Network metres', kpi_open: 'Open ends',
+      kpi_clashes: 'Clashes between networks', kpi_filled: 'filled', vs_prev: 'vs. previous', first: 'first snapshot', no_change: 'no change',
+      networks: 'Networks', networks_lead: 'Grouped by', share: 'Metres by network', unassigned: '(no value)', other: 'Other',
+      pipes: 'Pipes', conduits: 'Conduits', length: 'Metres', fittings: 'Fittings', accessories: 'Accessories', structures: 'Structures',
+      open_ends: 'Open ends', clashes: 'Clashes', joints: 'Joints without fitting', by_dn: 'Metres by diameter',
+      clash_matrix: 'Clashes between networks', clearance: 'clearance', no_clashes: 'No clashes between pipes and conduits.', clashes_skipped: 'Clash check skipped: the model exceeds the curve limit.',
+      health: 'Model health', warnings_by_type: 'Warnings by type', in_place: 'In-place families', imported_cad: 'Imported CAD', linked_cad: 'Linked CAD',
+      linked_rvt: 'Linked Revit models', views_off: 'Views not on sheets', sheets: 'Sheets', schedules: 'Schedules', families: 'Families', file_size: 'File size',
+      composition: 'Composition', by_category: 'Elements by category', by_level: 'Elements by level', by_workset: 'By workset', no_level: '(no level)',
+      quality: 'Data quality', filled: 'filled', scope: 'Scope', missing: 'without a value',
+      evolution: 'Progress', evolution_need: 'Progress appears from two snapshots of the same model.',
+      pending: 'Pending', pending_lead: 'Revit ids to ask the agent "select these elements". Sample limited to', copy: 'Copy ids', copied: 'Copied',
+      network: 'Network', what: 'What', count: 'No.', ids: 'Ids', open_ends_l: 'Open ends', missing_l: 'Without', clash_pairs_l: 'Clashing pairs', joints_l: 'Joints without fitting',
+      findings: 'Findings', findings_note: 'Agent commentary, not model data.', generated: 'Generated', product: 'Made with TBC-MCP · TeamBIMCivil',
+      local: 'Data from local snapshots; nothing leaves this computer.', others: 'other', elements: 'elements', more: 'more',
+      truncated: 'Sections cut by limits:'
+    }
+  };
+  var lang = (navigator.language || 'es').toLowerCase().indexOf('en') === 0 ? 'en' : 'es';
+  try { var saved = localStorage.getItem('tbc-dash-lang'); if (saved === 'es' || saved === 'en') lang = saved; } catch (e) {}
+  var selected = D.snapshots.length - 1;
+
+  function t(k) { return (T[lang] && T[lang][k]) || T.es[k] || k; }
+  function nf(v, d) { return v == null || isNaN(v) ? '–' : new Intl.NumberFormat(lang === 'es' ? 'es-ES' : 'en-GB', { maximumFractionDigits: d == null ? 0 : d, minimumFractionDigits: 0 }).format(v); }
+  function date(iso) { var d = new Date(iso); return isNaN(d) ? iso : d.toLocaleString(lang === 'es' ? 'es-ES' : 'en-GB', { dateStyle: 'medium', timeStyle: 'short' }); }
+  function shortDate(iso) { var d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-GB', { day: '2-digit', month: 'short' }); }
+  function h(tag, attrs) {
+    var e = document.createElement(tag);
+    if (attrs) for (var k in attrs) { if (attrs[k] == null) continue; if (k === 'text') e.textContent = attrs[k]; else if (k === 'style') e.style.cssText = attrs[k]; else e.setAttribute(k, attrs[k]); }
+    for (var i = 2; i < arguments.length; i++) { var c = arguments[i]; if (c == null) continue; e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); }
+    return e;
+  }
+  function s(tag, attrs) { var e = document.createElementNS('http://www.w3.org/2000/svg', tag); for (var k in attrs) e.setAttribute(k, attrs[k]); return e; }
+  function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+  function netName(n) { return n === '' || n == null ? t('unassigned') : n; }
+
+  // Colour follows the network, never its rank: slots by name over the whole history.
+  var colours = {};
+  (function () {
+    var names = {};
+    D.snapshots.forEach(function (sn) { var n = sn.sections.networks; if (n) n.items.forEach(function (i) { if (!i.unassigned) names[i.name] = 1; }); });
+    Object.keys(names).sort(function (a, b) { return a.localeCompare(b); }).forEach(function (n, i) { colours[n] = i < SERIES.length ? SERIES[i] : NEUTRAL; });
+  })();
+  function colour(name) { return colours[name] || NEUTRAL; }
+
+  // Tooltip
+  var tip = document.getElementById('tip');
+  function showTip(ev, html) { tip.innerHTML = html; tip.style.display = 'block'; var x = ev.clientX + 14, y = ev.clientY + 14; var r = tip.getBoundingClientRect(); if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - 14; if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - 14; tip.style.left = x + 'px'; tip.style.top = y + 'px'; }
+  function hideTip() { tip.style.display = 'none'; }
+  function tipOn(node, html) { node.addEventListener('mousemove', function (ev) { showTip(ev, html); }); node.addEventListener('mouseleave', hideTip); return node; }
+  function esc(v) { return String(v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  // ---- Components ----
+  function bars(rows, opts) {
+    opts = opts || {};
+    var max = Math.max.apply(null, rows.map(function (r) { return r.value; }).concat([0]));
+    var box = h('div', { 'class': 'bars' });
+    rows.forEach(function (r) {
+      box.appendChild(h('span', { 'class': 'name', title: r.label, text: r.label }));
+      var track = h('div', { 'class': 'track' }, h('div', { 'class': 'fill', style: 'width:' + (max > 0 ? Math.max(0.5, 100 * r.value / max) : 0) + '%;background:' + (r.colour || css('--seq-5')) }));
+      tipOn(track, '<b>' + esc(r.label) + '</b><br>' + nf(r.value, opts.digits) + (opts.unit ? ' ' + opts.unit : ''));
+      box.appendChild(track);
+      box.appendChild(h('span', { 'class': 'val', text: nf(r.value, opts.digits) + (opts.unit ? ' ' + opts.unit : '') }));
+    });
+    return box;
+  }
+
+  function foldTail(rows, keep, label) {
+    if (rows.length <= keep) return rows;
+    var head = rows.slice(0, keep - 1), tail = rows.slice(keep - 1);
+    head.push({ label: label + ' (' + tail.length + ')', value: tail.reduce(function (a, r) { return a + r.value; }, 0), colour: NEUTRAL });
+    return head;
+  }
+
+  function segbar(parts, digits, unit) {
+    var total = parts.reduce(function (a, p) { return a + p.value; }, 0);
+    var wrap = h('div');
+    var bar = h('div', { 'class': 'segbar' });
+    parts.forEach(function (p) {
+      if (p.value <= 0) return;
+      var pct = total > 0 ? 100 * p.value / total : 0;
+      var seg = h('div', { style: 'flex:' + p.value + ' 1 0;background:' + p.colour + (p.colour === '#eda100' ? ';color:#0b0b0b' : '') }, pct >= 9 ? nf(pct, 0) + '%' : '');
+      tipOn(seg, '<b>' + esc(p.label) + '</b><br>' + nf(p.value, digits) + ' ' + unit + ' · ' + nf(pct, 1) + '%');
+      bar.appendChild(seg);
+    });
+    wrap.appendChild(bar);
+    var legend = h('div', { 'class': 'legend' });
+    parts.forEach(function (p) { legend.appendChild(h('span', null, h('i', { 'class': 'sw', style: 'background:' + p.colour }), p.label + ' · ' + nf(p.value, digits) + ' ' + unit)); });
+    wrap.appendChild(legend);
+    return wrap;
+  }
+
+  function meter(label, pct, detail) {
+    var m = h('div', { 'class': 'meter' });
+    m.appendChild(h('div', { 'class': 'top' }, h('span', { text: label }), h('b', { text: pct == null ? '–' : nf(pct, 1) + '%' })));
+    m.appendChild(h('div', { 'class': 'track' }, h('div', { 'class': 'fill', style: 'width:' + (pct || 0) + '%' })));
+    if (detail) m.appendChild(h('p', { 'class': 'note', text: detail }));
+    return m;
+  }
+
+  function sparkline(values) {
+    var svg = s('svg', { viewBox: '0 0 100 28', preserveAspectRatio: 'none', 'aria-hidden': 'true' });
+    var v = values.filter(function (x) { return x != null; });
+    if (v.length < 2) return null;
+    var min = Math.min.apply(null, v), max = Math.max.apply(null, v), span = max - min || 1;
+    var pts = values.map(function (x, i) { return x == null ? null : [i * 100 / (values.length - 1), 24 - 20 * (x - min) / span]; }).filter(Boolean);
+    svg.appendChild(s('polyline', { points: pts.map(function (p) { return p.join(','); }).join(' '), fill: 'none', stroke: css('--seq-5'), 'stroke-width': 2, 'vector-effect': 'non-scaling-stroke', 'stroke-linejoin': 'round' }));
+    return svg;
+  }
+
+  // Line chart: one axis, 2px lines, 8px markers, hover crosshair with the nearest snapshot.
+  function lineChart(series, opts) {
+    opts = opts || {};
+    var W = 560, H = 190, L = 44, R = series.length <= 4 && series.length > 1 ? 96 : 16, TOP = 12, B = 26;
+    var xs = D.snapshots.map(function (sn) { return new Date(sn.captured_at_utc).getTime(); });
+    var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
+    var all = []; series.forEach(function (se) { se.values.forEach(function (v) { if (v != null) all.push(v); }); });
+    var ymin = Math.min.apply(null, all.concat([0])), ymax = Math.max.apply(null, all.concat([0]));
+    if (opts.pct) { ymin = 0; ymax = 100; }
+    if (ymax === ymin) ymax = ymin + 1;
+    var X = function (i) { return L + (x1 === x0 ? (W - L - R) / 2 : (xs[i] - x0) * (W - L - R) / (x1 - x0)); };
+    var Y = function (v) { return TOP + (H - TOP - B) * (1 - (v - ymin) / (ymax - ymin)); };
+    var svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': opts.title || '' });
+    [0, 0.5, 1].forEach(function (f) {
+      var v = ymin + f * (ymax - ymin), y = Y(v);
+      svg.appendChild(s('line', { x1: L, x2: W - R, y1: y, y2: y, 'class': f === 0 ? 'axis' : 'gridl' }));
+      var tx = s('text', { x: L - 6, y: y + 4, 'text-anchor': 'end' }); tx.textContent = nf(v, opts.digits); svg.appendChild(tx);
+    });
+    [0, xs.length - 1].forEach(function (i, k) {
+      if (k === 1 && xs.length < 2) return;
+      var tx = s('text', { x: X(i), y: H - 6, 'text-anchor': k === 0 ? 'start' : 'end' }); tx.textContent = shortDate(D.snapshots[i].captured_at_utc); svg.appendChild(tx);
+    });
+    series.forEach(function (se) {
+      var d = '', pen = false;
+      se.values.forEach(function (v, i) { if (v == null) { pen = false; return; } d += (pen ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1); pen = true; });
+      svg.appendChild(s('path', { d: d, 'class': 'serie', stroke: se.colour }));
+      se.values.forEach(function (v, i) { if (v != null) svg.appendChild(s('circle', { cx: X(i), cy: Y(v), r: i === selected ? 5 : 4, fill: se.colour, 'class': 'dot' })); });
+      if (R > 16) {
+        var last = se.values.length - 1; while (last >= 0 && se.values[last] == null) last--;
+        if (last >= 0) { var lb = s('text', { x: W - R + 8, y: Y(se.values[last]) + 4 }); lb.textContent = se.name.length > 14 ? se.name.slice(0, 13) + '…' : se.name; lb.setAttribute('fill', css('--text')); svg.appendChild(lb); }
+      }
+    });
+    var cross = s('line', { y1: TOP, y2: H - B, 'class': 'cross', visibility: 'hidden' });
+    svg.appendChild(cross);
+    var hit = s('rect', { x: L, y: 0, width: W - L - R, height: H, fill: 'transparent' });
+    hit.addEventListener('mousemove', function (ev) {
+      var r = svg.getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width, best = 0;
+      xs.forEach(function (_, i) { if (Math.abs(X(i) - px) < Math.abs(X(best) - px)) best = i; });
+      cross.setAttribute('x1', X(best)); cross.setAttribute('x2', X(best)); cross.setAttribute('visibility', 'visible');
+      var sn = D.snapshots[best];
+      showTip(ev, '<b>' + esc(date(sn.captured_at_utc)) + '</b>' + (sn.label ? '<br>' + esc(sn.label) : '') + series.map(function (se) {
+        return '<br><i class="sw" style="background:' + se.colour + '"></i> ' + esc(se.name) + ': ' + nf(se.values[best], opts.digits) + (opts.pct ? '%' : '');
+      }).join(''));
+    });
+    hit.addEventListener('mouseleave', function () { cross.setAttribute('visibility', 'hidden'); hideTip(); });
+    svg.appendChild(hit);
+    var box = h('div', { 'class': 'line' });
+    box.appendChild(svg);
+    if (series.length > 1) {
+      var lg = h('div', { 'class': 'legend' });
+      series.forEach(function (se) { lg.appendChild(h('span', null, h('i', { 'class': 'sw', style: 'background:' + se.colour }), se.name)); });
+      box.appendChild(lg);
+    }
+    return box;
+  }
+
+  function card(title) { var c = h('div', { 'class': 'card' }); if (title) c.appendChild(h('h3', { text: title })); for (var i = 1; i < arguments.length; i++) if (arguments[i]) c.appendChild(arguments[i]); return c; }
+  function block(title, lead) { var b = h('section', { 'class': 'block' }, h('h2', { text: title })); if (lead) b.appendChild(h('p', { 'class': 'note', style: 'margin:-6px 0 12px', text: lead })); return b; }
+
+  // ---- Sections ----
+  var KPI = [
+    { key: 'elements_total', label: 'kpi_elements', better: null },
+    { key: 'warnings_total', label: 'kpi_warnings', better: 'down' },
+    { key: 'network_length_m', label: 'kpi_length', better: null, digits: 1, unit: 'm' },
+    { key: 'open_ends', label: 'kpi_open', better: 'down' },
+    { key: 'network_clashes', label: 'kpi_clashes', better: 'down' }
+  ];
+
+  function kpis(sn, prev) {
+    var row = h('div', { 'class': 'kpis' });
+    var list = KPI.slice();
+    Object.keys(sn.key_figures || {}).forEach(function (k) { if (/_filled_pct$/.test(k)) list.push({ key: k, label: null, name: k.replace(/_filled_pct$/, '') + ' ' + t('kpi_filled'), better: 'up', digits: 1, unit: '%' }); });
+    list.forEach(function (k) {
+      var v = sn.key_figures ? sn.key_figures[k.key] : null;
+      if (v === undefined) return;
+      var tile = h('div', { 'class': 'kpi' });
+      tile.appendChild(h('div', { 'class': 'label', text: k.label ? t(k.label) : k.name }));
+      tile.appendChild(h('div', { 'class': 'value' }, nf(v, k.digits), k.unit ? h('span', { 'class': 'unit', text: k.unit }) : null));
+      var p = prev && prev.key_figures ? prev.key_figures[k.key] : null;
+      if (prev == null) tile.appendChild(h('div', { 'class': 'delta flat', text: t('first') }));
+      else if (p != null && v != null) {
+        var d = Math.round((v - p) * 1000) / 1000;
+        var cls = d === 0 || !k.better ? 'flat' : (d < 0) === (k.better === 'down') ? 'good' : 'bad';
+        tile.appendChild(h('div', { 'class': 'delta ' + cls, text: d === 0 ? '= ' + t('no_change') : (d > 0 ? '▲ +' : '▼ ') + nf(d, k.digits) + (k.unit === '%' ? ' pp' : '') + ' ' + t('vs_prev') }));
+      }
+      var spark = sparkline(D.snapshots.map(function (x) { return x.key_figures ? x.key_figures[k.key] : null; }));
+      if (spark) tile.appendChild(spark);
+      row.appendChild(tile);
+    });
+    return row;
+  }
+
+  function networks(sec) {
+    var b = block(t('networks'), t('networks_lead') + ' ' + sec.group_by + ' · ' + nf(sec.networks_total) + ' · ' + nf(sec.length_m, 1) + ' m');
+    var parts = sec.items.filter(function (i) { return i.length_m > 0; }).map(function (i) { return { label: netName(i.name), value: i.length_m, colour: i.unassigned ? NEUTRAL : colour(i.name) }; });
+    parts.sort(function (a, c) { return c.value - a.value; });
+    b.appendChild(card(t('share'), segbar(foldTail(parts, 6, t('other')), 1, 'm')));
+    var grid = h('div', { 'class': 'grid g3', style: 'margin-top:16px' });
+    sec.items.forEach(function (n) {
+      var c = h('div', { 'class': 'card net', style: '--c:' + (n.unassigned ? NEUTRAL : colour(n.name)) });
+      c.appendChild(h('h3', null, h('i', { 'class': 'sw', style: 'background:' + (n.unassigned ? NEUTRAL : colour(n.name)) }), netName(n.name)));
+      var dl = h('dl');
+      function add(label, value, cls) { dl.appendChild(h('div', null, h('dt', { text: label }), h('dd', { 'class': cls || '', text: value }))); }
+      add(t('length'), nf(n.length_m, 1));
+      add(n.conduits > 0 && n.pipes === 0 ? t('conduits') : t('pipes'), nf(n.pipes + n.conduits));
+      add(t('fittings'), nf(n.fittings));
+      add(t('structures'), nf(n.structures));
+      add(t('open_ends'), (n.open_ends.count > 0 ? '⚠ ' : '✓ ') + nf(n.open_ends.count), n.open_ends.count > 0 ? 'warn' : 'ok');
+      add(t('clashes'), (n.clashes_total > 0 ? '⚠ ' : '✓ ') + nf(n.clashes_total), n.clashes_total > 0 ? 'warn' : 'ok');
+      c.appendChild(dl);
+      if (n.by_diameter.length) {
+        c.appendChild(h('p', { 'class': 'note', style: 'margin:0 0 6px', text: t('by_dn') }));
+        c.appendChild(bars(n.by_diameter.map(function (d) { return { label: (d.kind === 'conduit' ? '◦ ' : '') + 'Ø' + d.dn_mm, value: d.length_m, colour: n.unassigned ? NEUTRAL : colour(n.name) }; }), { digits: 1, unit: 'm' }));
+      }
+      grid.appendChild(c);
+    });
+    b.appendChild(grid);
+    b.appendChild(clashMatrix(sec));
+    return b;
+  }
+
+  function clashMatrix(sec) {
+    var c = card(t('clash_matrix') + ' · ' + t('clearance') + ' ' + nf(sec.clearance_mm) + ' mm');
+    c.style.marginTop = '16px';
+    if (sec.clashes_checked === false) { c.appendChild(h('p', { 'class': 'note', text: t('clashes_skipped') })); return c; }
+    if (!sec.clash_pairs.length) { c.appendChild(h('p', { 'class': 'note', text: '✓ ' + t('no_clashes') })); return c; }
+    var names = []; sec.clash_pairs.forEach(function (p) { [p.a, p.b].forEach(function (n) { if (names.indexOf(n) < 0) names.push(n); }); });
+    names.sort(function (a, b) { return a.localeCompare(b); });
+    var count = {}; var max = 0;
+    sec.clash_pairs.forEach(function (p) { count[p.a + '\u0000' + p.b] = count[p.b + '\u0000' + p.a] = p.count; if (p.count > max) max = p.count; });
+    var table = h('table', { 'class': 'heat' });
+    var head = h('tr', null, h('th'));
+    names.forEach(function (n) { head.appendChild(h('th', { text: netName(n) })); });
+    table.appendChild(head);
+    names.forEach(function (r, i) {
+      var tr = h('tr', null, h('th', { 'class': 'row', text: netName(r) }));
+      names.forEach(function (col, j) {
+        if (j > i) { tr.appendChild(h('td', { 'class': 'empty' })); return; }
+        var v = count[r + '\u0000' + col] || 0;
+        if (!v) { tr.appendChild(h('td', { 'class': 'empty', text: '0' })); return; }
+        var step = Math.min(SEQ.length - 1, 1 + Math.floor((SEQ.length - 2) * v / max));
+        var td = h('td', { style: 'background:' + css(SEQ[step]) + ';color:' + (step >= 3 ? '#fff' : '#0b0b0b'), text: nf(v) });
+        tipOn(td, '<b>' + esc(netName(r)) + ' × ' + esc(netName(col)) + '</b><br>' + nf(v) + ' ' + t('clashes').toLowerCase());
+        tr.appendChild(td);
+      });
+      table.appendChild(tr);
+    });
+    c.appendChild(h('div', { 'class': 'scroll' }, table));
+    return c;
+  }
+
+  function health(sec) {
+    var b = block(t('health'));
+    var grid = h('div', { 'class': 'grid g2' });
+    var rows = sec.warnings_by_type.map(function (w) { return { label: w.description || '–', value: w.count }; });
+    var shown = foldTail(rows, 9, t('others'));
+    var warnCard = card(t('warnings_by_type') + ' · ' + nf(sec.warnings_total), rows.length ? bars(shown) : h('p', { 'class': 'note', text: '✓ 0' }));
+    grid.appendChild(warnCard);
+    var facts = h('div', { 'class': 'bars' });
+    [['families', sec.families_total], ['in_place', sec.in_place_families], ['imported_cad', sec.imported_cad], ['linked_cad', sec.linked_cad], ['linked_rvt', sec.linked_rvt],
+     ['views_off', sec.views_not_on_sheets + ' / ' + nf(sec.views_total)], ['sheets', sec.sheets], ['schedules', sec.schedules],
+     ['file_size', sec.file_size_bytes == null ? '–' : nf(sec.file_size_bytes / 1048576, 1) + ' MB']].forEach(function (f) {
+      facts.appendChild(h('span', { 'class': 'name', text: t(f[0]) }));
+      facts.appendChild(h('span'));
+      facts.appendChild(h('span', { 'class': 'val', text: typeof f[1] === 'number' ? nf(f[1]) : f[1] }));
+    });
+    grid.appendChild(card(t('health'), facts));
+    b.appendChild(grid);
+    return b;
+  }
+
+  function composition(sec) {
+    var b = block(t('composition'), nf(sec.elements_total) + ' ' + t('elements'));
+    var grid = h('div', { 'class': 'grid g2' });
+    var cats = foldTail(sec.by_category.map(function (c) { return { label: c.name || '–', value: c.count }; }), 15, t('others'));
+    grid.appendChild(card(t('by_category'), bars(cats)));
+    var lv = foldTail(sec.by_level.map(function (c) { return { label: c.name || t('no_level'), value: c.count }; }), 12, t('others'));
+    var right = card(t('by_level'), bars(lv));
+    if (sec.by_workset) { right.appendChild(h('h3', { style: 'margin:16px 0 12px', text: t('by_workset') })); right.appendChild(bars(foldTail(sec.by_workset.map(function (c) { return { label: c.name || '–', value: c.count }; }), 10, t('others')))); }
+    grid.appendChild(right);
+    b.appendChild(grid);
+    return b;
+  }
+
+  function quality(sec) {
+    var b = block(t('quality'));
+    var c = card(null);
+    sec.checks.forEach(function (q) {
+      c.appendChild(meter(q.parameter + ' · ' + nf(q.filled) + ' / ' + nf(q.total) + ' ' + t('filled'), q.pct, t('scope') + ': ' + q.scope + ' · ' + nf(q.total - q.filled) + ' ' + t('missing')));
+    });
+    b.appendChild(c);
+    return b;
+  }
+
+  function evolution() {
+    var b = block(t('evolution'));
+    if (D.snapshots.length < 2) { b.appendChild(h('p', { 'class': 'note', text: t('evolution_need') })); return b; }
+    var grid = h('div', { 'class': 'grid g2' });
+    function fig(key) { return D.snapshots.map(function (sn) { var v = sn.key_figures ? sn.key_figures[key] : null; return v == null ? null : v; }); }
+    var nets = Object.keys(colours);
+    if (nets.length) {
+      var series = nets.map(function (n) { return { name: n, colour: colour(n), values: D.snapshots.map(function (sn) { var s2 = sn.sections.networks; if (!s2) return null; var it = s2.items.filter(function (i) { return i.name === n; })[0]; return it ? it.length_m : 0; }) }; });
+      grid.appendChild(card(t('kpi_length'), lineChart(series.slice(0, 7), { digits: 0, title: t('kpi_length') })));
+    }
+    [['warnings_total', 'kpi_warnings'], ['open_ends', 'kpi_open'], ['network_clashes', 'kpi_clashes']].forEach(function (k) {
+      var v = fig(k[0]); if (v.every(function (x) { return x == null; })) return;
+      grid.appendChild(card(t(k[1]), lineChart([{ name: t(k[1]), colour: SERIES[0], values: v }], { digits: 0, title: t(k[1]) })));
+    });
+    Object.keys(D.snapshots[D.snapshots.length - 1].key_figures || {}).forEach(function (k) {
+      if (!/_filled_pct$/.test(k)) return;
+      var name = k.replace(/_filled_pct$/, '') + ' ' + t('kpi_filled');
+      grid.appendChild(card(name + ' (%)', lineChart([{ name: name, colour: SERIES[0], values: fig(k) }], { digits: 0, pct: true, title: name })));
+    });
+    b.appendChild(grid);
+    return b;
+  }
+
+  function pending(sn) {
+    var net = sn.sections.networks, dq = sn.sections.data_quality;
+    var rows = [];
+    if (net) net.items.forEach(function (n) {
+      if (n.open_ends.count) rows.push([netName(n.name), t('open_ends_l'), n.open_ends.count, n.open_ends.sample_ids]);
+      if (n.unjoined_joints.count) rows.push([netName(n.name), t('joints_l'), n.unjoined_joints.count, [].concat.apply([], n.unjoined_joints.sample_pairs)]);
+    });
+    if (net) net.clash_pairs.forEach(function (p) { rows.push([netName(p.a) + ' × ' + netName(p.b), t('clash_pairs_l'), p.count, [].concat.apply([], p.sample_pairs)]); });
+    if (dq) dq.checks.forEach(function (q) { if (q.total - q.filled > 0) rows.push(['–', t('missing_l') + ' ' + q.parameter, q.total - q.filled, q.missing_sample_ids]); });
+    if (!rows.length) return null;
+    var limit = (sn.parameters && sn.parameters.sample_limit) || '';
+    var b = block(t('pending'), t('pending_lead') + ' ' + limit + '.');
+    var table = h('table', { 'class': 'pending' }, h('tr', null, h('th', { text: t('network') }), h('th', { text: t('what') }), h('th', { text: t('count') }), h('th', { text: t('ids') }), h('th')));
+    rows.forEach(function (r) {
+      var ids = r[3].filter(function (v, i, a) { return a.indexOf(v) === i; });
+      var copy = h('button', { type: 'button', 'class': 'copy', text: t('copy') });
+      copy.addEventListener('click', function () {
+        var done = function () { copy.textContent = t('copied'); setTimeout(function () { copy.textContent = t('copy'); }, 1400); };
+        if (navigator.clipboard) navigator.clipboard.writeText(ids.join(', ')).then(done, function () {});
+      });
+      table.appendChild(h('tr', null, h('td', { text: r[0] }), h('td', { text: r[1] }), h('td', { 'class': 'mono', text: nf(r[2]) }),
+        h('td', { 'class': 'ids', text: ids.join(', ') + (r[2] > ids.length && r[1] === t('open_ends_l') ? ' … (+' + nf(r[2] - ids.length) + ' ' + t('more') + ')' : '') }), h('td', null, copy)));
+    });
+    b.appendChild(card(null, h('div', { 'class': 'scroll' }, table)));
+    return b;
+  }
+
+  // ---- Page ----
+  function render() {
+    document.documentElement.lang = lang;
+    document.title = t('title') + ' · ' + D.model.title + ' · TBC-MCP';
+    Array.prototype.forEach.call(document.querySelectorAll('[data-t]'), function (e) { e.textContent = t(e.getAttribute('data-t')); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-lang]'), function (e) { e.setAttribute('aria-pressed', e.getAttribute('data-lang') === lang ? 'true' : 'false'); });
+    var pick = document.getElementById('pick');
+    pick.innerHTML = '';
+    D.snapshots.forEach(function (sn, i) { pick.appendChild(h('option', { value: i, text: date(sn.captured_at_utc) + (sn.label ? ' · ' + sn.label : '') })); });
+    pick.value = String(selected);
+
+    var sn = D.snapshots[selected], prev = selected > 0 ? D.snapshots[selected - 1] : null;
+    var app = document.getElementById('app');
+    app.innerHTML = '';
+    var title = h('div', { 'class': 'title-row' }, h('div', null, h('p', { 'class': 'meta', style: 'margin:0', text: t('title') }), h('h1', { text: D.model.title })),
+      h('span', { 'class': 'meta', text: t('captured') + ' ' + date(sn.captured_at_utc) + (sn.label ? ' · ' + sn.label : '') + ' · ' + (selected + 1) + ' ' + t('of') + ' ' + D.snapshots.length + ' ' + t('snapshots') + (D.model.revit_year ? ' · ' + t('revit') + ' ' + D.model.revit_year : '') }),
+      h('span', { 'class': 'badge', text: t(D.audience) }));
+    app.appendChild(title);
+    app.appendChild(kpis(sn, prev));
+    if (D.findings) app.appendChild(h('section', { 'class': 'block' }, h('h2', { text: t('findings') }), h('div', { 'class': 'findings' }, h('small', { text: t('findings_note') }), D.findings)));
+    var S = sn.sections;
+    if (S.networks) app.appendChild(networks(S.networks));
+    app.appendChild(evolution());
+    if (S.health) app.appendChild(health(S.health));
+    if (S.data_quality) app.appendChild(quality(S.data_quality));
+    if (S.composition) app.appendChild(composition(S.composition));
+    if (D.audience === 'internal') { var p = pending(sn); if (p) app.appendChild(p); }
+    var cut = sn.truncated && sn.truncated.sections && sn.truncated.sections.length ? t('truncated') + ' ' + sn.truncated.sections.join(', ') + '. ' : '';
+    app.appendChild(h('footer', null, cut + t('generated') + ' ' + date(D.generated_at_utc) + ' · ' + t('product') + (D.product_version ? ' ' + D.product_version : '') + ' · ' + t('local')));
+  }
+
+  document.getElementById('pick').addEventListener('change', function () { selected = Number(this.value); render(); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-lang]'), function (e) {
+    e.addEventListener('click', function () { lang = e.getAttribute('data-lang'); try { localStorage.setItem('tbc-dash-lang', lang); } catch (x) {} render(); });
+  });
+  document.getElementById('print').addEventListener('click', function () { window.print(); });
+  render();
+})();
+</script>
+</body>
+</html>

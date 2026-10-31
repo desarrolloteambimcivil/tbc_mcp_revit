@@ -20,6 +20,8 @@ namespace RvtMcp.Plugin
             "analyze_geometry_complexity",
             "analyze_mep_network",
             "analyze_model_statistics",
+            "get_model_snapshot",
+            "list_model_snapshots",
             "analyze_sheet_layout",
             "analyze_structural_connections",
             "analyze_view_naming_patterns",

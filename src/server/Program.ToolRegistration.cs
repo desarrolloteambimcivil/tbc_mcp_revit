@@ -96,6 +96,7 @@ namespace RvtMcp.Server
             if (enabled.Contains("meta"))       types.Add(typeof(ChangeHistoryTools));
             if (enabled.Contains("meta"))       types.Add(typeof(FailureTools));
             if (enabled.Contains("lint"))       types.Add(typeof(LintTools));
+            if (enabled.Contains("lint"))       types.Add(typeof(ModelDashboardTools));
             if (enabled.Contains("structural")) types.Add(typeof(StructuralTools));
             return types.ToArray();
         }

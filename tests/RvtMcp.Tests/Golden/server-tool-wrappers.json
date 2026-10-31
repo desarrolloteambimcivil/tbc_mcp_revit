@@ -2705,6 +2705,28 @@
       "result": "Error: golden probe failure"
     }
   },
+  "revit_get_model_snapshot": {
+    "success": {
+      "calls": [
+        {
+          "command": "get_model_snapshot",
+          "params": "{\"sections\":null,\"network_parameter\":\"Comments\",\"clearance_mm\":0.0,\"sample_limit\":50}",
+          "timeout": 180
+        }
+      ],
+      "result": "{\r\n  \"golden_probe\": true,\r\n  \"items\": [\r\n    1,\r\n    2\r\n  ]\r\n}"
+    },
+    "failure": {
+      "calls": [
+        {
+          "command": "get_model_snapshot",
+          "params": "{\"sections\":null,\"network_parameter\":\"Comments\",\"clearance_mm\":0.0,\"sample_limit\":50}",
+          "timeout": 180
+        }
+      ],
+      "result": "Error: golden probe failure"
+    }
+  },
   "revit_get_model_warnings_summary": {
     "success": {
       "calls": [

@@ -37,6 +37,10 @@ namespace RvtMcp.Tests
             ["revit_health"] = "HealthToolsTests",
             ["revit_switch_target"] = "MetaToolShellTests",
             ["revit_analyze_usage_patterns"] = "MetaToolShellTests",
+            // Snapshot sends get_model_snapshot and stores the reply; the list and the dashboard read local files only.
+            ["revit_create_model_snapshot"] = "ModelDashboardTests",
+            ["revit_list_model_snapshots"] = "ModelDashboardTests",
+            ["revit_create_model_dashboard"] = "ModelDashboardTests",
         };
 
         // Tools that parse JSON text or arrays before sending need a minimal valid value for that parameter.
