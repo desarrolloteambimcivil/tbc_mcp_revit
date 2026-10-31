@@ -33,7 +33,7 @@ namespace RvtMcp.Plugin.Handlers
         public string Name => "connect_pipe_network";
 
         public string Description =>
-            "Insert fittings where pipes meet outside structures (elbow, union, transition, tee, cross). " +
+            "Insert fittings where pipes meet outside structures (elbow, union, transition, tee, cross; a tee after splitting a pipe whose side another pipe ends on). " +
             "Ends inside generic models or plumbing/mechanical equipment stay open. dry_run (default true) returns the plan only.";
 
         public string ParametersSchema => @"{""type"":""object"",""properties"":{""system_name"":{""type"":""string"",""description"":""Prefix of the piping system or system type name""},""element_ids"":{""type"":""array"",""items"":{""type"":""integer""}},""tolerance_mm"":{""type"":""number"",""default"":5,""maximum"":50},""structure_margin_mm"":{""type"":""number"",""default"":100,""maximum"":1000},""copy_comments"":{""type"":""boolean"",""default"":true},""dry_run"":{""type"":""boolean"",""default"":true},""limit"":{""type"":""integer"",""default"":200,""maximum"":500}}}";
@@ -70,11 +70,12 @@ namespace RvtMcp.Plugin.Handlers
                 return CommandResult.Fail("Scope has " + pipes.Count + " pipes; narrow system_name or element_ids to at most " + MaxPipes + ".");
 
             var ends = OpenEnds(pipes);
-            var plan = PipeJunctionPlanner.Plan(ends, Structures(doc), tolerance, margin);
+            var plan = PipeJunctionPlanner.Plan(ends, Structures(doc), tolerance, margin, Axes(pipes));
             var todo = plan.Junctions.Take(limit).ToList();
 
             var created = new List<object>();
             var failed = new List<object>();
+            var pieces = new Dictionary<long, List<long>>();   // pipe split by a tee_on_pipe -> pieces created from it
             if (!dryRun && todo.Count > 0)
             {
                 using (var tx = new Transaction(doc, "MCP: connect pipe network"))
@@ -87,18 +88,18 @@ namespace RvtMcp.Plugin.Handlers
                             sub.Start();
                             try
                             {
-                                var fitting = Create(doc, j);
+                                var fitting = Create(doc, j, pieces, tolerance);
                                 if (fitting == null) throw new InvalidOperationException("Revit returned no fitting.");
                                 var comment = copyComments ? SharedComment(doc, j) : null;
                                 if (comment != null) fitting.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)?.Set(comment);
                                 sub.Commit();
-                                created.Add(new { fitting_id = RevitCompat.GetId(fitting.Id), kind = j.Kind, pipes = j.Ends.Select(e => e.ElementId).ToArray(),
+                                created.Add(new { fitting_id = RevitCompat.GetId(fitting.Id), kind = j.Kind, pipes = PipeIds(j),
                                     point_mm = Point(j.X, j.Y, j.Z), deflection_deg = Math.Round(j.DeflectionDeg, 1), comments = comment });
                             }
                             catch (Exception ex)
                             {
                                 if (sub.HasStarted()) sub.RollBack();
-                                failed.Add(new { kind = j.Kind, pipes = j.Ends.Select(e => e.ElementId).ToArray(), point_mm = Point(j.X, j.Y, j.Z),
+                                failed.Add(new { kind = j.Kind, pipes = PipeIds(j), point_mm = Point(j.X, j.Y, j.Z),
                                     deflection_deg = Math.Round(j.DeflectionDeg, 1), error = ex.Message });
                             }
                         }
@@ -124,7 +125,7 @@ namespace RvtMcp.Plugin.Handlers
                 planned = plan.Junctions.Count,
                 processed = dryRun ? 0 : todo.Count,
                 truncated = plan.Junctions.Count > todo.Count,
-                junctions = dryRun ? todo.Select(j => (object)new { kind = j.Kind, pipes = j.Ends.Select(e => e.ElementId).ToArray(),
+                junctions = dryRun ? todo.Select(j => (object)new { kind = j.Kind, pipes = PipeIds(j),
                     diameters_mm = j.Ends.Select(e => Math.Round(e.DiameterMm, 1)).ToArray(), point_mm = Point(j.X, j.Y, j.Z),
                     deflection_deg = Math.Round(j.DeflectionDeg, 1) }).ToList() : null,
                 created,
@@ -157,6 +158,7 @@ namespace RvtMcp.Plugin.Handlers
             foreach (var pipe in pipes)
             {
                 var systemType = pipe.get_Parameter(BuiltInParameter.RBS_PIPING_SYSTEM_TYPE_PARAM)?.AsElementId();
+                var comment = pipe.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)?.AsString();
                 foreach (Connector c in pipe.ConnectorManager.Connectors)
                 {
                     if (c.ConnectorType != ConnectorType.End || c.Domain != Domain.DomainPiping || c.IsConnected) continue;
@@ -166,12 +168,32 @@ namespace RvtMcp.Plugin.Handlers
                         ElementId = RevitCompat.GetId(pipe.Id), ConnectorId = c.Id,
                         X = o.X * Mm, Y = o.Y * Mm, Z = o.Z * Mm, Dx = d.X, Dy = d.Y, Dz = d.Z,
                         DiameterMm = pipe.Diameter * Mm,
-                        SystemTypeId = systemType == null ? -1 : RevitCompat.GetId(systemType)
+                        SystemTypeId = systemType == null ? -1 : RevitCompat.GetId(systemType), Comment = comment
                     });
                 }
             }
             return ends;
         }
+
+        private static List<PipeAxis> Axes(IEnumerable<Pipe> pipes)
+        {
+            var axes = new List<PipeAxis>();
+            foreach (var pipe in pipes)
+            {
+                if (!((pipe.Location as LocationCurve)?.Curve is Line line)) continue;
+                XYZ s = line.GetEndPoint(0), e = line.GetEndPoint(1);
+                var systemType = pipe.get_Parameter(BuiltInParameter.RBS_PIPING_SYSTEM_TYPE_PARAM)?.AsElementId();
+                axes.Add(new PipeAxis
+                {
+                    ElementId = RevitCompat.GetId(pipe.Id), Sx = s.X * Mm, Sy = s.Y * Mm, Sz = s.Z * Mm, Ex = e.X * Mm, Ey = e.Y * Mm, Ez = e.Z * Mm,
+                    DiameterMm = pipe.Diameter * Mm, SystemTypeId = systemType == null ? -1 : RevitCompat.GetId(systemType)
+                });
+            }
+            return axes;
+        }
+
+        private static long[] PipeIds(PlannedJunction j)
+            => j.TargetPipeId.HasValue ? j.Ends.Select(e => e.ElementId).Concat(new[] { j.TargetPipeId.Value }).ToArray() : j.Ends.Select(e => e.ElementId).ToArray();
 
         private static List<StructureBox> Structures(Document doc)
         {
@@ -184,14 +206,16 @@ namespace RvtMcp.Plugin.Handlers
                     boxes.Add(new StructureBox
                     {
                         Id = RevitCompat.GetId(e.Id), Name = e.Symbol?.FamilyName + ": " + e.Symbol?.Name,
+                        Comment = e.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)?.AsString(),
                         MinX = bb.Min.X * Mm, MinY = bb.Min.Y * Mm, MinZ = bb.Min.Z * Mm, MaxX = bb.Max.X * Mm, MaxY = bb.Max.Y * Mm, MaxZ = bb.Max.Z * Mm
                     });
                 }
             return boxes;
         }
 
-        private static FamilyInstance Create(Document doc, PlannedJunction j)
+        private static FamilyInstance Create(Document doc, PlannedJunction j, Dictionary<long, List<long>> pieces, double toleranceMm)
         {
+            if (j.Kind == "tee_on_pipe") return TeeOnPipe(doc, j, pieces, toleranceMm);
             var c = j.Ends.Select(e => Find(doc, e)).ToArray();
             switch (j.Kind)
             {
@@ -202,6 +226,39 @@ namespace RvtMcp.Plugin.Handlers
                 case "cross": return doc.Create.NewCrossFitting(c[0], c[1], c[2], c[3]);
                 default: throw new InvalidOperationException("Unknown fitting kind " + j.Kind + ".");
             }
+        }
+
+        // Split the target pipe at the branch point and join the two new ends and the branch with a tee.
+        // An earlier tee in the same call may already have split the target, so the piece holding the point is used.
+        private static FamilyInstance TeeOnPipe(Document doc, PlannedJunction j, Dictionary<long, List<long>> pieces, double toleranceMm)
+        {
+            var target = j.TargetPipeId.Value;
+            var point = new XYZ(j.X / Mm, j.Y / Mm, j.Z / Mm);
+            var tol = toleranceMm / Mm;
+            List<long> known;
+            var candidates = new[] { target }.Concat(pieces.TryGetValue(target, out known) ? known : new List<long>());
+            Pipe host = null; XYZ at = null;
+            foreach (var id in candidates)
+            {
+                var pipe = doc.GetElement(RevitCompat.ToElementId(id)) as Pipe;
+                if (!((pipe?.Location as LocationCurve)?.Curve is Line line)) continue;
+                var r = line.Project(point);
+                if (r == null || r.Distance > tol) continue;
+                if (r.XYZPoint.DistanceTo(line.GetEndPoint(0)) <= tol || r.XYZPoint.DistanceTo(line.GetEndPoint(1)) <= tol) continue;
+                host = pipe; at = r.XYZPoint; break;
+            }
+            if (host == null) throw new InvalidOperationException("Pipe " + target + " no longer passes through the branch point.");
+            var branch = Find(doc, j.Ends[0]);
+            var newId = PlumbingUtils.BreakCurve(doc, host.Id, at);
+            var other = doc.GetElement(newId) as Pipe;
+            Func<Pipe, Connector> endAt = p => p.ConnectorManager.Connectors.Cast<Connector>()
+                .Where(c => c.ConnectorType == ConnectorType.End && !c.IsConnected).OrderBy(c => c.Origin.DistanceTo(at)).FirstOrDefault(c => c.Origin.DistanceTo(at) <= tol);
+            var a = endAt(host); var b = other == null ? null : endAt(other);
+            if (a == null || b == null) throw new InvalidOperationException("Splitting pipe " + target + " did not leave two open ends at the branch point.");
+            var tee = doc.Create.NewTeeFitting(a, b, branch);
+            if (!pieces.ContainsKey(target)) pieces[target] = new List<long>();
+            pieces[target].Add(RevitCompat.GetId(newId));
+            return tee;
         }
 
         // Connectors are re-read for each fitting: an earlier fitting in the same call may have changed the pipes.
@@ -217,7 +274,7 @@ namespace RvtMcp.Plugin.Handlers
         // View filters often select a network by Comments; a fitting takes it only when all its pipes agree.
         private static string SharedComment(Document doc, PlannedJunction j)
         {
-            var values = j.Ends.Select(e => doc.GetElement(RevitCompat.ToElementId(e.ElementId))?.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)?.AsString())
+            var values = PipeIds(j).Select(id => doc.GetElement(RevitCompat.ToElementId(id))?.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)?.AsString())
                 .Distinct().ToList();
             return values.Count == 1 && !string.IsNullOrEmpty(values[0]) ? values[0] : null;
         }

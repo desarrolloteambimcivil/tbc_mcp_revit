@@ -115,6 +115,61 @@ namespace RvtMcp.Tests
                 Assert.Single(Plan(End(1, 0, 0, 0, -1000, 0, 0, 160, 1), End(2, 0, 0, 0, 0, 1000, 0, 160, 2)).Unresolved).Reason);
         }
 
+        private static PipeAxis Axis(long id, double sx, double sy, double sz, double ex, double ey, double ez, long systemType = 1)
+            => new PipeAxis { ElementId = id, Sx = sx, Sy = sy, Sz = sz, Ex = ex, Ey = ey, Ez = ez, DiameterMm = 110, SystemTypeId = systemType };
+
+        [Fact]
+        public void End_on_the_side_of_another_pipe_gets_a_tee_on_that_pipe()
+        {
+            // A gutter connection ends on the axis of the collector, 4 m from its start (EMA north row).
+            var stub = End(5, 4000, 0, 10016, 4000, 160, 10200);
+            var collector = Axis(9, 0, 0, 10000, 30000, 0, 10120);
+            var plan = PipeJunctionPlanner.Plan(new[] { stub }, new StructureBox[0], 5, 100, new[] { collector });
+
+            var j = Assert.Single(plan.Junctions);
+            Assert.Equal("tee_on_pipe", j.Kind);
+            Assert.Equal(9, j.TargetPipeId);
+            Assert.Equal(4000, j.X, 1);
+            Assert.Equal(10016, j.Z, 1);
+            Assert.Empty(plan.Unresolved);
+        }
+
+        [Fact]
+        public void End_near_the_end_of_another_pipe_or_off_its_axis_stays_open()
+        {
+            var collector = new[] { Axis(9, 0, 0, 0, 30000, 0, 0) };
+            Assert.Equal("open_end", Assert.Single(PipeJunctionPlanner.Plan(new[] { End(5, 3, 0, 0, 3, 160, 200) }, new StructureBox[0], 5, 100, collector).Unresolved).Reason);
+            Assert.Equal("open_end", Assert.Single(PipeJunctionPlanner.Plan(new[] { End(5, 4000, 40, 0, 4000, 200, 200) }, new StructureBox[0], 5, 100, collector).Unresolved).Reason);
+        }
+
+        [Fact]
+        public void End_on_the_side_of_a_pipe_from_another_system_or_along_it_is_unresolved()
+        {
+            Assert.Equal("system_type_mismatch", Assert.Single(PipeJunctionPlanner.Plan(new[] { End(5, 4000, 0, 0, 4000, 160, 200) },
+                new StructureBox[0], 5, 100, new[] { Axis(9, 0, 0, 0, 30000, 0, 0, systemType: 2) }).Unresolved).Reason);
+            Assert.Equal("branch_along_pipe", Assert.Single(PipeJunctionPlanner.Plan(new[] { End(5, 4000, 0, 0, 3000, 0, 0) },
+                new StructureBox[0], 5, 100, new[] { Axis(9, 0, 0, 0, 30000, 0, 0) }).Unresolved).Reason);
+        }
+
+        [Fact]
+        public void Structure_of_another_network_is_not_a_junction()
+        {
+            // A gutter connection lands on the drain collector inside the extent of an electrical chamber (EMA, BC319).
+            var stub = End(5, 4000, 0, 9400, 4000, 100, 9750);
+            stub.Comment = "Pluviales";
+            var chamber = Manhole(4000, 0); chamber.Comment = "Electricidad"; chamber.MinZ = 9000;
+            var collector = new[] { Axis(9, 0, 0, 9400, 30000, 0, 9400) };
+
+            var plan = PipeJunctionPlanner.Plan(new[] { stub }, new[] { chamber }, 5, 100, collector);
+            Assert.Equal("tee_on_pipe", Assert.Single(plan.Junctions).Kind);
+            Assert.Empty(plan.InStructure);
+
+            chamber.Comment = "Pluviales";
+            Assert.Single(PipeJunctionPlanner.Plan(new[] { stub }, new[] { chamber }, 5, 100, collector).InStructure);
+            chamber.Comment = null;
+            Assert.Single(PipeJunctionPlanner.Plan(new[] { stub }, new[] { chamber }, 5, 100, collector).InStructure);
+        }
+
         [Fact]
         public void Deflection_is_zero_for_a_straight_continuation_and_ninety_for_a_square_bend()
         {

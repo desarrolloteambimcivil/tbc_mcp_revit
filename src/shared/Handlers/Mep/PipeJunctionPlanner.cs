@@ -13,6 +13,16 @@ namespace RvtMcp.Plugin.Handlers
         public double Dx, Dy, Dz;
         public double DiameterMm;
         public long SystemTypeId;
+        public string Comment;
+    }
+
+    /// <summary>Centreline (mm) of a pipe in scope, used to find ends that meet its side.</summary>
+    internal sealed class PipeAxis
+    {
+        public long ElementId;
+        public double Sx, Sy, Sz, Ex, Ey, Ez;
+        public double DiameterMm;
+        public long SystemTypeId;
     }
 
     /// <summary>Axis-aligned extent (mm) of a structure such as a manhole, chamber, gully or tank.</summary>
@@ -20,14 +30,17 @@ namespace RvtMcp.Plugin.Handlers
     {
         public long Id;
         public string Name;
+        public string Comment;
         public double MinX, MinY, MinZ, MaxX, MaxY, MaxZ;
     }
 
     /// <summary>One fitting to insert. Ends are in API order: elbow/union/transition 2;
-    /// tee run, run, branch; cross run A, run A, run B, run B.</summary>
+    /// tee run, run, branch; cross run A, run A, run B, run B. A tee_on_pipe has the branch end
+    /// only: the target pipe is split at the point and its two new ends form the run.</summary>
     internal sealed class PlannedJunction
     {
         public string Kind;
+        public long? TargetPipeId;
         public List<PipeEnd> Ends;
         public double X, Y, Z;
         public double DeflectionDeg;
@@ -64,26 +77,27 @@ namespace RvtMcp.Plugin.Handlers
         internal const double SameDiameterMm = 0.5;
 
         internal static PipeJunctionPlan Plan(IList<PipeEnd> ends, IList<StructureBox> structures,
-            double toleranceMm, double structureMarginMm)
+            double toleranceMm, double structureMarginMm, IList<PipeAxis> axes = null)
         {
             var plan = new PipeJunctionPlan();
             foreach (var group in Cluster(ends, toleranceMm))
             {
                 double cx = group.Average(e => e.X), cy = group.Average(e => e.Y), cz = group.Average(e => e.Z);
-                var host = structures.FirstOrDefault(s => Inside(s, cx, cy, cz, structureMarginMm));
+                var host = structures.FirstOrDefault(s => Inside(s, cx, cy, cz, structureMarginMm) && SameNetwork(s, group));
                 if (host != null)
                 {
                     plan.InStructure.AddRange(group.Select(e => new PipeEndInStructure { End = e, Structure = host }));
                     continue;
                 }
-                string reason;
-                var junction = Decide(group, out reason);
+                string reason = null;
+                var junction = group.Count == 1 ? OnPipeSide(group[0], axes, toleranceMm, out reason) : null;
+                if (junction == null && reason == null) junction = Decide(group, out reason);
                 if (junction == null)
                 {
                     plan.Unresolved.Add(new UnresolvedJunction { Reason = reason, Ends = group, X = cx, Y = cy, Z = cz });
                     continue;
                 }
-                junction.X = cx; junction.Y = cy; junction.Z = cz;
+                if (junction.Kind != "tee_on_pipe") { junction.X = cx; junction.Y = cy; junction.Z = cz; }
                 plan.Junctions.Add(junction);
             }
             return plan;
@@ -132,6 +146,31 @@ namespace RvtMcp.Plugin.Handlers
             };
         }
 
+        /// <summary>A lone end that lies on another pipe's centreline, away from its ends, joins it with a tee.</summary>
+        private static PlannedJunction OnPipeSide(PipeEnd e, IList<PipeAxis> axes, double toleranceMm, out string reason)
+        {
+            reason = null;
+            if (axes == null) return null;
+            foreach (var a in axes)
+            {
+                if (a.ElementId == e.ElementId) continue;
+                double ux = a.Ex - a.Sx, uy = a.Ey - a.Sy, uz = a.Ez - a.Sz, len = Math.Sqrt(ux * ux + uy * uy + uz * uz);
+                if (len < 1e-9) continue;
+                ux /= len; uy /= len; uz /= len;
+                var s = (e.X - a.Sx) * ux + (e.Y - a.Sy) * uy + (e.Z - a.Sz) * uz;
+                if (s <= toleranceMm || s >= len - toleranceMm) continue;
+                double px = a.Sx + s * ux, py = a.Sy + s * uy, pz = a.Sz + s * uz;
+                double dx = e.X - px, dy = e.Y - py, dz = e.Z - pz;
+                if (dx * dx + dy * dy + dz * dz > toleranceMm * toleranceMm) continue;
+                if (a.SystemTypeId != e.SystemTypeId) { reason = "system_type_mismatch"; return null; }
+                var along = Math.Abs(e.Dx * ux + e.Dy * uy + e.Dz * uz);
+                var angle = Math.Acos(Math.Min(1, along)) * 180 / Math.PI;   // 90 = square branch
+                if (angle < TeeRunDeg) { reason = "branch_along_pipe"; return null; }
+                return new PlannedJunction { Kind = "tee_on_pipe", TargetPipeId = a.ElementId, Ends = new List<PipeEnd> { e }, X = px, Y = py, Z = pz, DeflectionDeg = 90 - angle };
+            }
+            return null;
+        }
+
         /// <summary>Change of direction through a joint, in degrees: 0 when the two pipes continue straight.</summary>
         internal static double Deflection(PipeEnd a, PipeEnd b)
         {
@@ -140,6 +179,10 @@ namespace RvtMcp.Plugin.Handlers
             var cos = -(a.Dx * b.Dx + a.Dy * b.Dy + a.Dz * b.Dz) / (la * lb);
             return Math.Acos(Math.Max(-1, Math.Min(1, cos))) * 180 / Math.PI;
         }
+
+        /// <summary>A structure of another network (both carry a Comments value and they differ) is not a junction for these pipes.</summary>
+        private static bool SameNetwork(StructureBox s, List<PipeEnd> group)
+            => string.IsNullOrEmpty(s.Comment) || group.All(e => string.IsNullOrEmpty(e.Comment) || string.Equals(e.Comment, s.Comment, StringComparison.OrdinalIgnoreCase));
 
         private static bool Inside(StructureBox s, double x, double y, double z, double margin)
             => x >= s.MinX - margin && x <= s.MaxX + margin && y >= s.MinY - margin && y <= s.MaxY + margin

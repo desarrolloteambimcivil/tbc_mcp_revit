@@ -1164,7 +1164,7 @@
     },
     {
       "name": "revit_connect_pipe_network",
-      "description_hash": "sha256:6bee078760c29159944fd3653941e232881ff1ec337ca83eb9c36c617906aca4",
+      "description_hash": "sha256:3ddaf1e46949d56651ca34426a2dbb52924667c0c2602e548f6296e1eccddd64",
       "inputSchema": {
         "properties": {
           "copyComments": {
