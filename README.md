@@ -164,13 +164,14 @@ Notifications are **on by default** and can be turned off. In **Settings → Toa
 
 ### Prompts
 
-v1.0.0 provides six MCP prompts — pick `/mcp__tbc-revit-mcp__revit_<name>` (Claude Code) or the prompts menu (Claude Desktop), and the agent follows the script with the tools it already has:
+The server provides seven MCP prompts — pick `/mcp__tbc-revit-mcp__revit_<name>` (Claude Code) or the prompts menu (Claude Desktop), and the agent follows the script with the tools it already has:
 
 - `revit_getting_started` — orient in the open model (read-only, works on defaults).
 - `revit_drawing_layout` — supply `request`: arrange the viewports of one sheet. Reads real sheet-space positions first (`revit_get_viewport_geometry`), agrees the alignment with you, shows a dry-run plan (`revit_align_viewports`), moves only after you confirm, then reads back. Needs `query,sheets,view,meta`. In read-only mode it reports and proposes only.
 - `revit_change` — supply `change`: survey relationships, agree the smallest scope for this request, confirm the concrete proposal before writing, then read back and record the reason in the conversation. Needs `query,meta`; works without `send_code`. In read-only mode it stops at the survey/proposal. Missing or incomplete evidence stays "not checked"; readback is not a complete inventory of indirect changes, and the record is not a persistent change database.
 - `revit_model_audit` — health audit: warnings, families, dry-run purge candidates (needs `workflows,families,lint,meta`).
 - `revit_pre_issue_check` — checks resolved sheets before issue (needs `sheets,view,annotation,lint,meta`). Supply sheet numbers/IDs, an explicit number/name filter, or `all`; a named sheet set needs its member sheets. Sampled model warnings and incomplete checks are reported as **NOT VERIFIED**, not a sheet-level pass.
+- `revit_pipe_network` — supply `request`: make a piping network continuous. Open pipe ends that meet without a structure get a fitting; ends inside manholes, chambers or gullies stay open. Shows the plan, creates fittings only after you confirm, then checks again for open ends. Needs `mep,meta`; read-only sessions stop at the plan. See [network continuity](docs/placement-and-mep-contracts.md#network-continuity).
 - `revit_stairs` — guided stair creation through `send_code` (writes only after your confirmation). Includes the transaction/failure/cleanup template; no source checkout is needed.
 
 If a prompt's toolsets aren't enabled, it answers with the exact `--toolsets` line to add — nothing runs half-configured. Read-only protection stays on when the missing tools allow it; prompts requiring write-capable toolsets explain the conflict rather than silently changing configuration. Prompts are instructions for the agent, not server-enforced workflow locks.

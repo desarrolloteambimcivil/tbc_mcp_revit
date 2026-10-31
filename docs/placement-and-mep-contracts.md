@@ -39,6 +39,17 @@ These are public MCP argument names. The internal plugin command uses `system_ty
 
 Connection verification accepts a direct connection or two distinct physical ports on one shared pipe/duct fitting. Repeating either connection is a no-op (`already_connected: true`), including with explicit connector selection. It does not infer connectivity through arbitrary equipment or a longer network path.
 
+## Network continuity
+
+A modelled pipe network should be continuous, so Revit reads it as one system and analysis, schedules and disconnect checks are meaningful. Agents apply this by default when they create or rebuild pipes; the `revit_pipe_network` prompt runs the check on an existing network.
+
+- **Structures are junctions.** A pipe end inside a manhole, chamber, gully, channel, tank or separator stays open. Do not add a fitting there and do not report it as a defect.
+- **Pipes that meet without a structure get a fitting** through `revit_create_mep_fitting`: 2 pipes → elbow (union when collinear), 3 → tee, 4 → cross, and a transition between diameters. Short connections from gutters, gullies or downpipes count as pipes.
+- **Create segments that meet.** Consecutive segments of one drawn line end at the same point, plan position and level included, so the fitting needs no pipe movement. Add the fittings in the same task.
+- **Drawings are evidence.** Do not move, trim or re-slope pipes to make a fitting fit. Small deflections of a few degrees may refuse an elbow; report them.
+- **Keep filters working.** When view filters select a network by an instance value such as Comments (`revit_list_view_filters`), give new fittings the same value as the pipes they join.
+- **Check the result.** `revit_find_mep_disconnects` lists open ends before and after. The remaining ones should all be inside structures or listed as unresolved.
+
 ## Interpret MEP membership and connector counts
 
 `revit_list_mep_systems`, `revit_analyze_mep_network`, and `revit_get_system_inventory` share membership reads:

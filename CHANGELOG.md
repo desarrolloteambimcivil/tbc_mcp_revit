@@ -28,6 +28,14 @@
 
 Install only the [latest GitHub Release](https://github.com/bimwright/rvt-mcp/releases/latest). v0.1.0–v0.5.0 are kept as git tags for history; any GitHub Releases for them are no longer published, and the legacy NuGet package `Bimwright.Rvt.Server` (0.1–0.3) is obsolete.
 
+## Unreleased
+
+### Pipe networks: fittings by default
+
+- **`revit_pipe_network` prompt** (`mep,meta`): makes a piping network continuous. Open pipe ends that meet without a structure get a fitting (elbow, union, tee, cross or transition); ends inside a manhole, chamber, gully, channel or tank stay open, because the structure is the junction. The agent proposes a table and writes only after confirmation; read-only sessions stop at the plan. New fittings take the same view-filter value (for example Comments) as the pipes they join. Pipes are never moved to make a fitting fit. Seven prompts in total.
+- **`revit_create_pipe`** description: consecutive segments should end at the same point and be joined with `revit_create_mep_fitting` in the same task.
+- [Placement and MEP contracts](docs/placement-and-mep-contracts.md#network-continuity) documents the convention.
+
 ## v1.3.2 — 2026-10-30
 
 ### CAD links: map drawing coordinates into the model

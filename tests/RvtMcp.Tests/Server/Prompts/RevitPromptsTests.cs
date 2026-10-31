@@ -19,6 +19,7 @@ namespace RvtMcp.Tests
         [InlineData("model_audit")]
         [InlineData("pre_issue_check")]
         [InlineData("stairs")]
+        [InlineData("pipe_network")]
         public void Embedded_prompt_body_loads(string name)
         {
             Assert.False(string.IsNullOrWhiteSpace(PromptBody.Load(name)), $"missing RvtMcp.Prompts.{name}.md");
@@ -328,6 +329,35 @@ namespace RvtMcp.Tests
             Assert.Contains("meta", rendered);
             Assert.Contains("--toolsets", rendered);
             Assert.DoesNotContain("resolved design", rendered);
+        }
+
+        [Theory]
+        [InlineData(false, "Fittings need confirmation")]
+        [InlineData(true, "READ-ONLY")]
+        public void PipeNetwork_renders_request_and_session_mode(bool readOnly, string expectedMode)
+        {
+            ServerState.Config = new RvtMcpConfig { Toolsets = new List<string> { "mep", "meta" }, ReadOnly = readOnly };
+
+            var rendered = RevitPrompts.PipeNetwork("EMA-Pluviales");
+
+            Assert.Contains("Network or area: EMA-Pluviales", rendered);
+            Assert.Contains(expectedMode, rendered);
+            Assert.Contains("revit_create_mep_fitting", rendered);
+            Assert.Contains("A structure is the junction", rendered);
+            Assert.DoesNotContain("{request}", rendered);
+            Assert.DoesNotContain("{mode}", rendered);
+        }
+
+        [Fact]
+        public void PipeNetwork_without_request_asks_for_scope_and_needs_mep()
+        {
+            ServerState.Config = new RvtMcpConfig { Toolsets = new List<string> { "mep", "meta" } };
+            Assert.Contains("Ask me which system", RevitPrompts.PipeNetwork(""));
+
+            ServerState.Config = new RvtMcpConfig { Toolsets = new List<string> { "meta" } };
+            var notice = RevitPrompts.PipeNetwork("EMA-Pluviales");
+            Assert.Contains("Missing: mep", notice);
+            Assert.DoesNotContain("Network or area", notice);
         }
     }
 }

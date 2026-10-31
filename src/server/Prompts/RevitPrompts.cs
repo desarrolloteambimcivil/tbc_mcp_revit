@@ -22,6 +22,7 @@ namespace RvtMcp.Server.Prompts
         // can also ride the toolbaker set — without the gate a toolbaker-only server
         // would render a body whose first step isn't exposed.
         private static readonly string[] StairsSets = { "meta" };
+        private static readonly string[] PipeNetworkSets = { "mep", "meta" };
 
         [McpServerPrompt(Name = "revit_getting_started"),
          Description("Read-only orientation for the connected Revit: current target, active view, model statistics. Safe first command.")]
@@ -90,6 +91,24 @@ namespace RvtMcp.Server.Prompts
                         : "Use only exposed tools. Moves need confirmation of the dry-run plan below.",
                     ["request"] = string.IsNullOrWhiteSpace(request)
                         ? "Not specified. Ask me which sheet and which viewports, and how to arrange them, before reading or moving anything."
+                        : request
+                });
+        }
+
+        [McpServerPrompt(Name = "revit_pipe_network"),
+         Description("Make a piping network continuous: fittings where pipes meet without a structure, ends inside manholes/chambers left open. Confirms the plan before writing; read-only sessions plan only.")]
+        public static string PipeNetwork(
+            [Description("The network or area to check: system name, area or element IDs")] string request)
+        {
+            return PromptBody.Render(
+                PromptBody.Load("pipe_network"), PipeNetworkSets, requiresSendCode: false,
+                args: new Dictionary<string, string>
+                {
+                    ["mode"] = ServerState.Config?.ReadOnlyOrDefault == true
+                        ? "READ-ONLY: report open ends and propose fittings only. Do not call revit_create_mep_fitting."
+                        : "Use only exposed tools. Fittings need confirmation of the plan below.",
+                    ["request"] = string.IsNullOrWhiteSpace(request)
+                        ? "Not specified. Ask me which system, area or elements to check before reading or writing anything."
                         : request
                 });
         }

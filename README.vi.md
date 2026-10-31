@@ -167,13 +167,14 @@ Toast **bật mặc định** và có thể tắt. Trong **Settings → Toast**,
 
 ### Prompt
 
-v1.0.0 có sáu MCP prompt — chọn `/mcp__tbc-revit-mcp__revit_<name>` (Claude Code) hoặc menu prompt (Claude Desktop); agent làm theo kịch bản bằng các tool sẵn có:
+Server có bảy MCP prompt — chọn `/mcp__tbc-revit-mcp__revit_<name>` (Claude Code) hoặc menu prompt (Claude Desktop); agent làm theo kịch bản bằng các tool sẵn có:
 
 - `revit_getting_started` — làm quen với model đang mở (chỉ đọc, chạy được với cấu hình mặc định).
 - `revit_drawing_layout` — truyền `request`: sắp xếp viewport của một sheet. Đọc vị trí thật trong không gian sheet trước (`revit_get_viewport_geometry`), thống nhất cách căn với bạn, hiện kế hoạch chạy thử (`revit_align_viewports`), chỉ di chuyển sau khi bạn xác nhận, rồi đọc lại. Cần `query,sheets,view,meta`. Chế độ read-only chỉ báo cáo và đề xuất.
 - `revit_change` — truyền `change`: khảo sát quan hệ, chốt phạm vi nhỏ nhất cho từng yêu cầu, xác nhận phương án cụ thể trước khi ghi, rồi đọc lại và ghi lý do trong hội thoại. Cần `query,meta`, không cần `send_code`; chế độ read-only dừng ở khảo sát/đề xuất. Dữ liệu thiếu hoặc chưa đầy đủ phải ghi "không kiểm được". Đọc lại không phải danh sách đầy đủ mọi phần tử bị đổi gián tiếp; bản ghi trong hội thoại không phải cơ sở dữ liệu lưu bền. Prompt hướng dẫn agent, không phải khóa workflow do server cưỡng chế.
 - `revit_model_audit` — kiểm tra sức khỏe model: cảnh báo, family, ứng viên purge ở chế độ chạy thử (cần `workflows,families,lint,meta`).
 - `revit_pre_issue_check` — kiểm tra các sheet đã xác định trước khi phát hành (cần `sheets,view,annotation,lint,meta`). Truyền số/ID sheet, bộ lọc số/tên rõ ràng, hoặc `all`; sheet set có tên cần các sheet thành viên. Cảnh báo model chỉ lấy mẫu và kiểm tra chưa đầy đủ được báo là **NOT VERIFIED**, không phải đạt ở mức sheet.
+- `revit_pipe_network` — truyền `request`: làm cho mạng ống liên tục. Các đầu ống gặp nhau ở chỗ không có công trình thì được thêm phụ kiện; đầu ống nằm trong hố ga, hố thu hay giếng thăm thì để hở. Trình bày kế hoạch, chỉ tạo phụ kiện sau khi bạn xác nhận, rồi kiểm tra lại các đầu ống hở. Cần `mep,meta`; chế độ read-only dừng ở bước kế hoạch. Xem [tính liên tục của mạng](docs/placement-and-mep-contracts.md#network-continuity).
 - `revit_stairs` — tạo thang có hướng dẫn qua `send_code` (chỉ ghi sau khi bạn xác nhận). Gồm mẫu transaction/xử lý lỗi/dọn dẹp; không cần source checkout.
 
 Nếu toolset mà prompt cần chưa bật, prompt trả lời đúng dòng `--toolsets` cần thêm — không có gì chạy khi cấu hình dở dang. Bảo vệ read-only vẫn bật khi các tool còn thiếu cho phép; prompt cần toolset có quyền ghi sẽ giải thích xung đột thay vì âm thầm đổi cấu hình. Prompt là hướng dẫn cho agent, không phải khóa quy trình do server cưỡng chế.

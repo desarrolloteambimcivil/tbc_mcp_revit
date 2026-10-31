@@ -166,13 +166,14 @@ Toast **默认开启**，可以关闭。在 **Settings → Toast** 中可选择�
 
 ### 提示
 
-v1.0.0 提供六个 MCP 提示。在客户端提示菜单（Claude Code：`/mcp__tbc-revit-mcp__revit_<name>`）中选择，代理会用现有工具按脚本执行：
+服务器提供七个 MCP 提示。在客户端提示菜单（Claude Code：`/mcp__tbc-revit-mcp__revit_<name>`）中选择，代理会用现有工具按脚本执行：
 
 - `revit_getting_started` — 了解已打开的模型（只读，使用默认配置即可）。
 - `revit_drawing_layout` — 通过 `request` 指定：排列一张图纸上的视口。先读取图纸空间的真实位置（`revit_get_viewport_geometry`），与你确认对齐方式，给出试运行计划（`revit_align_viewports`），确认后才移动，再读取结果。需要 `query,sheets,view,meta`。只读模式下仅报告和建议。
 - `revit_change` — 通过 `change` 指定修改要求：调查关联关系，逐项确认最小修改范围，在确认具体方案后写入，再读取结果并在对话中记录原因。需要 `query,meta`，不依赖 `send_code`；只读模式止于调查和建议。缺失或不完整的证据必须标为“未检查”。读取结果不代表完整捕获所有间接变化，对话记录也不是持久化变更数据库。提示用于指导代理，不是服务器强制执行的工作流锁。
 - `revit_model_audit` — 模型健康审计：警告、族、试运行的 purge 候选（需要 `workflows,families,lint,meta`）。
 - `revit_pre_issue_check` — 发布前检查已确定的图纸（需要 `sheets,view,annotation,lint,meta`）。提供图纸编号/ID、明确的编号/名称过滤，或 `all`；命名图纸集需要其成员图纸。抽样的模型警告和不完整的检查会报告为 **NOT VERIFIED**，而不是图纸级通过。
+- `revit_pipe_network` — 通过 `request` 指定：使管网连续。在没有构筑物的位置相接的管端加装管件；位于检查井、集水井或雨水口内的管端保持开口。先给出方案，确认后才创建管件，然后再次检查开口管端。需要 `mep,meta`；只读模式止于方案。参见[管网连续性](docs/placement-and-mep-contracts.md#network-continuity)。
 - `revit_stairs` — 通过 `send_code` 引导创建楼梯（仅在你确认后写入）。包含事务/失败/清理模板，无需源码检出。
 
 如果提示所需的 toolset 未启用，它会给出需要添加的确切 `--toolsets` 行——不会以半配置状态运行。缺失的工具允许时，只读保护保持开启；需要可写 toolset 的提示会说明冲突，而不是悄悄更改配置。提示是给代理的指令，不是 server 强制执行的工作流锁。

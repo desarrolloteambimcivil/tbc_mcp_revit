@@ -1992,7 +1992,7 @@
     },
     {
       "name": "revit_create_pipe",
-      "description_hash": "sha256:cfe46fbb009a29ca592ac2e08ee9a205bc0ebfd38a33b8e4bdde83762b8c8899",
+      "description_hash": "sha256:6ad2e3b82a2aea593c622e1f536d43d4a23d8a9f176dcfb95e9c403266c2d552",
       "inputSchema": {
         "properties": {
           "diameter": {
